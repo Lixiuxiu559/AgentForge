@@ -1,0 +1,24 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "agentforge",
+  "description": "AgentForge —— 通用 agent 工作流与工程技能集，作为可安装的 Claude Code 插件。",
+  "owner": {
+    "name": "lixiuxiu"
+  },
+  "plugins": [
+    {
+      "name": "agentforge",
+      "source": "./",
+      "description": "通用 agent 工作流与工程技能集：研究 → 需求澄清 → 原型 → 架构 → 实施 → 质量门 → 评审 → 提交。含 22 个技能与 4 个专职子 agent。",
+      "category": "engineering",
+      "keywords": [
+        "workflow",
+        "skills",
+        "subagents",
+        "tdd",
+        "code-review",
+        "architecture"
+      ]
+    }
+  ]
+}

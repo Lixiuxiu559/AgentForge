@@ -1,0 +1,16 @@
+{
+  "description": "AgentForge hooks —— 保持 CLAUDE.md 与 AGENTS.md 双向同步。",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/sync-agent-docs.sh\""
+          }
+        ]
+      }
+    ]
+  }
+}

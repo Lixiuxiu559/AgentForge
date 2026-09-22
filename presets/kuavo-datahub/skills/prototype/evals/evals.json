@@ -1,0 +1,27 @@
+{
+  "skill_name": "prototype",
+  "note": "评测重点在档位判定（T1/T2/T3）与 prototype.md 的字段清单完整度——这两项决定 arch-spec 能否正确推导 API 契约。HTML 视觉质量由人工在 viewer 中评判，不设断言。",
+  "evals": [
+    {
+      "id": 0,
+      "name": "t1-新建页面全量原型",
+      "prompt": "PRD 已经审批通过了，帮我出原型：assets/docs/prd/v3.3/2026-09-15-机器人手势平台资产管理PRD.md",
+      "expected_output": "判定 T1，产出 prototype.md（页面清单/字段清单含枚举值域/六态状态清单/组件选型）+ 每个页面一个 HTML + index.html 导航页",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "t3-纯字段增减应跳过",
+      "prompt": "PRD 已经审批通过了，帮我出原型：assets/docs/prd/v3.3/2026-08-20-任务数据单条时长PRD.md",
+      "expected_output": "判定 T3，说明本次不出原型、理由，并告知 arch-spec 可直接从 PRD 数据模型节推导契约；不产出任何 HTML 文件",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "t2-现有页面局部新增",
+      "prompt": "PRD 已经审批通过了，帮我出原型：assets/docs/prd/v3.3/2026-09-11-数采工单任务级退回PRD.md",
+      "expected_output": "判定 T2，只画改动的退回入口与二次确认弹窗，prototype.md 只列受影响字段并标注新增/修改",
+      "files": []
+    }
+  ]
+}
