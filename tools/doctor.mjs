@@ -207,7 +207,7 @@ function checkAgents() {
       add('warn', 'agents', `${shown} 未声明 tools 白名单`, '默认拥有全部工具，建议按最小权限声明')
     }
 
-    const isReadOnly = /只报告|只读|不修改代码|不修改生产代码/.test(`${data.description ?? ''}\n${body}`)
+    const isReadOnly = /只报告|只读分析|不修改代码|不修改生产代码/.test(`${data.description ?? ''}\n${body}`)
     if (isReadOnly) {
       const leaked = tools.filter((t) => WRITE_TOOLS.has(t))
       if (leaked.length) add('error', 'agents', `${shown} 声称只读，但 tools 包含写工具：${leaked.join(', ')}`)
