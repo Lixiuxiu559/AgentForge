@@ -1,0 +1,46 @@
+name: validate
+
+# 只做校验，不发版。
+# 发版是显式动作：bump .claude-plugin/plugin.json 的 version 并打标签。
+# 详见 docs/releasing.md
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 结构与资产校验
+        run: node tools/doctor.mjs
+
+      - name: JSON 清单合法性
+        run: |
+          node -e "JSON.parse(require('fs').readFileSync('.claude-plugin/plugin.json','utf8'))"
+          node -e "JSON.parse(require('fs').readFileSync('.claude-plugin/marketplace.json','utf8'))"
+
+      - name: 脚本语法
+        run: |
+          node --check tools/doctor.mjs
+          node --check tools/release.mjs
+          node --check src/index.js
+          node --check skills/complexity-audit/scripts/crap.js
+
+      - name: 版本号与 CHANGELOG 一致性
+        run: |
+          V=$(node -e "console.log(require('./.claude-plugin/plugin.json').version)")
+          echo "plugin.json version = $V"
+          if [ -n "$(git tag -l "v$V")" ]; then
+            echo "✅ 该版本已打标签（已发布）"
+          else
+            echo "ℹ️  该版本尚未打标签（未发布，属正常：日常 push 不发版）"
+          fi
