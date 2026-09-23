@@ -1,0 +1,13 @@
+# AgentForge 的 DSH layer。
+#
+# 只做一件事：把桥接插件挂进 profile。
+#
+# 技能、子 agent、钩子的注册**全部在插件内部完成**（`src/index.js`），
+# 不在这里用路径表达式 —— 原因见 docs/architecture.md 附录 A.1：
+# `!!js` 在 ESM eval 上下文求值，没有 `require`/`__dirname`，无法自解析包内路径；
+# 而 `customSkillDirs` 之类的配置项走 `path.resolve()`，相对 `process.cwd()`，
+# 写相对路径或绝对路径都不可移植。
+
+- insert:
+    - id: agentforge
+      name: 'agentforge'
