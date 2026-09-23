@@ -1,0 +1,18 @@
+{
+  "name": "agentforge",
+  "version": "0.1.0",
+  "description": "通用 agent 工作流与工程技能集：实施编排、复杂度风险审计、测试有效性审计。含 3 个技能与 3 个子 agent，零外部依赖。",
+  "author": {
+    "name": "lixiuxiu"
+  },
+  "license": "MIT",
+  "keywords": [
+    "workflow",
+    "implementation",
+    "subagents",
+    "complexity",
+    "crap",
+    "mutation-testing",
+    "code-quality"
+  ]
+}
