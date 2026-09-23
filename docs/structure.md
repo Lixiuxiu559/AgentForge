@@ -13,8 +13,13 @@
 | **依赖** | **零外部依赖** —— 不依赖 MCP 服务、不依赖网络、不依赖项目预装工具 |
 | **真源** | 单仓 + 共享目录，两端只是不同入口（改一次两边生效） |
 | **DSH 子 agent** | 写桥接插件，让无 MCP 依赖的 agent 在 DSH 可用 |
-| **命令入口** | 用 `user-invocable` 技能代替斜杠命令（两端都免写 JS） |
+| **命令入口** | 用 `user-invocable` 技能代替斜杠命令 |
 | **工具白名单** | 重写 agent，去掉所有 `mcp__*` 依赖 |
+
+> **关于"零 JS"**：原设想是 DSH 侧纯 YAML、零 JS。**验证后放弃**（见 §5）——
+> `!!js` 无法自解析包内路径，纯 YAML 就得写死绝对路径，不可移植。
+> 改为**一个自包含桥接插件**（约 150 行），换来可移植性。
+> 注意这仍是**零外部依赖**：桥接插件随包分发，不依赖任何外部服务。
 
 ---
 
@@ -24,10 +29,10 @@
 |---|---|---|---|
 | **技能** | `skills/<name>/SKILL.md` 自动发现 | 扫 `.dsh/skills`、`.agents/skills`、`~/.dsh/skills`、`~/.agents/skills` | ✅ **格式逐字相同** |
 | **子 agent** | `agents/<name>.md` 自动发现 | **无对应物** | ❌ 需桥接插件 |
-| **斜杠命令** | `commands/<name>.md` | 必须 `ctx.commands.register()`（JS） | ❌ 但可用 `user-invocable` 技能绕过 |
+| **斜杠命令** | `commands/<name>.md`（官方已标为遗留格式，等同技能） | 必须 `ctx.commands.register()`（JS） | ❌ 用 `user-invocable` 技能绕过 |
 | **钩子** | `hooks/hooks.json` | `dsh-hooks-claude-code` 桥读同一份 | ✅ 配置共享 |
 | **分发** | marketplace → `/plugin install` | `dsh plugin add <npm包>` → `dsh.bundle.patch` | ❌ 各写各的清单 |
-| **包形态** | 纯文件 | **可纯 YAML**（`dsh-base` 的 `lib/index.js` 只有 11 字节 `export {};`） | — |
+
 
 ### 三条硬约束
 
@@ -109,9 +114,9 @@ AgentForge/                          ← 插件根 & DSH 包根 & 市场根
 │   ├── marketplace.json             # source: "./"
 │   └── plugin.json
 ├── package.json                     # DSH: dsh.bundle.patch
-├── cordis.patch.yml                 # DSH 入口（纯 YAML）
+├── cordis.patch.yml                 # DSH 入口（挂载桥接插件）
 │
-├── skills/                          # ★ 真源：CC 自动发现；DSH 用 customSkillDirs 指过来
+├── skills/                          # ★ 真源：CC 自动发现；DSH 由桥接插件注册
 ├── agents/                          # ★ 真源：CC 自动发现；DSH 由桥接插件读
 ├── hooks/                           # ★ 真源：两端共用（DSH 挂官方 hooks 桥）
 │
@@ -162,18 +167,58 @@ plugins/claude-code/skills -> ../../shared/skills
 
 ---
 
-## 3. DSH 侧的三个挂载动作
+## 3. DSH 侧的三个注册动作
 
-DSH bundle 是纯 YAML patch，插三行：
+DSH bundle 是一个 YAML patch。技能、钩子、子 agent 的注册**都在桥接插件里**（原因见 §3.1），patch 本身只负责挂载它：
 
 ### 3.1 技能根
+
+**路径解析的坑（实测踩到）**：`customSkillDirs` 的每一项在
+`dsh-skill-filesystem/lib/index.js:79` 被 `resolve(root)` 处理 ——
+即 **`node:path.resolve`，相对于 `process.cwd()`**，不是相对于 patch 文件。
+
+```js
+// dsh-skill-filesystem/lib/index.js
+this.customSkillDirs = (config.customSkillDirs ?? []).map((root) => resolve(root))
+```
+
+**并且 `!!js` 里不能用 `require`。** `!!js` 的求值实现在
+`cordis-plugin-loader/lib/index.js:288`：
+
+```js
+const evaluate = new Function("ctx", "expr", `
+  with (ctx) { return eval(expr) }
+`)
+```
+
+`ctx` 是 cordis 的 **Context 对象**，不是 Node 全局 —— 所以 `require` / `__dirname`
+都不存在（`process` 存在）。实测报错：`ReferenceError: require is not defined`。
+
+> ⚠️ **`dsh --dump-config` 看不出来这个错**：它只把 `!!js` 表达式原样打印，
+> 不求值。必须在**真实启动**时才会暴露。这是个很容易踩的陷阱。
+
+**结论**：技能根不能用"自解析表达式"表达。两个可行方案：
+
+| 方案 | 做法 | 评价 |
+|---|---|---|
+| **A. 绝对路径** | patch 里写死绝对路径 | ✅ 实测可行（下面就是），❌ 不可移植 |
+| **B. 代码内注册** | 桥接插件读自己的包路径，调 `ctx.skills.register()` | ✅ 可移植，推荐 |
+
+方案 A 的实测写法（已端到端验证 `probe-skill` 被加载）：
 
 ```yaml
 - id: skill-filesystem
   config:
     customSkillDirs:
-      - !!js <解析到 AgentForge 的 skills 目录>
+      - /absolute/path/to/node_modules/agentforge/skills
 ```
+
+方案 B 用 `ctx.skills.register(skill)`（`SkillRegistration` 接受 name / description /
+path / metadata），插件自己用 `import.meta.url` 定位包内 `skills/`，逐个注册。
+**这是最终推荐**：不依赖 cwd，不依赖绝对路径。
+
+> **注意**：本方案要求桥接插件存在。既然 §3.3 的子 agent 桥**本来就要写 JS**，
+> 就把技能注册和 agent 注册放进**同一个插件** —— 边际成本为零。
 
 ### 3.2 钩子桥
 
@@ -182,9 +227,12 @@ DSH bundle 是纯 YAML patch，插三行：
     - id: hooks-claude-code
       name: '@deepseek-ai/dsh-hooks-claude-code'
       config:
-        configPath: !!js <解析到 AgentForge 的 hooks/hooks.json>
+        configPath: /absolute/path/to/hooks/hooks.json
 ```
 
+> `configPath` 同样受 cwd 影响，且不能用 `!!js` + `require` 自解析。
+> 由 §3.1 的桥接插件在代码里一并处理（或用绝对路径）。
+>
 > **必须校验事件子集**：`dsh-hooks-claude-code` 只支持 7 个事件
 > （`SessionStart` / `UserPromptSubmit` / `PreToolUse` / `PostToolUse` / `Stop` / `SubagentStart` / `SubagentStop`）。
 > 不在其中的会被**静默跳过**。所以 `tools/doctor.mjs` 必须把这件事报出来。
@@ -273,26 +321,55 @@ user-invocable: true
 
 ---
 
-## 5. 落地前必须验证的三件事
+## 5. 验证结果（已全部实测）
 
-| # | 风险 | 状态 | 验证方式 |
+验证方法：造一个最小 bundle 包（`package.json` + `cordis.patch.yml` + 一个探针技能），
+装进**隔离的 `DSH_HOME`**（不碰现有 web profile），端到端启动确认技能被加载。
+临时环境已清理，原有 profile 未受影响。
+
+| # | 假设 | 结果 | 证据 |
 |---|---|---|---|
-| 1 | **`spawn` provider 支持调用期 `persona` / `toolFilter`** | ✅ **已验证** | 类型定义 + `capabilities = {persona:true, toolFilter:true}` |
-| 2 | **`defineTool` 的确切签名、`exec.agent` 可用性、`ToolRestriction` 形状** | ⬜ 待验证 | 读 `dsh-tools` 的类型定义与一个真实工具包（如 `dsh-tool-todo`）的实现 |
-| 3 | **`!!js` 表达式能否稳定解析到包内路径** | ⬜ 待验证 | 在 `cordis.patch.yml` 里用 `require.resolve` 试跑，`dsh --dump-config` 确认输出 |
-| 4 | **纯 YAML bundle 能否被 `dsh plugin add` 识别** | ⬜ 待验证 | 造最小 npm 包（只有 `package.json` + `cordis.patch.yml`），`dsh plugin --profile web add` 后确认进入 layer stack |
+| 1 | `spawn` provider 支持调用期 `persona` / `toolFilter` | ✅ **通过** | `capabilities = { persona: true, toolFilter: true }`；`SubagentStartRequest` 带这两个字段 |
+| 2 | `defineTool` 签名 / `exec.agent` / `ToolRestriction` | ✅ **通过** | `execute(args, exec: ToolRunContext)`；`ToolRunContext extends ToolExecution`，带 `agent?: Agent` 和 `signal`；`ToolRestriction = { allow?: string[], deny?: string[] }` |
+| 3 | 纯 YAML bundle 被 `dsh plugin add` 识别 | ✅ **通过** | 安装后自动进入 `dsh.profile.bundles`，无 "declares no dsh.bundle" 警告 |
+| 4 | `!!js` 能解析到包内路径 | ❌ **失败**（已找到替代方案） | `ReferenceError: require is not defined` —— 见 §3.1 |
 
-**风险 2/3/4 都不通过的话**，退路是：DSH 侧只共享技能，子 agent 用「技能化的角色扮演」替代
-（把 coder 的方法论写成一个技能，两端都能用，但没有工具隔离和模型覆盖）。
+### 验证 4 的失败细节（重要）
+
+三个连锁事实，任何一个不知道都会踩坑：
+
+1. **`!!js` 在 ESM eval 上下文求值**，`new Function("ctx","expr","with(ctx){return eval(expr)}")`
+   → `require` / `__dirname` 不可用（`process` 可用）。
+2. **`customSkillDirs` 用 `path.resolve()` 解析**，相对 `process.cwd()` 而非 patch 文件位置。
+3. **`dsh --dump-config` 不会求值 `!!js`** —— 只原样打印。错误只在真实启动时暴露。
+
+**替代方案（已验证可行）**：绝对路径写在 patch 里。
+**最终推荐**：由桥接插件在代码里用 `import.meta.url` 定位包内路径，
+调 `ctx.skills.register()` 注册技能 —— 不依赖 cwd，不依赖绝对路径。
+
+### 对结构的最终影响
+
+验证 4 的失败**反而简化了架构**：既然路径自解析不可行，
+技能注册、钩子配置、子 agent 注册就**全部收进同一个桥接插件**（`src/index.ts`）。
+原本"纯 YAML 零 JS"的设想放弃，但换来的是**可移植**（不写死绝对路径）。
+
+| 组件 | DSH 侧实现 |
+|---|---|
+| 技能 | 桥接插件读包内 `skills/`，逐个 `ctx.skills.register()` |
+| 钩子 | 桥接插件挂 `dsh-hooks-claude-code`，`configPath` 用 `import.meta.url` 定位 |
+| 子 agent | 桥接插件读包内 `agents/*.md`，注册**一个**工具（`agent` 参数枚举） |
+| `cordis.patch.yml` | 只需一行：挂载桥接插件 |
+
+**这比原方案更好**：DSH 侧从"YAML + 一堆路径表达式"变成"一行 YAML + 一个自包含插件"。
 
 ---
 
 ## 6. 待决问题
 
 1. **`presets/` 里的项目专属资产怎么被项目消费？** 复制、软链，还是也做成 npm 包？
-2. **`tools/doctor.mjs` 现在是 Node 脚本，DSH 侧怎么调用？** 它需要能被 DSH 的 Bash 工具直接跑
-   （应该没问题，但要确认 Node 在 DSH 的 shell 环境里可用）。
-3. **两个插件要不要拆成两个 npm 包？** 还是 AgentForge 一个包同时声明
-   `dsh.bundle.patch` 和作为 CC 插件目录？
-4. **版本同步**：CC 插件用 `plugin.json` 的 `version`，DSH 用 `package.json` 的 `version`，
+2. **桥接插件用 TS 还是纯 JS？** TS 需要构建步骤（`tsc` → `lib/`）；
+   纯 JS 可以直接 `main: "src/index.js"`，零构建。考虑到插件只有约 150 行，**倾向纯 JS**。
+3. **版本同步**：CC 用 `plugin.json` 的 `version`，DSH 用 `package.json` 的 `version`，
    要不要用脚本强制一致？
+4. **`tools/doctor.mjs` 在 DSH 侧怎么调用？** 它需要能被 DSH 的 Bash 工具直接跑
+   （Node 在 DSH shell 环境里应该可用，但未实测）。
