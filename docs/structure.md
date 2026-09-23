@@ -77,81 +77,88 @@ toolFilter，再调 `ctx.subagents.start()`。**一个工具覆盖 N 个 agent�
 
 ## 2. 仓库结构
 
+### 2.1 两端入口的位置约束（实测）
+
+**结论：只有"市场清单"必须在根，插件本身可以在任意子目录。**
+
+| 项 | 必须的位置 | 依据 |
+|---|---|---|
+| Claude Code `marketplace.json` | **必须** `.claude-plugin/marketplace.json` | 官方 254 插件市场就是这个布局 |
+| Claude Code 插件目录 | **任意子目录** | 官方市场里 **51 个插件在子目录**（`./plugins/<name>`、`./external_plugins/<name>`），`source` 写相对路径即可 |
+| DSH bundle 包 | **任意目录**，作为 npm 依赖安装 | `resolveBundleDir()` 走 `packageDirFromAnchor`，按包名解析；`dsh plugin add` 直接转发给 pnpm，支持 `file:` / 路径 spec |
+
+Claude Code 侧官方市场 `marketplace.json` 的 source 类型分布：
+
+| source 类型 | 数量 | 含义 |
+|---|---|---|
+| `url` / `git-subdir` | 201 | 远程仓库或仓库子目录 |
+| `string: ./plugins/*` | 36 | **本仓子目录** |
+| `string: ./external_plugins/*` | 15 | **本仓子目录** |
+| `github` | 2 | GitHub 简写 |
+
+**这解除了一个我以为存在的硬约束。** 之前认为"CC 强制 `skills/` 在插件根"，
+这是对的 —— 但**插件根本身可以是子目录**，所以问题转化为"选哪一层当插件根"。
+
+### 2.2 结构：插件根 = 仓库根（推荐）
+
+既然插件可以在子目录，就有两种放法。**推荐让插件根等于仓库根**：
+
 ```
-AgentForge/
+AgentForge/                          ← 插件根 & DSH 包根 & 市场根
 ├── .claude-plugin/
-│   ├── marketplace.json        # Claude Code 市场清单（source: "./"）
-│   └── plugin.json             # Claude Code 插件清单
-├── package.json                # DSH bundle 清单（dsh.bundle.patch）
-├── cordis.patch.yml            # DSH bundle 补丁（纯 YAML，无 JS）
+│   ├── marketplace.json             # source: "./"
+│   └── plugin.json
+├── package.json                     # DSH: dsh.bundle.patch
+├── cordis.patch.yml                 # DSH 入口（纯 YAML）
 │
-├── shared/                     # ★ 唯一真源
-│   ├── skills/                 #   技能 —— 两端逐字共用
-│   │   └── <name>/SKILL.md
-│   ├── agents/                 #   子 agent 定义 —— CC 直读，DSH 由桥接插件读
-│   │   └── <name>.md
-│   └── hooks/
-│       ├── hooks.json          #   两端共用同一份
-│       └── scripts/
+├── skills/                          # ★ 真源：CC 自动发现；DSH 用 customSkillDirs 指过来
+├── agents/                          # ★ 真源：CC 自动发现；DSH 由桥接插件读
+├── hooks/                           # ★ 真源：两端共用（DSH 挂官方 hooks 桥）
 │
-├── plugins/
-│   ├── claude-code/            # CC 入口：薄壳，全部指向 shared/
-│   │   ├── skills   → ../../shared/skills
-│   │   ├── agents   → ../../shared/agents
-│   │   ├── hooks    → ../../shared/hooks
-│   │   └── commands/           #   仅此处有 CC 专属的斜杠命令（可选）
-│   └── dsh/                    # DSH 入口
-│       ├── package.json        #   dsh.bundle.patch
-│       ├── cordis.patch.yml    #   挂载技能根 + hooks 桥 + agent 桥
-│       └── src/                #   ★ 唯一需要写 JS 的地方：agent 桥
-│
-├── presets/<项目>/             # 约定专属资产，项目自持，不参与自动发现
-├── tools/doctor.mjs            # 双端体检
+├── presets/<项目>/                  # 约定专属资产，项目自持，不参与自动发现
+├── tools/doctor.mjs
 └── docs/
 ```
 
-### 为什么 `shared/` 而不是各自 `skills/`
+**为什么不让插件根下沉到 `plugins/claude-code/`：**
 
-Claude Code 的自动发现要求技能在**插件根**的 `skills/`。
-若把真源放在 `shared/skills`，CC 插件根就必须有 `skills/` —— 用**软链**指过去：
+| 考量 | 根即插件根 | 插件下沉到子目录 |
+|---|---|---|
+| CC 自动发现 | ✅ 零配置 | ✅ 需 `source: "./plugins/claude-code"` |
+| DSH 找技能 | `customSkillDirs` → `<包根>/skills` | `customSkillDirs` → `<包根>/plugins/claude-code/skills` |
+| DSH 桥接插件 | 包内子路径导出即可 | 需额外的包或子路径 |
+| 真源位置 | 根目录 `skills/`、`agents/` | 子目录里 |
+| **多一层目录** | 无 | 有（`plugins/claude-code/`） |
+| 未来加第二个 CC 插件 | 需重构 | 天然支持 |
+
+**结论**：现在只有一个插件，**根即插件根**最扁、最直接。
+将来真要拆多个插件时再下沉 —— 那时 `source` 改一行即可，`skills/` 跟着移动，无其他代价。
+
+**副作用（可接受）**：仓库根会同时有 `package.json`（DSH 用）和 `.claude-plugin/`（CC 用）。
+Claude Code 只读 `.claude-plugin/`，不关心 `package.json`；DSH 只读 `package.json`，不关心 `.claude-plugin/`。
+两边互不干扰。
+
+### 2.3 为什么不需要 `shared/` + 软链
+
+CC 要求技能在**插件根**的 `skills/`。若把真源放在别处（如 `shared/skills`），
+插件根就必须有 `skills/` —— 只能靠软链：
 
 ```bash
 plugins/claude-code/skills -> ../../shared/skills
 ```
 
-**风险**：软链在 Windows 和 git 上都不稳（`core.symlinks` 默认关闭时会变成文本文件）。
-三个备选：
-
-| 方案 | 优点 | 缺点 |
-|---|---|---|
-| **A. 软链** | 零构建，真源唯一 | Windows/git 不稳 |
-| **B. `forge link` 脚本** | 跨平台，可校验 | 多一个命令要跑 |
-| **C. 真源直接放 `plugins/claude-code/skills/`**，DSH 侧用 `customSkillDirs` 指过去 | **零链接、零构建、真源唯一** | DSH 需要绝对路径或 `!!js` 表达式 |
-
-**推荐 C**：既然 DSH 的 `dsh-skill-filesystem` 支持 `customSkillDirs`，
-就让 **Claude Code 侧当"真源宿主"**（它必须叫 `skills/`），DSH 侧配置指过去：
+**软链在 Windows 和 git 上都不稳**（`core.symlinks` 默认关闭时软链会退化成文本文件）。
+既然 **DSH 的 `dsh-skill-filesystem` 支持 `customSkillDirs`**，
+就让 CC 侧当"真源宿主"（它必须叫 `skills/`），DSH 侧配置指过来：
 
 ```yaml
-# plugins/dsh/cordis.patch.yml
 - id: skill-filesystem
   config:
     customSkillDirs:
-      - !!js require('node:path').join(require('node:path').dirname(require.resolve('agentforge/package.json')), '../claude-code/skills')
+      - !!js <解析到 AgentForge 的 skills 目录>
 ```
 
-这样 `shared/` 这一层可以去掉，结构更扁：
-
-```
-AgentForge/
-├── .claude-plugin/{marketplace,plugin}.json
-├── skills/                     # ★ 真源（CC 自动发现，DSH 配置指向）
-├── agents/                     # ★ 真源（CC 自动发现，DSH 桥接插件读取）
-├── hooks/
-├── plugins/dsh/                # DSH 入口：清单 + patch + agent 桥 JS
-├── presets/
-├── tools/doctor.mjs
-└── docs/
-```
+**零软链、零构建、真源唯一。**
 
 ---
 
@@ -187,7 +194,7 @@ DSH bundle 是纯 YAML patch，插三行：
 **一个工具覆盖 N 个 agent**（依据约束 2 的验证结论）：
 
 ```ts
-// plugins/dsh/src/bridge.ts —— 骨架
+// src/bridge.ts —— 骨架（DSH 桥接插件，随包分发）
 import fs from 'node:fs'
 import path from 'node:path'
 import type { Context } from '@deepseek-ai/cordis'
@@ -261,7 +268,7 @@ user-invocable: true
 - **DSH**：`user-invocable: true` 让它在命令面板出现，直接调用
 
 **代价**：失去了 `commands/*.md` 的 `allowed-tools` 权限预授权和 `argument-hint`。
-如果 Claude Code 侧想要更好的体验，可以在 `plugins/claude-code/commands/` 放一个薄壳命令，
+如果 Claude Code 侧想要更好的体验，可以在 `commands/` 放一个薄壳命令，
 正文只有一句「调用 feature 技能」——这样两端入口都在，真源仍只有技能。
 
 ---
