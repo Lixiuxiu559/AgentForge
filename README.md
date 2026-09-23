@@ -7,23 +7,25 @@
 
 ## 装什么
 
-### 技能（3）
+### 技能（4）
 
 | 技能 | 作用 |
 |---|---|
+| `research` | 调研与调查：技术研究、代码库调查、日志排查、证据链与研究报告 |
 | `implementation-workflow` | 实施编排：评估任务、拆分依赖、串行/并行调度 `implementer`、集成验证、按风险调用审计 agent |
 | `complexity-audit` | 复杂度风险审计：用 CRAP 定位「复杂且测试保护不足」的函数，支持 Java / Python / Go / JS / TS |
 | `mutation-testing` | 测试有效性审计：用突变测试找出存活突变体与无覆盖代码，支持 Java / Python / Go / JS / TS |
 
-### 子 agent（3）
+### 子 agent（4）
 
 | Agent | 职责 | 工具边界 |
 |---|---|---|
+| `researcher` | 技术调研、代码调查、日志排查、证据收集与研究报告 | Read / Glob / Grep / Edit / Write / Bash / WebSearch / WebFetch |
 | `implementer` | 阅读代码、修改实现、编写测试、局部验证 | Read / Glob / Grep / Edit / Write / Bash |
 | `complexity-auditor` | 复杂度与覆盖率风险审计 | **只读**：Read / Glob / Grep / Bash |
 | `mutation-auditor` | 突变测试与测试有效性审计 | **只读**：Read / Glob / Grep / Bash |
 
-两个审计 agent **只报告、不改码**。这个边界让「发现风险」和「实施修复」解耦。
+两个审计 agent **只报告、不改码**。`researcher` 默认只读调查，用户要求长报告时才写入 `docs/research/`。
 
 ---
 
@@ -36,11 +38,12 @@
 
 安装后可用：
 
+- `/research` —— 启动调研与调查
 - `/implementation-workflow` —— 启动实施编排
 - `/complexity-audit` —— 单独跑复杂度审计
 - `/mutation-testing` —— 单独跑测试有效性审计
-- 3 个技能按 `description` 自动触发
-- 3 个子 agent 可被 Task 工具调用
+- 4 个技能按 `description` 自动触发
+- 4 个子 agent 可被 Task 工具调用
 
 ---
 
@@ -79,6 +82,8 @@ AgentForge/
 │   └── marketplace.json             # 市场清单（source: "./"）
 │
 ├── skills/                          # 插件自动发现
+│   ├── research/                    # 调研与调查
+│   │   └── SKILL.md
 │   ├── implementation-workflow/
 │   │   ├── SKILL.md                 # 编排入口
 │   │   └── references/              # 拆分/并行/质量门/任务卡模板
@@ -91,6 +96,7 @@ AgentForge/
 │       └── references/              # 五语言适配说明
 │
 ├── agents/                          # 插件自动发现
+│   ├── researcher.md
 │   ├── implementer.md
 │   ├── complexity-auditor.md
 │   └── mutation-auditor.md
@@ -119,5 +125,6 @@ node tools/doctor.mjs
 
 1. **零外部依赖** —— 不使用 MCP，不依赖网络，不依赖项目预装工具。
 2. **只读边界** —— 审计类 agent 不持有 Edit/Write，从工具层面保证「只报告不改码」。
-3. **技能是方法，agent 是角色** —— 技能承载可复用流程，agent 承载执行边界与权限。
-4. **详细规则下沉** —— 主 `SKILL.md` 只留决策入口，细节放 `references/`，避免上下文膨胀。
+3. **调查可追溯** —— `researcher` 必须区分事实、推断、未确认项和置信度；长报告保存到 `docs/research/`。
+4. **技能是方法，agent 是角色** —— 技能承载可复用流程，agent 承载执行边界与权限。
+5. **详细规则下沉** —— 主 `SKILL.md` 只留决策入口，细节放 `references/`，避免上下文膨胀。
