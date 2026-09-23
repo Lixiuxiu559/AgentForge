@@ -1,16 +1,23 @@
-# Java + JaCoCo 适配说明
+# Java + JaCoCo 适配
 
-## 输入
+## 复杂度与覆盖率
 
-Java 项目需要提供 JaCoCo XML 报告，通常位于：
+JaCoCo XML 可以提供方法级 complexity 和 line coverage。两者能够按类、方法和签名匹配时，可以计算完整 CRAP。
+
+常见报告位置：
 
 ```text
 target/site/jacoco/jacoco.xml
 ```
 
-多模块项目可能存在多个报告，应根据审计范围选择对应模块的报告。
+查找报告：
 
-## 运行命令
+```bash
+find . -path '*/target/site/jacoco/jacoco.xml' \
+  -not -path '*/node_modules/*'
+```
+
+## 执行
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/skills/complexity-audit/scripts/crap.js" \
@@ -20,9 +27,9 @@ node "${CLAUDE_PLUGIN_ROOT}/skills/complexity-audit/scripts/crap.js" \
   --top 30
 ```
 
-## 限制
+## 规则
 
-- JaCoCo 报告必须包含函数级 complexity 与 line coverage 信息。
-- 没有覆盖率时只能退化为复杂度排序。
+- 多模块项目选择与审计范围对应的模块报告。
+- 没有覆盖率时只能退化为 `complexity-only`。
 - 不要把类级覆盖率当成函数级覆盖率。
-- 不要因为 CRAP 超阈值就直接要求重写整个类，应结合改动范围和业务风险判断。
+- 不要因为 CRAP 超阈值就直接要求重写整个类。
