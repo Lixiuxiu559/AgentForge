@@ -16,6 +16,14 @@
 
 ### Added
 
+- 
+
+---
+
+## [0.3.0] - 2026-09-24
+
+### Added
+
 - **两端同步发版** —— `tools/release.mjs` 现在一次 bump 两个版本文件：
   `.claude-plugin/plugin.json`（Claude Code 的发版开关）与 `package.json`（DSH / npm 侧）。
   `doctor` 新增 `version` 检查组，两端漂移直接判 error 并阻止发版。
