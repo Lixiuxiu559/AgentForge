@@ -23,7 +23,6 @@
     "src",
     "skills",
     "agents",
-    "hooks",
     "cordis.patch.yml",
     ".claude-plugin"
   ]

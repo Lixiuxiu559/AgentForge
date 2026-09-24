@@ -10,7 +10,7 @@
  * 降 CRAP 两条路:拆分降复杂度 或 补测试提覆盖率。
  *
  * ## 为什么用 Node
- * 用 Claude Code 就一定有 Node,但不一定有 Python/uv。用 Node 写脚本 →
+ * 装 Claude Code 或 DSH 都一定带 Node,但不一定有 Python/uv。用 Node 写脚本 →
  * 任何项目放进来 `node crap.js` 即可,零安装零依赖,利于打包成插件分发。
  *
  * ## 多语言支持现状

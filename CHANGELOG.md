@@ -14,7 +14,37 @@
 
 ### Added
 
-- 
+- **DSH 插件适配：子 agent 注册** —— `src/index.js` 现在把 `agents/*.md` 注册成一个
+  `agentforge` 工具（用 `agent` 参数枚举选择），至此 4 个技能 + 4 个子 agent
+  在 DSH 侧全部可用。子 agent 的 persona、工具白名单、模型覆盖都走调用期参数。
+- **两端差异适配层**（全部收在桥接插件，内容文件保持单份）：
+  - CC→DSH 工具名映射（`Read`→`read`、`WebSearch`→`web_search` …），
+    未映射的名字会被丢弃并记 warning
+  - 白名单在**调用期**与真实工具表求交集 —— `tools.restrict()` 对未知工具名和
+    空 filter 都会抛错，静态判断会误伤未挂载的工具行
+  - `${CLAUDE_PLUGIN_ROOT}` 在技能正文与子 agent persona 里展开为真实包路径
+  - 子 agent persona 前置「AgentForge 资源位置」，让正文里的 `skills/...`
+    相对路径在 DSH 侧也可解析
+  - CC 的 `model: haiku/sonnet` 别名与 `maxTurns` 在 DSH 侧忽略（可用
+    `config.agents.<name>` 覆盖模型）
+- `tools/doctor.mjs` 新增 `dsh` 检查组：bundle 清单、桥接插件可加载性、
+  agent 工具名映射完整性、工具名与 DSH 保留名冲突。
+  该组直接 import `src/index.js` 读取映射表，不抄第二份，避免漂移。
+- `docs/architecture.md` 补齐实测结论：DSH 工具注册契约、`tools.restrict()` 的
+  硬约束、隔离 `DSH_HOME` 的端到端验证步骤与结果。
+
+### Changed
+
+- 桥接插件的 `inject` 从 `['skills']` 扩为 `['skills', 'tools']`；
+  `subagents` 刻意**不**设为硬依赖（改在调用期 `ctx.get()`），
+  避免某个 profile 没挂 subagent provider 时整个插件停在 waiting。
+- `package.json` 的 `files` 去掉并不存在的 `hooks`。
+- `skills/complexity-audit/references/java-jacoco.md` 补 DSH 侧的脚本定位方式。
+
+### Notes
+
+- `hooks/` 仍未实装（仓库内无 hooks 资产），因此没有挂 `dsh-hooks-claude-code` 桥。
+- 工具名不叫 `subagent`：dsh-base 已注册 `subagent` / `subagent_fork`，重名会让插件装载失败。
 
 ---
 

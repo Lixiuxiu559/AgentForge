@@ -1,7 +1,10 @@
 # AgentForge 架构
 
-**状态**：v1.0 定稿
+**状态**：v1.0 定稿；DSH 适配层已实装并端到端验证（见 §4、附录 A.5）
 **范围**：Claude Code 插件 + DSH 插件，两端原生可用
+
+> **本文档的读法**：§1–§6 是设计（已落地）；§7、§8 里带「计划」标注的内容是
+> **尚未实装的路线**，不要当成现状。实际能力清单见 §7「当前实装」。
 
 ---
 
@@ -34,9 +37,6 @@ AgentForge/
 │   └── <name>/SKILL.md
 ├── agents/                       # ★ 真源 —— 子 agent 定义
 │   └── <name>.md
-├── hooks/
-│   ├── hooks.json                # 两端共用同一份
-│   └── scripts/
 │
 ├── src/
 │   └── index.js                  # DSH 桥接插件（纯 JS，本项目唯一的代码）
@@ -44,6 +44,9 @@ AgentForge/
 │   └── doctor.mjs                # 双端一致性体检
 └── docs/
 ```
+
+**没有 `hooks/`**：本仓库当前不含任何 hooks 资产，也不挂 `dsh-hooks-claude-code` 桥 ——
+空桥只会增加一个加载失败点。等真有 hooks 需求时再加（那时 §4.3 才成立）。
 
 **没有 `commands/` 目录**：Claude Code 官方已把 `commands/*.md` 标为遗留格式，
 并说明它和 `skills/<name>/SKILL.md` **加载方式完全相同**，只是文件布局不同。
@@ -60,10 +63,11 @@ AgentForge/
 
 | 组件 | Claude Code 侧 | DSH 侧 | 磁盘份数 |
 |---|---|---|---|
-| **技能** | 插件机制自动发现 `skills/` | 桥接插件读包内 `skills/`，逐个 `ctx.skills.register()` | **1** |
-| **子 agent** | 原生自动发现 `agents/*.md` | 桥接插件读 `agents/*.md`，注册**一个**子 agent 工具 | **1** |
-| **钩子** | `hooks/hooks.json` | 桥接插件挂 `@deepseek-ai/dsh-hooks-claude-code`，指向同一份 | **1** |
-| **工作流入口** | `skills/feature`（`user-invocable`） | 同左 | **1** |
+| **技能** | 插件机制自动发现 `skills/` | 桥接插件读包内 `skills/`，注册为 skill provider | **1** |
+| **子 agent** | 原生自动发现 `agents/*.md` | 桥接插件读 `agents/*.md`，注册**一个** `agentforge` 工具 | **1** |
+| **工具白名单** | agent frontmatter `tools:` 直接生效 | 同一份 `tools:`，经名字映射后作为 `toolFilter` 传入 | **1** |
+| **钩子** | `hooks/hooks.json` | 未实装（无 hooks 资产） | — |
+| **工作流入口** | `skills/<name>/SKILL.md`（`user-invocable`） | 同左 | **1** |
 
 **关键点**：磁盘上每个技能、每个 agent 都只有一份文件。
 Claude Code 走原生机制，DSH 走桥接插件，两者读的是同一批文件。
@@ -76,59 +80,88 @@ Claude Code 走原生机制，DSH 走桥接插件，两者读的是同一批文�
 
 ### 4.1 注册技能
 
-读包内 `skills/*/SKILL.md`，解析 frontmatter，逐个 `ctx.skills.register()`。
+读包内 `skills/*/SKILL.md`，解析 frontmatter，`ctx.skills.registerProvider()` 注册一个
+provider（`list` / `get` 两方法，与 `dsh-skill-filesystem` 形状一致）。
 
-用 `import.meta.url` 定位自己的包目录 —— **这是不使用 `!!js` 路径表达式的原因**（见附录 A）。
+用 `import.meta.url` 定位自己的包目录 —— **这是不使用 `!!js` 路径表达式的原因**（见附录 A.1）。
+
+`get()` 里做一件两端适配：把正文中的 `${CLAUDE_PLUGIN_ROOT}` 展开成真实包路径。
+DSH 没有这个变量，不展开的话技能里的脚本命令在 DSH 上就是死链。
 
 ### 4.2 注册子 agent
 
-读包内 `agents/*.md`，解析 frontmatter，注册**一个**工具：
+读包内 `agents/*.md`，解析 frontmatter，注册**一个**工具（实现在 `src/index.js` 的
+`createAgentTool`）：
 
 ```js
-ctx.tools.register(defineTool({
-  name: 'subagent',
-  description: '委派任务给具名子 agent。\n\n' +
-    agents.map(([n, a]) => `- ${n}: ${a.description}`).join('\n'),
-  parameters: {
-    agent:       { type: 'string', required: true, enum: [...agentNames],
-                   description: '要运行哪个子 agent。' },
-    prompt:      { type: 'string', required: true,
-                   description: '给子 agent 的完整、自包含任务。' },
-    description: { type: 'string', required: true,
-                   description: '3-5 词的短标签，用于展示。' },
+ctx.tools.register({
+  name: 'agentforge',                    // 不能用 subagent：dsh-base 已占用
+  description: '委派任务给 AgentForge 预定义子 agent……\n\n' +
+    agents.map((a) => `- ${a.name}: ${a.description}`).join('\n'),
+  parameters: {                          // 标准 JSON Schema（手写，不用 defineTool）
+    type: 'object',
+    properties: {
+      agent:       { type: 'string', enum: [...names] },
+      prompt:      { type: 'string' },
+      description: { type: 'string' },
+    },
+    required: ['agent', 'prompt', 'description'],
+    additionalProperties: false,
   },
+  output: {
+    schema: { type: 'object', properties: { agent: {...}, output: {...} }, ... },
+    render: (_args, value) => [{ type: 'text', text: value.output }],
+  },
+  isConcurrencySafe: () => true,         // 允许并行派发多个子 agent
   async execute(args, exec) {
-    const a = agents.get(args.agent)
-    const run = await ctx.subagents.start(config.provider ?? 'spawn', {
+    const run = await ctx.get('subagents').start(config.provider ?? 'spawn', {
       label: args.description,
       prompt: [{ type: 'text', text: args.prompt }],
-      parent: exec.agent,            // 官方实现同样要求非空
+      parent: exec.agent,                // 官方实现同样要求非空
       signal: exec.signal,
-      persona: a.persona,            // 正文作为子 agent 的系统提示词
-      toolFilter: a.toolFilter,      // frontmatter 的 tools 白名单
-      agentOptions: a.model,         // frontmatter 的 model 覆盖
+      persona: buildPersona(agent),      // 正文即系统提示词（+ 资源位置说明）
+      toolFilter: resolveToolFilter(ctx, agent),  // 调用期与真实工具表求交集
+      agentOptions: resolveAgentOptions(config, agent.name),
     })
-    return settle(run)               // 收集最终输出
+    return { agent: agent.name, output: await collectRun(run) }
   },
-}))
+})
 ```
 
-**一个工具覆盖全部子 agent**，靠 `agent` 参数枚举选择。新增 agent 只需加一个 markdown 文件，
-不用改 YAML、不用重启。
+**四个必须解释的设计点**（都是实测踩出来的，见附录 A.2 / A.3）：
+
+1. **工具名不叫 `subagent`** —— dsh-base 的 `@deepseek-ai/dsh-tool-subagent` 已注册
+   `subagent` / `subagent_fork`；重名会让 `apply()` 直接抛错。默认名 `agentforge`，
+   可用 patch 行的 `config.toolName` 改。
+2. **不做 `defineTool`，手写 `ToolDefinition`** —— 零依赖的直接后果。参数用标准 JSON Schema，
+   `execute` 自己校验，`output.schema` 只用 DSH 支持的关键字子集
+   （`type` / `properties` / `required` / `additionalProperties` / `enum`），
+   注册期由 `assertSupportedJsonSchema` 校验。
+3. **工具白名单要翻译，且要在调用期求交集** —— 两端工具名是两套命名
+   （`Read` vs `read`），直接透传会让 `tools.restrict({ allow })` 因「未知工具名」抛错；
+   `apply()` 时其它行可能还没注册完，所以交集只能在 `execute` 里算，
+   交集为空时**不传** `toolFilter`（空 filter 同样抛错）。
+4. **agentOptions 默认不发** —— `model: haiku` / `sonnet` 是 CC 别名，DSH 不认识；
+   默认让子 agent 继承父会话路由，需要固定路由时用 patch 行的
+   `config.agents.<name>.{provider,model,reasoningEffort}`。
+
+**一个工具覆盖全部子 agent**，靠 `agent` 参数枚举选择。新增 agent 只需加一个 markdown 文件 ——
+但**需要重载插件**：工具 description 里的清单在 `apply()` 时一次性固定（技能可以按需重扫，
+工具不行）。
 
 > 为什么不用官方的 `@deepseek-ai/dsh-tool-subagent`：它的 `persona` / `toolFilter`
 > 是**挂载期配置**，每个 agent 要一行独立工具；而且它的**工具描述不可配置**，
 > 多个 agent 会得到完全相同的描述，模型无法区分。自研工具两个问题都解决。
 
-### 4.3 挂载钩子桥
+### 4.3 钩子桥（未实装）
 
-挂 `@deepseek-ai/dsh-hooks-claude-code`，`configPath` 用 `import.meta.url` 定位到
-包内 `hooks/hooks.json`。
-
-**必须校验事件子集**：该桥只支持 7 个事件
+**计划**：挂 `@deepseek-ai/dsh-hooks-claude-code`，`configPath` 用 `import.meta.url`
+定位到包内 `hooks/hooks.json`。该桥只支持 7 个事件
 （`SessionStart` / `UserPromptSubmit` / `PreToolUse` / `PostToolUse` / `Stop` /
 `SubagentStart` / `SubagentStop`），不在其中的会被**静默跳过**。
-`tools/doctor.mjs` 负责把这件事报出来。
+
+**现状**：本仓库没有 `hooks/` 目录、没有 hook 脚本，所以没有挂这个桥。
+`tools/doctor.mjs` 也没有 hooks 检查项。等真有 hooks 资产时再实装。
 
 ---
 
@@ -168,29 +201,43 @@ dsh plugin --profile web add /path/to/AgentForge
 
 ## 7. 内容清单（AgentForge 装什么）
 
-### 技能
+### 当前实装
 
-**工作流 / 工程**：`research` `grilling` `implement` `code-review` `tdd`
-`systematic-debugging` `codebase-design` `improve-codebase-architecture` `git-commit` `worktree`
+**技能（4，两端共用同一份）**
 
-**设计**：`design` `design-system` `ui-styling` `ui-ux-pro-max` `brand` `banner-design` `slides`
+| 技能 | 作用 | `user-invocable` |
+|---|---|---|
+| `research` | 调研与调查：技术研究、代码库调查、日志排查、证据链与研究报告 | ✅ |
+| `implementation-workflow` | 实施编排：评估任务、拆分依赖、串行/并行调度 `implementer`、集成验证、按风险调用审计 agent | ✅ |
+| `complexity-audit` | 复杂度风险审计：CRAP 定位「复杂且测试保护不足」的函数，五语言适配 | ✅ |
+| `mutation-testing` | 测试有效性审计：存活突变体与无覆盖代码，五语言适配 | ✅ |
 
-**工作流入口**：`feature`（`user-invocable`，8 阶段带门禁流水线）
+**子 agent（4，两端同一份定义）**
 
-### 子 agent
+| Agent | 职责 | 工具白名单（CC 名 → DSH 名） |
+|---|---|---|
+| `researcher` | 技术调研、代码调查、日志排查、证据收集与研究报告 | `Read→read` `Glob→glob` `Grep→grep` `Edit→edit` `Write→write` `Bash→bash` `WebSearch→web_search` `WebFetch→web_fetch` |
+| `implementer` | 阅读代码、修改实现、编写测试、局部验证 | 同上去掉 WebSearch / WebFetch |
+| `complexity-auditor` | 复杂度与覆盖率风险审计 | `Read` `Glob` `Grep` `Bash`（**只读**） |
+| `mutation-auditor` | 突变测试与测试有效性审计 | `Read` `Glob` `Grep` `Bash`（**只读**） |
 
-`coder` `cleaner` `reinforcer` `architect` `backend-architect` `frontend-architect` `pm`
+### 计划（未实装，勿当现状）
 
-**全部重写，去掉所有 `mcp__*` 工具依赖。** 工具白名单只保留内置工具
-（`Read` `Glob` `Grep` `Bash` `Edit` `Write` `WebSearch` 等）。
+早期设计里的 `grilling` / `implement` / `code-review` / `tdd` / `design` / `feature`
+等技能，以及 `coder` / `cleaner` / `reinforcer` / `architect` / `pm` 等子 agent，
+**都不在本仓库中**。保留此段仅为记录设计意图；要落地时按 §4 的桥接层扩即可
+（技能加目录、agent 加 markdown，不用改 `cordis.patch.yml`）。
 
 ### 钩子
 
-`CLAUDE.md` ↔ `AGENTS.md` 双向同步。
+**未实装**（仓库内无 hooks 资产，见 §2 与 §4.3）。
 
 ---
 
-## 8. 通用工作流
+## 8. 通用工作流（设计目标）
+
+> **状态**：下表是目标形态，当前实装的是 `implementation-workflow` 技能所描述的四 agent
+> 协作流程（见 §7）。`feature` / `pm` / `architect` 等尚未落地。
 
 `feature` 技能编排一条**带门禁**的流水线（`user-invocable: true`，两端都能直接调用）：
 
@@ -251,21 +298,35 @@ dsh plugin --profile web add /path/to/AgentForge
 | 能力 | Claude Code | DSH |
 |---|---|---|
 | 技能 | `skills/<name>/SKILL.md` 自动发现 | 扫 `.dsh/skills`、`.agents/skills`、`~/.dsh/skills`、`~/.agents/skills`（**不读 `.claude/`**） |
-| 子 agent | `agents/<name>.md` 自动发现 | **无对应物**，须自研 |
-| 斜杠命令 | `commands/*.md`（官方标为遗留，等同技能） | 须 `ctx.commands.register()`（JS） |
+| 子 agent | `agents/<name>.md` 自动发现 | **无对应物**，须自研（本插件注册 `agentforge` 工具） |
+| 斜杠命令 | `commands/*.md`（官方标为遗留，等同技能） | 须 `ctx.commands.register()`（JS）；`user-invocable` 技能会进人类命令面板 |
 | 钩子 | `hooks/hooks.json` | `dsh-hooks-claude-code` 桥读同一份，但只支持 7 个事件 |
 | 分发 | marketplace → `/plugin install` | `dsh plugin add` → `dsh.bundle.patch` |
+| 工具名 | `Read` `Glob` `Grep` `Edit` `Write` `Bash` `WebSearch` `WebFetch` | `read` `glob` `grep` `edit` `write` `bash` `web_search` `web_fetch` |
+| 路径变量 | `${CLAUDE_PLUGIN_ROOT}` | **无**；`resourceBase` 给出技能目录，子 agent 需自己注入 |
+| 模型名 | `haiku` / `sonnet` / `opus` 别名 | 真实 provider/model id，别名无效 |
 
-**技能格式两端逐字相同**，这是唯一能零转换共享的资产格式。
+**技能格式两端逐字相同**，这是唯一能零转换共享的资产格式；
+**agent 格式也逐字相同**，但工具名、模型名、路径变量三项要翻译 —— 全在桥接层做。
 
-### A.3 DSH 子 agent 的能力边界
+### A.3 DSH 子 agent 的能力边界（实测）
 
 - `spawn` provider 声明 `capabilities = { agentOptions: true, outputSchema: true,
   depthLimit: true, toolFilter: true, persona: true }`
-- `SubagentStartRequest` **带 `persona?` 和 `toolFilter?`** —— 调用期可传
+- `SubagentStartRequest` 带 `persona?` 和 `toolFilter?` —— **调用期**可传，
+  这是「一个工具覆盖 N 个 agent」可行性的基础
 - 官方 `dsh-tool-subagent` 的工具行是**挂载期静态配置**，且工具描述不可配置
 - `ToolRestriction = { allow?: readonly string[], deny?: readonly string[] }`
-- `defineTool` 的 `execute(args, exec: ToolRunContext)`，`exec` 上有 `agent?: Agent` 和 `signal`
+- `tools.restrict()` 的硬约束：**空 filter、未知工具名、scope-local 名、保留名都会抛错**，
+  所以白名单必须在**调用期**与真实工具表求交集，不能拿 CC 的名字硬传
+- `ctx.tools.register(definition)` **不校验 `parameters`**（那是 `defineTool` 干的活），
+  只校验 `output.schema`（`assertSupportedJsonSchema`）与 `output.render` 是函数；
+  手写定义时要自己校验参数
+- `ctx.tools.get(name)` 已存在同名工具时 `register` 是静默覆盖，不是报错 ——
+  所以桥接插件自己在 `apply()` 里做了一次重名检查
+- dsh-base 已占用 `subagent` / `subagent_fork`；`run_code` 是注册期保留名
+- 子 agent 的非 `completed` 结束（`aborted` / `error` / `max-tokens` / `refusal`）
+  不会自动变成工具错误，要自己转成抛出
 
 ### A.4 位置约束
 
@@ -273,8 +334,35 @@ dsh plugin --profile web add /path/to/AgentForge
 - CC 的**插件目录可以是子目录**（官方 254 个插件里 51 个在子目录）
 - DSH bundle 包**可以是任意目录**，作为 npm 依赖安装
 - 纯 YAML bundle 能被 `dsh plugin add` 正确识别并进入 `dsh.profile.bundles`
+- `dsh plugin --profile <name> add <本地路径>` 在 profile 不存在时会**自动按同名模板初始化**
+  （`web` / `headless` / `tui` / `acp` / `sdk`），并把它加进 `dsh.profile.bundles`
 
 ### A.5 验证方法
 
-上述结论的验证方式：造最小 bundle 包（`package.json` + `cordis.patch.yml` + 一个探针技能），
+**通用方法**：造最小 bundle 包（`package.json` + `cordis.patch.yml` + 一个探针技能），
 装进**隔离的 `DSH_HOME`**（不碰现有 profile），端到端启动确认技能出现在模型可见目录中。
+
+**本插件的实测步骤**（可复现）：
+
+```bash
+export DSH_HOME=/tmp/af-verify                       # 隔离 home，不碰 ~/.dsh
+dsh plugin --profile headless add /path/to/AgentForge # 自动初始化 headless profile
+dsh --profile headless --dump-config | grep -A2 agentforge   # 只看组合，不启动模型
+cp ~/.dsh/.credentials.yaml $DSH_HOME/               # 真跑一次需要凭据
+dsh --profile headless "必须调用一次 agentforge 工具，agent=complexity-auditor，……"
+```
+
+**已验证到的结论**：
+
+1. `agentforge` 工具与 `complexity-audit` / `implementation-workflow` / `mutation-testing` /
+   `research` 四个技能都出现在模型可见目录中，启动无插件错误；
+2. 委派给 `researcher` 时，子 agent 拿到的工具恰好是 8 个映射后的 DSH 工具
+   （`bash` `edit` `glob` `grep` `read` `web_fetch` `web_search` `write`），
+   够不到 `subagent` / `workflow` / `ralph`；
+3. 委派给 `complexity-auditor` 时，子 agent 只有 `bash` `glob` `grep` `read` ——
+   **只读边界在 DSH 侧同样被工具层面强制**；
+4. 子 agent 能正确复述 persona 里注入的插件根目录，说明 `${CLAUDE_PLUGIN_ROOT}`
+   展开与资源位置说明都生效。
+
+**注意**：验证用的隔离 home 里要重启 profile 才能看到改动（`patchReload: startup`）；
+`live` 的 profile 会自动重载 patch 层。
