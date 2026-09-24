@@ -14,9 +14,9 @@
 
 ## [Unreleased]
 
-### Added
+### Fixed
 
-- 
+- 修正插件与市场清单里的描述：补充 `architecture-scout`，并把组件数量更正为「6 个技能与 5 个子 agent」。
 
 ---
 

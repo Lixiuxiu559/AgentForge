@@ -1,7 +1,7 @@
 {
   "name": "agentforge",
   "version": "0.3.0",
-  "description": "通用 agent 工作流与工程技能集：调研取证、实施编排、三轴代码评审、复杂度风险审计、测试有效性审计。含 5 个技能与 5 个子 agent，零外部依赖。",
+  "description": "通用 agent 工作流与工程技能集：调研取证、架构机会侦察、实施编排、三轴代码评审、复杂度风险审计、测试有效性审计。含 6 个技能与 5 个子 agent，零外部依赖。",
   "author": {
     "name": "lixiuxiu"
   },
