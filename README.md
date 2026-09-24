@@ -68,11 +68,12 @@ dsh --profile web --dump-config | grep -A2 agentforge
 
 ## 装什么
 
-### 技能（5）
+### 技能（6）
 
 | 技能 | 作用 |
 |---|---|
 | `research` | 调研与调查：技术研究、代码库调查、日志排查、证据链与研究报告 |
+| `architecture-scout` | 用户主动发起的架构机会侦察：按需并行委派 researcher 收集证据，主 Agent 筛选模块边界；允许零候选，不修改代码 |
 | `diff-review` | 三轴代码评审：Correctness（有 bug 吗）+ Standards（符合本仓库编码规范吗）+ Spec（忠实实现需求吗），各轴独立报告。**能力自包含，不依赖任何宿主** |
 | `implementation-workflow` | 实施编排：评估任务、拆分依赖、串行/并行调度 `implementer`、集成验证、按风险调用审计 agent |
 | `complexity-audit` | 复杂度风险审计：用 CRAP 定位「复杂且测试保护不足」的函数，支持 Java / Python / Go / JS / TS |
@@ -95,7 +96,7 @@ dsh --profile web --dump-config | grep -A2 agentforge
 
 | 组件 | Claude Code | DeepSeek Harness |
 |---|---|---|
-| 技能（5） | 自动发现 `skills/<name>/SKILL.md` | 桥接插件注册为 skill provider，模型目录与 `/` 命令面板都可见 |
+| 技能（6） | 自动发现 `skills/<name>/SKILL.md` | 桥接插件注册为 skill provider，模型目录与 `/` 命令面板都可见 |
 | 子 agent（5） | 自动发现 `agents/<name>.md` | 桥接插件注册**一个** `agentforge` 工具，用 `agent` 参数枚举选择 |
 | 工具边界 | agent frontmatter 的 `tools:` 白名单 | 同一份白名单，经 CC→DSH 工具名映射后由 `toolFilter` 强制 |
 | 系统提示词 | agent 正文即子 agent 的系统提示词 | 同一份正文作为 `persona` 传入 |
@@ -138,8 +139,7 @@ Always-on:  ~308 tok   # 10 个组件的 description 总和，加到每个会话
 | `research` | ~540 |
 | `mutation-testing` | ~530 |
 
-DSH 侧的常驻成本是 5 个技能的 description 加 1 个 `agentforge` 工具签名
-（工具描述里列出 5 个 agent 的职责，比 5 个独立工具省下 4 份签名）。
+DSH 侧的常驻成本是六个技能的 description 加一个 `agentforge` 工具签名（工具描述列出五个 agent 的职责）。以上 v0.2.1 的 token 数值属于**历史快照**，新增 `architecture-scout` 后未重新实测，不能当作当前精确值。
 
 ---
 
@@ -182,6 +182,9 @@ DSH 侧的常驻成本是 5 个技能的 description 加 1 个 `agentforge` 工�
 # 调研
 /research 对比一下几个 Java 的 mutation testing 工具
 
+# 开工前架构机会侦察（允许结论为暂无值得改造的地方）
+/architecture-scout 怎样让接下来的订单模块改动更容易？
+
 # 实施
 /implementation-workflow 给用户模块加上导出功能
 
@@ -196,6 +199,7 @@ DSH 侧的常驻成本是 5 个技能的 description 加 1 个 `agentforge` 工�
 **DeepSeek Harness**：技能同样按 `description` 触发，也可以直接点名。
 
 ```text
+用 architecture-scout 技能调查订单模块的边界，必要时并行委派 researcher 取证；只出候选报告，不修改代码。
 用 research 技能对比一下几个 Java 的 mutation testing 工具
 
 用 agentforge 工具，agent=researcher，去查清 task 模块的测试覆盖情况
@@ -224,6 +228,12 @@ AgentForge/
 │
 ├── skills/                          # ★ 真源，两端读同一份
 │   ├── research/SKILL.md
+│   ├── architecture-scout/          # 架构机会侦察；含判据、并行调查与报告模板
+│   │   ├── SKILL.md
+│   │   └── references/
+│   ├── diff-review/                 # Correctness / Standards / Spec 三轴评审
+│   │   ├── SKILL.md
+│   │   └── references/
 │   ├── implementation-workflow/
 │   │   ├── SKILL.md                 # 编排入口
 │   │   └── references/              # 拆分 / 并行 / 质量门 / 任务卡模板
@@ -237,6 +247,7 @@ AgentForge/
 │
 ├── agents/                          # ★ 真源：CC 自动发现，DSH 由桥接插件注册
 │   ├── researcher.md
+│   ├── diff-reviewer.md
 │   ├── implementer.md
 │   ├── complexity-auditor.md
 │   └── mutation-auditor.md

@@ -14,6 +14,11 @@
 
 ### Added
 
+- 新增用户主动调用的 `architecture-scout` 技能：开工前或定期调查值得深化的模块边界，
+  按规模由主 Agent 自查或并行委派最多四个 `researcher` 收集结构、历史、测试约束与反证。
+  候选需通过真实摩擦、删除测试、最小替代、反证和迁移风险门槛；允许零候选。
+  默认生成 `docs/research/` 下的 Markdown 报告，只调查，不修改代码或 ADR。
+- 新增架构侦察的判据、研究简报、候选报告及正反例验收文档。
 - **DSH 侧新内容复验** —— `diff-review` / `diff-reviewer` 加入后，桥接层
   （`src/index.js`、`tools/doctor.mjs`）**零改动**即通过：`agentforge` 的
   `agent` 取值自动变成 5 个，`diff-review` 自动出现在技能目录，
@@ -25,6 +30,9 @@
 
 ### Changed
 
+- `implementation-workflow` 在理解任务阶段可建议用户**开工前**独立运行 `architecture-scout`，
+  但不把全仓架构扫描设为实施后的必经质量门。
+- `README.md` 的技能清单与目录树同步加入 `architecture-scout`，历史 token 数据明确标为旧版本快照。
 - `README.md` 同步到 5 技能 / 5 子 agent：token 成本按 v0.2.1 重新实测
   （always-on ~308 tok，替换过期的 ~190 tok / 8 组件）；补 `diff-review` 用法；
   删掉与 `quality-gates.md` 重复的质量门判定表，改为指向技能，避免两处漂移。
