@@ -68,6 +68,10 @@
 - `skills/research/SKILL.md` 补充「委派后主 Agent 的收尾约束」：
   抽查一轮关键引用即应收尾，不得逐条复核（等于重做子 agent 的工作）。
 
+### Fixed
+
+- 修正插件与市场清单里的描述：补充 `diff-review`，并把组件数量从「4 个技能与 4 个子 agent」更正为「5 个技能与 5 个子 agent」。
+
 ### Notes
 
 - `hooks/` 仍未实装（仓库内无 hooks 资产），因此没有挂 `dsh-hooks-claude-code` 桥。
