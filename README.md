@@ -102,7 +102,8 @@ dsh --profile web --dump-config | grep -A2 agentforge
 
 **只有一个工具**：DSH 侧不注册 5 个同名工具，而是注册 1 个 `agentforge`，
 工具描述里列出全部 agent 与职责，`agent` 参数用 enum 约束。新增 agent 只需加一个
-markdown 文件，不用改 YAML。
+markdown 文件，不用改 YAML —— 但**要重载插件**：工具描述与 enum 在 `apply()` 时固定，
+不像技能那样按需重扫。
 
 > 工具名不叫 `subagent`：DSH 的 dsh-base 已经注册了 `subagent` / `subagent_fork`，
 > 重名会让插件装载直接失败。可用 patch 行的 `config.toolName` 改名。
@@ -120,18 +121,29 @@ markdown 文件，不用改 YAML。
 
 ### token 成本
 
-实测（`claude plugin details`）：
+实测（`claude plugin details agentforge`，v0.2.1）：
 
 ```text
-Always-on:  ~190 tok   # 8 个组件的 description 总和，加到每个会话
+Always-on:  ~308 tok   # 10 个组件的 description 总和，加到每个会话
 ```
 
-技能正文与子 agent 定义按需加载，例如 `implementation-workflow` 触发时约 +660 tok。
-DSH 侧的常驻成本是 4 个技能的 description 加 1 个 `agentforge` 工具签名。
+技能正文与子 agent 定义按需加载，几个参考值：
+
+| 组件 | on-invoke |
+|---|---|
+| `diff-reviewer` | ~1.1k |
+| `implementation-workflow` | ~790 |
+| `diff-review` | ~740 |
+| `complexity-audit` | ~640 |
+| `research` | ~540 |
+| `mutation-testing` | ~530 |
+
+DSH 侧的常驻成本是 5 个技能的 description 加 1 个 `agentforge` 工具签名
+（工具描述里列出 5 个 agent 的职责，比 5 个独立工具省下 4 份签名）。
 
 ---
 
-## 四个 agent 如何配合
+## 五个 agent 如何配合
 
 ```text
   researcher                    ← 上游：获取事实与证据
@@ -145,6 +157,7 @@ DSH 侧的常驻成本是 4 个技能的 description 加 1 个 `agentforge` 工�
       ├─ 拆分任务、判断串行/并行
       ├─ 派发 implementer
       ├─ 集成 + 统一验证
+      ├─ 按风险 → diff-reviewer
       ├─ 按风险 → complexity-auditor
       └─ 按风险 → mutation-auditor
       ↓
@@ -153,15 +166,11 @@ DSH 侧的常驻成本是 4 个技能的 description 加 1 个 `agentforge` 工�
   重新验证
 ```
 
-**审计 agent 不是每次都跑**，按风险选择性调用：
+**质量门不是每次都跑全套**：按变更风险在 `diff-reviewer` / `complexity-auditor` /
+`mutation-auditor` 之间选择；跳过任何一个都要在报告里说明原因，缺工具时如实降级。
 
-| 变更类型 | complexity-auditor | mutation-auditor |
-|---|---|---|
-| 文档 / 配置 / 样式 | 跳过 | 跳过 |
-| 普通业务逻辑 | 建议运行 | 通常跳过 |
-| 复杂逻辑 / 大型重构 | 建议运行 | 视测试情况 |
-| 权限 / 状态机 / 金额 / 规则 | 建议运行 | 建议运行 |
-| 测试专项 | 可选 | 优先运行 |
+判定表以 [`skills/implementation-workflow/references/quality-gates.md`](skills/implementation-workflow/references/quality-gates.md)
+为准 —— 本文件不再复制一份，避免两处漂移。
 
 ---
 
@@ -176,6 +185,9 @@ DSH 侧的常驻成本是 4 个技能的 description 加 1 个 `agentforge` 工�
 # 实施
 /implementation-workflow 给用户模块加上导出功能
 
+# 提交前三轴评审
+/diff-review 看一下这次改动
+
 # 单独审计
 /complexity-audit 检查一下这次改动
 /mutation-testing 验证 task 模块的测试有效性
@@ -187,11 +199,14 @@ DSH 侧的常驻成本是 4 个技能的 description 加 1 个 `agentforge` 工�
 用 research 技能对比一下几个 Java 的 mutation testing 工具
 
 用 agentforge 工具，agent=researcher，去查清 task 模块的测试覆盖情况
+用 agentforge 工具，agent=diff-reviewer，三轴评审这次改动
 用 agentforge 工具，agent=complexity-auditor，审计这次改动
 ```
 
 DSH 侧的子 agent 通过 `agentforge` 工具调用；`implementation-workflow` 技能里的
-「派发 implementer」在两端都指向同一个 agent 定义。
+「派发 implementer」「调用 diff-reviewer」在两端都指向同一份 agent 定义。
+`diff-review` 技能与 `diff-reviewer` agent 同源：技能由主 Agent 自己执行，
+agent 用隔离上下文执行同一套三轴方法。
 
 ---
 

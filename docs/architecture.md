@@ -203,29 +203,36 @@ dsh plugin --profile web add /path/to/AgentForge
 
 ### 当前实装
 
-**技能（4，两端共用同一份）**
+**技能（5，两端共用同一份）**
 
 | 技能 | 作用 | `user-invocable` |
 |---|---|---|
 | `research` | 调研与调查：技术研究、代码库调查、日志排查、证据链与研究报告 | ✅ |
-| `implementation-workflow` | 实施编排：评估任务、拆分依赖、串行/并行调度 `implementer`、集成验证、按风险调用审计 agent | ✅ |
+| `diff-review` | 三轴代码评审：Correctness / Standards / Spec 各轴独立报告 | ✅ |
+| `implementation-workflow` | 实施编排：评估任务、拆分依赖、串行/并行调度 `implementer`、集成验证、按风险调用评审与审计 agent | ✅ |
 | `complexity-audit` | 复杂度风险审计：CRAP 定位「复杂且测试保护不足」的函数，五语言适配 | ✅ |
 | `mutation-testing` | 测试有效性审计：存活突变体与无覆盖代码，五语言适配 | ✅ |
 
-**子 agent（4，两端同一份定义）**
+**子 agent（5，两端同一份定义）**
 
 | Agent | 职责 | 工具白名单（CC 名 → DSH 名） |
 |---|---|---|
 | `researcher` | 技术调研、代码调查、日志排查、证据收集与研究报告 | `Read→read` `Glob→glob` `Grep→grep` `Edit→edit` `Write→write` `Bash→bash` `WebSearch→web_search` `WebFetch→web_fetch` |
 | `implementer` | 阅读代码、修改实现、编写测试、局部验证 | 同上去掉 WebSearch / WebFetch |
+| `diff-reviewer` | 三轴代码评审（Correctness + Standards + Spec） | `Read→read` `Glob→glob` `Grep→grep` `Bash→bash`（**只读**） |
 | `complexity-auditor` | 复杂度与覆盖率风险审计 | `Read` `Glob` `Grep` `Bash`（**只读**） |
 | `mutation-auditor` | 突变测试与测试有效性审计 | `Read` `Glob` `Grep` `Bash`（**只读**） |
 
+**新增内容不需要改桥接层**：v0.2.0 → v0.2.1 加入 `diff-review` / `diff-reviewer` 时，
+`src/index.js` 与 `tools/doctor.mjs` **一行都没改** —— 工具名映射、persona 注入、
+资源位置说明都是按内容泛化的。这是「一份真源 + 薄适配层」是否成立的关键证据。
+
 ### 计划（未实装，勿当现状）
 
-早期设计里的 `grilling` / `implement` / `code-review` / `tdd` / `design` / `feature`
-等技能，以及 `coder` / `cleaner` / `reinforcer` / `architect` / `pm` 等子 agent，
-**都不在本仓库中**。保留此段仅为记录设计意图；要落地时按 §4 的桥接层扩即可
+早期设计里的 `grilling` / `implement` / `tdd` / `design` / `feature` 等技能，
+以及 `coder` / `cleaner` / `reinforcer` / `architect` / `pm` 等子 agent，
+**都不在本仓库中**（`code-review` 的位置已由 `diff-review` 占据）。
+保留此段仅为记录设计意图；要落地时按 §4 的桥接层扩即可
 （技能加目录、agent 加 markdown，不用改 `cordis.patch.yml`）。
 
 ### 钩子
@@ -236,8 +243,8 @@ dsh plugin --profile web add /path/to/AgentForge
 
 ## 8. 通用工作流（设计目标）
 
-> **状态**：下表是目标形态，当前实装的是 `implementation-workflow` 技能所描述的四 agent
-> 协作流程（见 §7）。`feature` / `pm` / `architect` 等尚未落地。
+> **状态**：下表是目标形态，当前实装的是 `implementation-workflow` 技能所描述的
+> 五 agent 协作流程（见 §7）。`feature` / `pm` / `architect` 等尚未落地。
 
 `feature` 技能编排一条**带门禁**的流水线（`user-invocable: true`，两端都能直接调用）：
 
@@ -354,15 +361,30 @@ dsh --profile headless "必须调用一次 agentforge 工具，agent=complexity-
 
 **已验证到的结论**：
 
-1. `agentforge` 工具与 `complexity-audit` / `implementation-workflow` / `mutation-testing` /
-   `research` 四个技能都出现在模型可见目录中，启动无插件错误；
-2. 委派给 `researcher` 时，子 agent 拿到的工具恰好是 8 个映射后的 DSH 工具
+1. `agentforge` 工具与 `complexity-audit` / `diff-review` / `implementation-workflow` /
+   `mutation-testing` / `research` 五个技能都出现在模型可见目录中，启动无插件错误；
+2. `agentforge` 的 `agent` 参数取值与 `agents/*.md` 一致
+   （`complexity-auditor` `diff-reviewer` `implementer` `mutation-auditor` `researcher`）；
+3. 委派给 `researcher` 时，子 agent 拿到的工具恰好是 8 个映射后的 DSH 工具
    （`bash` `edit` `glob` `grep` `read` `web_fetch` `web_search` `write`），
    够不到 `subagent` / `workflow` / `ralph`；
-3. 委派给 `complexity-auditor` 时，子 agent 只有 `bash` `glob` `grep` `read` ——
+4. 委派给 `complexity-auditor` / `diff-reviewer` / `mutation-auditor` 时，
+   子 agent 只有 `bash` `glob` `grep` `read` ——
    **只读边界在 DSH 侧同样被工具层面强制**；
-4. 子 agent 能正确复述 persona 里注入的插件根目录，说明 `${CLAUDE_PLUGIN_ROOT}`
+5. 子 agent 能正确复述 persona 里注入的插件根目录，说明 `${CLAUDE_PLUGIN_ROOT}`
    展开与资源位置说明都生效。
 
-**注意**：验证用的隔离 home 里要重启 profile 才能看到改动（`patchReload: startup`）；
-`live` 的 profile 会自动重载 patch 层。
+**新增内容后的复验**：v0.2.1 加入 `diff-review` / `diff-reviewer` 后重跑，
+结论不变，且桥接层未改动（见 §7）。
+
+**注意：bundle 内容变化必须重启 profile，`live` 不会救你。**
+
+- `patchReload: live` 只 `watchUserPatches` 两个**用户 patch 文件**
+  （`profiles/<name>/cordis.patch.yml` 与 `$DSH_HOME/cordis.patch.yml`），
+  并给 HMR 传的是空 `root`；它不监听包内源文件。
+- 即使触发了重合成，`Entry.update(options)` 里也有
+  `if (!diff.length && !force) return` —— 行选项没有 diff 就直接返回，
+  **不会重新 `apply()`**。bundle 行的选项来自 bundle 自己的 patch，没变。
+- 所以：**新增/删除 `agents/*.md` 之类的内容变化，必须重启 profile。**
+  技能不受影响（`list()` 每次重扫，注册表缓存会在下次读取时更新）。
+- 验证用的隔离 home 里同样是重启才看到改动（`patchReload: startup`）。

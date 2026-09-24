@@ -14,7 +14,24 @@
 
 ### Added
 
-- 
+- **DSH 侧新内容复验** —— `diff-review` / `diff-reviewer` 加入后，桥接层
+  （`src/index.js`、`tools/doctor.mjs`）**零改动**即通过：`agentforge` 的
+  `agent` 取值自动变成 5 个，`diff-review` 自动出现在技能目录，
+  `diff-reviewer` 的只读边界（`bash` `glob` `grep` `read`）在 DSH 侧同样被强制。
+- 新增实测事实：**bundle 内容变化必须重启 profile**。`patchReload: live`
+  只监听两个用户 patch 文件，且 `Entry.update()` 在选项无 diff 时直接返回、
+  不会重新 `apply()` —— 所以新增 `agents/*.md` 不会被热重载拾取
+  （技能不受影响，`list()` 每次重扫）。
+
+### Changed
+
+- `README.md` 同步到 5 技能 / 5 子 agent：token 成本按 v0.2.1 重新实测
+  （always-on ~308 tok，替换过期的 ~190 tok / 8 组件）；补 `diff-review` 用法；
+  删掉与 `quality-gates.md` 重复的质量门判定表，改为指向技能，避免两处漂移。
+- `docs/architecture.md` §7 内容清单补 `diff-review` / `diff-reviewer`，
+  §8 状态改为五 agent 协作。
+- `skills/implementation-workflow/SKILL.md` 的 `description` 补上 `diff-reviewer`
+  —— 质量门已扩展，但触发描述漏了评审角色。
 
 ---
 
