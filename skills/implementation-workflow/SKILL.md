@@ -24,15 +24,16 @@ user-invocable: true
 **不要使用**：文档、注释、简单配置、单文件低风险修复、机械版本号调整、小范围测试补充。
 这些由主 Agent 直接完成，或只派发一个 `implementer`。
 
-## 三个子 agent
+## 四个质量角色
 
-| Agent | 职责 | 边界 |
+| Agent / Skill | 职责 | 边界 |
 |---|---|---|
 | `implementer` | 阅读代码、修改实现、编写测试、运行局部验证 | 只改任务范围内文件 |
+| `diff-review` + `diff-reviewer` | Correctness / Standards / Spec 三轴代码评审 | **只报告，不改码；不依赖宿主内置 review** |
 | `complexity-auditor` | 复杂度与覆盖率风险审计 | **只报告，不改码** |
 | `mutation-auditor` | 突变测试与测试有效性审计 | **只报告，不改码** |
 
-职责细节由各自 agent 定义和对应技能承载，本工作流不重复。
+职责细节由各自 agent 和 skill 承载，本工作流只负责编排。
 
 ## 执行流程
 
@@ -106,23 +107,25 @@ user-invocable: true
 
 ### 8. 选择性质量审计
 
-**不要每次都运行全部审计 agent**，按风险选择。
+**不要每次都运行全部审计角色**，按风险选择。集成检查和统一验证通过后，再按下表决定是否调用 `diff-review`、`complexity-auditor` 和 `mutation-auditor`。
 
-| 变更类型 | complexity-auditor | mutation-auditor |
-|---|---|---|
-| 文档 / 配置 / 样式 | 跳过 | 跳过 |
-| 普通业务逻辑 | 建议运行 | 通常跳过 |
-| 复杂逻辑 / 大型重构 | 建议运行 | 视测试情况 |
-| 权限 / 状态机 / 金额 / 规则 | 建议运行 | 建议运行 |
-| 测试专项 | 可选 | 优先运行 |
+| 变更类型 | diff-review | complexity-auditor | mutation-auditor |
+|---|---|---|---|
+| 文档 / 配置 / 样式 | 按需：检查契约、约定是否一致 | 跳过 | 跳过 |
+| 简单字段 / 小修复 | 通常跳过 | 跳过 | 跳过 |
+| 普通业务逻辑 | 建议运行 | 视复杂度 | 通常跳过 |
+| 复杂逻辑 / 大型重构 | 建议运行 | 建议运行 | 视测试情况 |
+| 权限 / 状态机 / 金额 / 规则 | 建议运行 | 建议运行 | 有工具时建议运行 |
+| 公共 API / 跨模块契约变更 | 建议运行 | 视复杂度 | 视测试情况 |
+| 测试专项 | 按需 | 可选 | 有工具时优先运行 |
 
-完整调用与跳过条件见 `references/quality-gates.md`。
+**跳过不是遗漏**：每个未调用的审计角色，在最终报告里说明跳过原因。工具缺失、没有可靠基线或找不到 spec 时如实降级，不得为了跑完流程安装工具、伪造 finding 或把“未验证”说成“通过”。
 
-审计 agent 只报告。修复由 `implementer` 执行。
+完整调用与跳过条件见 `references/quality-gates.md`。评审和审计角色只报告，修复由 `implementer` 执行；修复后重新运行相关验证，但**不要求反复评审直到零 finding**。
 
 ### 9. 汇总
 
-报告包含：任务拆分与完成状态、执行方式（串行/并行）、修改内容、实际验证命令与结果、质量审计结论、未解决问题与环境阻塞。
+报告包含：任务拆分与完成状态、执行方式（串行/并行）、修改内容、实际验证命令与结果、三个质量角色的运行/跳过/降级结论、未解决问题与环境阻塞。
 
 ## 核心原则
 
@@ -136,5 +139,6 @@ user-invocable: true
 
 - `references/task-decomposition.md` —— 拆分方法、依赖识别、文件边界
 - `references/parallel-execution.md` —— 并行条件、必须串行的场景、集成清单
-- `references/quality-gates.md` —— 两个审计 agent 的调用与跳过条件
+- `references/quality-gates.md` —— 三个审计角色的调用与跳过条件
 - `references/task-card-template.md` —— 子任务卡模板
+- `skills/diff-review/SKILL.md` —— 三轴代码评审入口

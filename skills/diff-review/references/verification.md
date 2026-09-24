@@ -14,7 +14,17 @@
 - 不写"如果环境支持就调用 X"
 - Correctness 轴的判据必须是本技能自己的检查清单
 
-## 三轴为什么建议分开执行
+## 明确不使用 `context: fork`
+
+不在 `diff-review/SKILL.md` 的 frontmatter 里设置 `context: fork`，这是一个有意的跨宿主设计决定：
+
+- `context: fork` 是 Claude Code 的专有扩展，DSH 和其他 harness 不保证识别
+- forked skill 的默认行为、后台模式和工具集在不同运行环境中不一致
+- AgentForge 已有 `diff-reviewer` 子 agent 承载隔离执行；不需要再用宿主专有 fork 机制
+- 没有可用派发通道时，技能可以在主上下文里串行完成三轴，而不是直接失效
+
+如果未来做 Claude Code 专属优化，可以单独增加一个 CC-only wrapper，但不要把跨端真源技能绑定到 `context: fork`。
+
 
 三条轴关心不同的材料：
 
