@@ -6,7 +6,9 @@
 版本号遵循[语义化版本](https://semver.org/lang/zh-CN/)。
 
 > **注意**：只有 bump `.claude-plugin/plugin.json` 的 `version` 并打标签才算发版。
-> 日常 push 不改变用户看到的版本。详见 [`docs/releasing.md`](docs/releasing.md)。
+> 日常 push 不改变用户看到的版本。发版时 `release.mjs` 会**同步 bump
+> `package.json`**（DSH / npm 侧版本），两者漂移会被 `doctor` 判为 error。
+> 详见 [`docs/releasing.md`](docs/releasing.md)。
 
 ---
 
@@ -14,6 +16,9 @@
 
 ### Added
 
+- **两端同步发版** —— `tools/release.mjs` 现在一次 bump 两个版本文件：
+  `.claude-plugin/plugin.json`（Claude Code 的发版开关）与 `package.json`（DSH / npm 侧）。
+  `doctor` 新增 `version` 检查组，两端漂移直接判 error 并阻止发版。
 - 新增用户主动调用的 `architecture-scout` 技能：开工前或定期调查值得深化的模块边界，
   按规模由主 Agent 自查或并行委派最多四个 `researcher` 收集结构、历史、测试约束与反证。
   候选需通过真实摩擦、删除测试、最小替代、反证和迁移风险门槛；允许零候选。
@@ -30,6 +35,9 @@
 
 ### Changed
 
+- `docs/releasing.md` 补 DSH 侧的版本机制：`dsh plugin` 是 pnpm 透传，
+  **没有独立版本开关** —— `link:` 安装直接读磁盘、版本号不参与更新；
+  只有 git / registry 安装时 `package.json` 的版本才起作用。
 - `implementation-workflow` 在理解任务阶段可建议用户**开工前**独立运行 `architecture-scout`，
   但不把全仓架构扫描设为实施后的必经质量门。
 - `README.md` 的技能清单与目录树同步加入 `architecture-scout`，历史 token 数据明确标为旧版本快照。

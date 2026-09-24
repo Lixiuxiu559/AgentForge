@@ -2,8 +2,11 @@
 /**
  * AgentForge 发版脚本。
  *
- * 核心约定：`.claude-plugin/plugin.json` 的 `version` 是发版开关。
- * 不 bump 它，用户就收不到更新；bump 它并打标签才算发版。
+ * 一次发版同时更新两端清单，两者版本号始终一致：
+ *
+ *   .claude-plugin/plugin.json   Claude Code 的发版开关 —— 不 bump 它，CC 用户收不到更新
+ *   package.json                 DSH / npm 侧版本 —— link 安装时读磁盘，版本号用于一致性；
+ *                                git 或 registry 安装时 pnpm 按 semver 解析，此时它才是开关
  *
  * 用法：
  *   node tools/release.mjs patch              # 0.1.0 -> 0.1.1
@@ -22,6 +25,7 @@ import path from 'node:path'
 
 const ROOT = path.resolve(import.meta.dirname, '..')
 const PLUGIN_JSON = path.join(ROOT, '.claude-plugin', 'plugin.json')
+const PACKAGE_JSON = path.join(ROOT, 'package.json')
 const CHANGELOG = path.join(ROOT, 'CHANGELOG.md')
 
 const argv = process.argv.slice(2)
@@ -76,9 +80,16 @@ try {
 
 // 4. 计算新版本
 const plugin = JSON.parse(fs.readFileSync(PLUGIN_JSON, 'utf8'))
+const pkg = JSON.parse(fs.readFileSync(PACKAGE_JSON, 'utf8'))
 const current = plugin.version
 if (typeof current !== 'string' || !SEMVER.test(current)) {
   die(`plugin.json 的 version="${current}" 不是合法 semver`)
+}
+
+// 两端版本漂移时提示，但以 plugin.json 为基准继续 —— 本次发版会把两者拉齐
+if (pkg.version !== current) {
+  console.log(`⚠️  两端版本不一致：package.json=${pkg.version}，plugin.json=${current}`)
+  console.log(`   以 plugin.json 为基准，本次发版将把两者统一为下一个版本`)
 }
 
 const [maj, min, pat] = current.split('.').map(Number)
@@ -90,7 +101,7 @@ else if (SEMVER.test(bump)) next = bump
 else die(`无法识别的版本参数 "${bump}"`, '用 patch / minor / major，或显式 x.y.z')
 
 if (next === current) die(`新版本与当前版本相同（${current}）`)
-console.log(`✅ 版本：${current} → ${next}`)
+console.log(`✅ 版本：${current} → ${next}（两端同步）`)
 
 // 5. tag 不存在
 const tag = `v${next}`
@@ -117,7 +128,8 @@ console.log('✅ CHANGELOG 有 Unreleased 内容')
 if (DRY) {
   console.log('\n' + '─'.repeat(64))
   console.log('--dry-run：未做任何修改。')
-  console.log(`将要执行：bump ${current} → ${next}，提交 chore(release): ${tag}，打标签 ${tag}`)
+  console.log(`将要执行：bump plugin.json 与 package.json ${current} → ${next}，`)
+  console.log(`          提交 chore(release): ${tag}，打标签 ${tag}`)
   console.log()
   process.exit(0)
 }
@@ -126,10 +138,14 @@ if (DRY) {
 
 const today = new Date().toISOString().slice(0, 10)
 
-// 7. 更新 plugin.json
+// 7. 同步更新两端清单版本
 plugin.version = next
 fs.writeFileSync(PLUGIN_JSON, `${JSON.stringify(plugin, null, 2)}\n`)
 console.log(`✅ 已更新 .claude-plugin/plugin.json`)
+
+pkg.version = next
+fs.writeFileSync(PACKAGE_JSON, `${JSON.stringify(pkg, null, 2)}\n`)
+console.log(`✅ 已更新 package.json`)
 
 // 8. 更新 CHANGELOG：Unreleased 转为正式版本，并留一个空 Unreleased
 const newUnreleased = `## [Unreleased]\n\n### Added\n\n- \n`
@@ -142,7 +158,7 @@ fs.writeFileSync(CHANGELOG, updated)
 console.log('✅ 已更新 CHANGELOG.md')
 
 // 9. 提交 + 打标签
-git(['add', '.claude-plugin/plugin.json', 'CHANGELOG.md'])
+git(['add', '.claude-plugin/plugin.json', 'package.json', 'CHANGELOG.md'])
 git(['commit', '-m', `chore(release): ${tag}`])
 console.log(`✅ 已提交 chore(release): ${tag}`)
 

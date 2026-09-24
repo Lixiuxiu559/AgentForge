@@ -4,14 +4,16 @@
  *
  * 零依赖，只用 node: 内置模块。检查项：
  *   1. 插件清单与市场清单
- *   2. 组件目录位置（必须在插件根，不能嵌进 .claude-plugin/）
- *   3. 技能 frontmatter 与目录名一致性
- *   4. 子 agent frontmatter 与文件名一致性
- *   5. 只读 agent 不得声明写工具
- *   6. 外部依赖（mcp__* 引用）
- *   7. 技能内 references 引用是否都存在
- *   8. 硬编码绝对路径
- *   9. DSH 适配层：bundle 清单、桥接插件、CC→DSH 工具名映射
+ *   2. 两端版本号一致性（plugin.json 与 package.json）
+ *   3. 组件目录位置（必须在插件根，不能嵌进 .claude-plugin/）
+ *   4. 技能 frontmatter 与目录名一致性
+ *   5. 子 agent frontmatter 与文件名一致性
+ *   6. 只读 agent 不得声明写工具
+ *   7. 外部依赖（mcp__* 引用）
+ *   8. 技能内 references 引用是否都存在
+ *   9. 硬编码绝对路径
+ *  10. 与 Claude Code 内置技能重名
+ *  11. DSH 适配层：bundle 清单、桥接插件、CC→DSH 工具名映射
  *
  * 用法：
  *   node tools/doctor.mjs [插件根目录]
@@ -114,6 +116,37 @@ function checkManifests() {
     }
   } catch (e) {
     add('error', 'manifest', 'marketplace.json 不是合法 JSON', String(e.message))
+  }
+}
+
+/* ─────────────────────── 1b. 两端版本一致性 ─────────────────────── */
+
+/**
+ * Claude Code 读 `.claude-plugin/plugin.json` 的 version，DSH/npm 读 `package.json` 的 version。
+ * 两者漂移会导致「发了一端、另一端版本号还是旧的」，或 git/registry 安装时解析到错误版本。
+ */
+function checkVersionSync() {
+  const pluginPath = path.join(ROOT, '.claude-plugin', 'plugin.json')
+  const pkgPath = path.join(ROOT, 'package.json')
+  if (!exists(pluginPath) || !exists(pkgPath)) return
+
+  let plugin
+  let pkg
+  try {
+    plugin = JSON.parse(fs.readFileSync(pluginPath, 'utf8'))
+    pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'))
+  } catch {
+    return // JSON 非法已由 checkManifests 报告
+  }
+  if (!plugin.version || !pkg.version) return
+
+  if (plugin.version !== pkg.version) {
+    add(
+      'error',
+      'version',
+      `两端版本号不一致：plugin.json=${plugin.version}，package.json=${pkg.version}`,
+      'Claude Code 用 plugin.json 判断更新，DSH/npm 用 package.json；发版应同步 bump 两者（node tools/release.mjs 已自动同步）',
+    )
   }
 }
 
@@ -418,7 +451,7 @@ function report() {
     return 0
   }
 
-  const ORDER = ['manifest', 'layout', 'skills', 'agents', 'paths', 'dsh']
+  const ORDER = ['manifest', 'version', 'layout', 'skills', 'agents', 'paths', 'dsh']
   const areas = [...new Set(findings.map((f) => f.area))].sort(
     (a, b) => (ORDER.indexOf(a) + 1 || 99) - (ORDER.indexOf(b) + 1 || 99),
   )
@@ -446,6 +479,7 @@ if (!exists(ROOT)) {
 }
 
 checkManifests()
+checkVersionSync()
 checkComponentLayout()
 checkSkills()
 checkAgents()
