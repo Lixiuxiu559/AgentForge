@@ -1,6 +1,6 @@
 ---
 name: implementation-workflow
-description: 实施编排工作流。当用户要求实现功能、修复 Bug、重构代码、补充测试、拆分开发任务、并行编码或按质量门完成开发时使用。负责评估任务、拆分依赖、调度 implementer，并按风险选择性调用 complexity-auditor 和 mutation-auditor。
+description: 实施编排工作流。当用户要求实现功能、修复 Bug、重构代码、补充测试、拆分开发任务、并行编码或按质量门完成开发时使用。负责评估任务、拆分依赖、调度 implementer，并按风险选择性调用 diff-reviewer 和两个审计 agent（complexity-auditor、mutation-auditor）。
 user-invocable: true
 ---
 
