@@ -14,6 +14,14 @@
 
 ## [Unreleased]
 
+### Added
+
+- 
+
+---
+
+## [0.4.0] - 2026-09-24
+
 ### Removed
 
 - **移除全部 5 个子 agent 的 `maxTurns`**。该字段超限时把输出**静默标记为 partial**
