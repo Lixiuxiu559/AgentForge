@@ -14,6 +14,14 @@
 
 ### Added
 
+- 
+
+---
+
+## [0.2.0] - 2026-09-24
+
+### Added
+
 - **DSH 插件适配：子 agent 注册** —— `src/index.js` 现在把 `agents/*.md` 注册成一个
   `agentforge` 工具（用 `agent` 参数枚举选择），至此技能与子 agent
   在 DSH 侧全部可用。子 agent 的 persona、工具白名单、模型覆盖都走调用期参数。
