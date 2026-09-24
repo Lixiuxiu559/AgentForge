@@ -88,19 +88,19 @@ dsh --profile web --dump-config | grep -A2 agentforge
 | `complexity-auditor` | 复杂度与覆盖率风险审计 | **只读**：Read / Glob / Grep / Bash |
 | `mutation-auditor` | 突变测试与测试有效性审计 | **只读**：Read / Glob / Grep / Bash |
 
-两个审计 agent **只报告、不改码**，从工具层面保证「发现风险」和「实施修复」解耦。
+三个只读 agent（`code-reviewer` / `complexity-auditor` / `mutation-auditor`）**只报告、不改码**，从工具层面保证「发现问题」和「实施修复」解耦。
 `researcher` 默认只调查不修改，用户要求长报告时才写入 `docs/research/`。
 
 ### 同一个插件在两端的形态
 
 | 组件 | Claude Code | DeepSeek Harness |
 |---|---|---|
-| 技能（4） | 自动发现 `skills/<name>/SKILL.md` | 桥接插件注册为 skill provider，模型目录与 `/` 命令面板都可见 |
-| 子 agent（4） | 自动发现 `agents/<name>.md` | 桥接插件注册**一个** `agentforge` 工具，用 `agent` 参数枚举选择 |
+| 技能（5） | 自动发现 `skills/<name>/SKILL.md` | 桥接插件注册为 skill provider，模型目录与 `/` 命令面板都可见 |
+| 子 agent（5） | 自动发现 `agents/<name>.md` | 桥接插件注册**一个** `agentforge` 工具，用 `agent` 参数枚举选择 |
 | 工具边界 | agent frontmatter 的 `tools:` 白名单 | 同一份白名单，经 CC→DSH 工具名映射后由 `toolFilter` 强制 |
 | 系统提示词 | agent 正文即子 agent 的系统提示词 | 同一份正文作为 `persona` 传入 |
 
-**只有一个工具**：DSH 侧不注册 4 个同名工具，而是注册 1 个 `agentforge`，
+**只有一个工具**：DSH 侧不注册 5 个同名工具，而是注册 1 个 `agentforge`，
 工具描述里列出全部 agent 与职责，`agent` 参数用 enum 约束。新增 agent 只需加一个
 markdown 文件，不用改 YAML。
 
