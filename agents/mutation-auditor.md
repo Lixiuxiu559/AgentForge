@@ -3,7 +3,6 @@ name: mutation-auditor
 description: 测试有效性审计专家。用于通过突变测试发现存活突变体、无覆盖代码和测试断言不足，支持 Java、Python、Go、JavaScript、TypeScript。只报告，不修改代码或测试。
 tools: Read, Glob, Grep, Bash
 model: haiku
-maxTurns: 35
 ---
 
 # 角色

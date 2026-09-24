@@ -115,7 +115,7 @@ markdown 文件，不用改 YAML —— 但**要重载插件**：工具描述与
 |---|---|
 | 工具名两套命名（`Read` vs `read`） | 桥接插件做映射；未映射的名字会被丢弃并记 warning |
 | `model: haiku` / `sonnet` 是 Claude Code 别名 | DSH 侧默认忽略（子 agent 继承父会话路由）；需要固定路由时用 `config.agents.<name>` |
-| `maxTurns` 是 CC 专属 | DSH 无对应物，忽略 |
+| `maxTurns` | **刻意不使用** —— 超限时输出被静默截断（对只读审计会造假阴性），且 DSH 无对应物。`doctor` 会拦截。见 [`docs/architecture.md`](docs/architecture.md) §A.6 |
 | `${CLAUDE_PLUGIN_ROOT}` 是 CC 的变量 | 注册技能正文 / 子 agent persona 时展开成真实包路径 |
 | agent 正文里的 `skills/...` 相对路径 | 子 agent persona 前置一段「AgentForge 资源位置」，写明插件根目录 |
 | CC 的 `hooks/hooks.json` | **未实现**（本仓库当前没有 hooks 资产，不做空桥） |
@@ -278,6 +278,7 @@ node tools/doctor.mjs
 | `layout` | 组件目录被误放进 `.claude-plugin/`（不会被发现） |
 | `skills` | frontmatter 缺失、name 与目录名不一致、嵌套技能、`references/` 悬空引用 |
 | `agents` | frontmatter 缺失、name 与文件名不一致 |
+| `agents` | 声明了 `maxTurns`（本仓库刻意不用，见 §A.6） |
 | `agents` | 只读 agent 却声明了 Edit/Write |
 | `agents` | 任何 `mcp__*` 依赖（本插件承诺零外部依赖） |
 | `paths` | 硬编码绝对路径（应用 `${CLAUDE_PLUGIN_ROOT}`） |
@@ -285,7 +286,7 @@ node tools/doctor.mjs
 | `dsh` | `src/index.js` 缺失或无法加载、未导出映射表 |
 | `dsh` | agent 声明的工具在 DSH 无对应物（会被静默丢弃） |
 | `dsh` | 桥接插件的工具名与 DSH 保留名冲突 |
-| `dsh` | CC 专属字段（`model` / `maxTurns`）在 DSH 被忽略（info） |
+| `dsh` | CC 专属字段（`model`）在 DSH 被忽略（info） |
 
 `dsh` 组直接 import `src/index.js` 读取工具名映射表，不抄第二份，避免漂移。
 

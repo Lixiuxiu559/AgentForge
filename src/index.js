@@ -365,8 +365,6 @@ export function scanAgents() {
       dshTools: names,
       /** CC 的模型别名，DSH 侧默认忽略；可用 config.agents 覆盖。 */
       ccModel: data.model,
-      /** CC 的 maxTurns 在 DSH 没有对应物，仅记录。 */
-      ccMaxTurns: data.maxTurns,
       persona: body.trim(),
       path: file,
     })

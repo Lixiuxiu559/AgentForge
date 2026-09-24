@@ -14,9 +14,19 @@
 
 ## [Unreleased]
 
+### Removed
+
+- **移除全部 5 个子 agent 的 `maxTurns`**。该字段超限时把输出**静默标记为 partial**
+  （CC <2.1.246 连标记都没有），对只读审计 agent 会产生「看起来完整、实则被截断」的
+  假阴性；`implementer` 被截断则产生半完成编辑。而 DSH 侧**没有任何对应机制**
+  （grep `maxSteps`/`maxTurns`/`turnLimit` 全为空），造成不可降级的两端行为分歧。
+  实测：唯一运行过的 `researcher` 两次分别用 19 / 29 回合（原上限 60），
+  且都跑在无上限的 DSH 上**自然结束** —— 上限在任何一端都没触发过。
+
 ### Added
 
-- 
+- `tools/doctor.mjs` 的 `agents` 组新增拦截：agent 声明 `maxTurns` 即报 warn，
+  避免该字段被无意加回。理由与实测数据记入 `docs/architecture.md` §A.6。
 
 ---
 

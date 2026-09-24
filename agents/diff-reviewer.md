@@ -3,7 +3,6 @@ name: diff-reviewer
 description: 三轴代码评审执行者。沿 Correctness（有 bug 吗）、Standards（符合本仓库文档化编码规范吗）、Spec（忠实实现原始需求吗）三条轴评审 diff。只报告，不修改代码。
 tools: Read, Glob, Grep, Bash
 model: sonnet
-maxTurns: 40
 ---
 
 # 角色

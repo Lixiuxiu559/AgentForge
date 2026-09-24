@@ -388,3 +388,89 @@ dsh --profile headless "必须调用一次 agentforge 工具，agent=complexity-
 - 所以：**新增/删除 `agents/*.md` 之类的内容变化，必须重启 profile。**
   技能不受影响（`list()` 每次重扫，注册表缓存会在下次读取时更新）。
 - 验证用的隔离 home 里同样是重启才看到改动（`patchReload: startup`）。
+
+### A.6 刻意不使用 `maxTurns`（含实测数据）
+
+**决策：`agents/*.md` 一律不声明 `maxTurns`。** `tools/doctor.mjs` 的 `agents` 组会拦截，
+发现即报 warn。不要再加回来。
+
+#### 该字段的真实语义
+
+官方文档（sub-agents → supported frontmatter fields）：
+
+> Maximum number of agentic turns before the subagent stops. When the subagent reaches
+> the limit, Claude Code returns its output **marked as partial**, and Claude can
+> **resume it** to continue. The partial marking **requires Claude Code v2.1.246 or later**.
+
+它**不在**「plugin subagent 忽略」的字段列表里（那个列表是 `permissionMode` /
+`mcpServers` / `hooks` / `initialPrompt`），所以对本插件的 agent **确实生效**。
+
+#### 移除的三条理由
+
+**1. 失败模式不对称 —— 决定性理由**
+
+| | 无上限 | 上限过低 |
+|---|---|---|
+| 表现 | 跑飞 | **静默截断** |
+| 可见性 | 用户能在任务列表看见并中断 | **看不见** |
+| 产物 | 无（但你知道它没完成） | **看起来完整，实际不完整** |
+
+对**只读审计 agent** 尤其致命：报告写「未发现规范违规」，而 agent 其实是在评审中途被砍断的
+—— 这是质量门里的**假阴性**，比「没跑」更危险，因为调用方会当它通过了。
+`implementer` 被截断则会产生**半完成的编辑**。
+
+> 跑飞是响的、可中断的；截断是静的、看起来正常的。
+
+**2. DSH 侧没有任何对应机制**
+
+在 `@deepseek-ai/dsh/lib` 里 grep `maxSteps` / `maxTurns` / `maxIterations` /
+`stepLimit` / `turnLimit` / `maxToolCalls` —— **全部为空**。所以：
+
+```text
+Claude Code      : researcher 到 60 回合被强制停止
+DeepSeek Harness : 无上限，跑到自然结束
+```
+
+同一个 agent，两端行为不同，且**无法降级**。这与 `model` 的分歧性质不同：
+
+| 字段 | DSH 侧的表现 | 性质 |
+|---|---|---|
+| `model: haiku` | 继承父会话路由 —— **保留了 agent 的功能意图** | 有意义的降级 |
+| `maxTurns: 60` | 无 —— **功能直接消失** | 不可降级 |
+
+**3. 实测从未触发**
+
+从会话日志统计真实回合数（DSH 的 `step/start` 计数 ≈ CC 的 agentic turn）：
+
+| 会话 | 内容 | 回合数 | 工具调用 | 耗时 |
+|---|---|---|---|---|
+| `651a7af4` | `researcher` 调研 improve-codebase-architecture | 19 | 33 | 425s |
+| `6534e858` | `researcher` 调研 code-review | 29 | 48 | — |
+| （对照）主会话 | — | 531 | 618 | — |
+
+两个关键点：
+
+- 实测 **19 / 29**，原上限是 **60** —— 有 2~3 倍余量
+- 这两次都跑在 **DSH 上，而 DSH 根本没有上限** —— 它们是**自然结束**的，不是被上限拦住的
+
+即：**上限在任何一端都没有被触发过**。另外 4 个 agent（`implementer` /
+`complexity-auditor` / `mutation-auditor` / `diff-reviewer`）**从未运行过**，
+它们原本的 35 / 40 / 60 是凭感觉取的整数，没有任何依据。
+
+#### 成本控制用什么
+
+| 手段 | 说明 |
+|---|---|
+| `model` | 已在用 —— 三个只读审计 agent 路由到 `haiku` |
+| `effort` | 需要时按 agent 调 |
+| 中断 | CC 侧用户可在任务列表停止 |
+
+`maxTurns` 是**粗糙且不可预测**的杠杆：它不省「每次调用的钱」，
+只在「任务比预期长」时把工作砍断 —— 而砍断的代价（假阴性审计 / 半完成编辑）
+比烧 token 更严重。
+
+#### 如果将来确实需要防跑飞
+
+不要恢复 `maxTurns`。跑飞是 **prompt 缺陷**，应该修 prompt。
+若必须有硬保险，需同时接受「仍是 CC-only」，并明确注释为**跑飞保护而非预算**
+（例如 `maxTurns: 150`），且要在本文档记录为什么重新引入。

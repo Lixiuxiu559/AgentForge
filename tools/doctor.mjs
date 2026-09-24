@@ -242,6 +242,19 @@ function checkAgents() {
       add('warn', 'agents', `${shown} 未声明 tools 白名单`, '默认拥有全部工具，建议按最小权限声明')
     }
 
+    // maxTurns 已被刻意移除，不要加回来。
+    // 超限时输出被静默标记为 partial（CC <2.1.246 连标记都没有），
+    // 对只读审计 agent 会产生「看起来完整实则被截断」的假阴性；
+    // 且 DSH 无任何对应机制，会造成不可降级的两端行为分歧。
+    if (data.maxTurns !== undefined) {
+      add(
+        'warn',
+        'agents',
+        `${shown} 声明了 maxTurns=${data.maxTurns}`,
+        '本仓库刻意不使用该字段（截断静默、DSH 无对应物）。成本控制请用 model / effort；理由与实测数据见 docs/architecture.md',
+      )
+    }
+
     const isReadOnly = /只报告|只读分析|不修改代码|不修改生产代码/.test(`${data.description ?? ''}\n${body}`)
     if (isReadOnly) {
       const leaked = tools.filter((t) => WRITE_TOOLS.has(t))
@@ -391,7 +404,6 @@ function checkDshAdaptation(bridge) {
 
       const ignored = []
       if (typeof data.model === 'string' && data.model !== '') ignored.push(`model=${data.model}`)
-      if (data.maxTurns !== undefined) ignored.push(`maxTurns=${data.maxTurns}`)
       if (ignored.length) ccOnly.push(`${f.replace(/\.md$/, '')}(${ignored.join(', ')})`)
     }
 

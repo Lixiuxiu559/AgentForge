@@ -3,7 +3,6 @@ name: complexity-auditor
 description: 代码复杂度风险审计专家。用于根据复杂度与覆盖率定位高风险函数，执行 Java、Python、Go、JavaScript、TypeScript 的复杂度审计或 CRAP 风险分析。只报告，不修改代码。
 tools: Read, Glob, Grep, Bash
 model: haiku
-maxTurns: 40
 ---
 
 # 角色

@@ -3,7 +3,6 @@ name: researcher
 description: 调研与调查专家。用于技术调研、代码库调查、日志分析、故障排查、依赖评估和证据收集。负责给出可追溯的事实、结论、未确认项和置信度，不负责默认修改业务代码。
 tools: Read, Glob, Grep, Edit, Write, Bash, WebSearch, WebFetch
 model: sonnet
-maxTurns: 60
 ---
 
 # 角色

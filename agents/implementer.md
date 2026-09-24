@@ -3,7 +3,6 @@ name: implementer
 description: 编码执行专家。负责实现功能、修改代码、修复 Bug、重构和编写测试。专注于实际编码，不负责产品需求分析或架构设计。
 tools: Read, Glob, Grep, Edit, Write, Bash
 model: haiku
-maxTurns: 60
 ---
 
 # 角色
