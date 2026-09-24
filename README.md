@@ -73,7 +73,7 @@ dsh --profile web --dump-config | grep -A2 agentforge
 | 技能 | 作用 |
 |---|---|
 | `research` | 调研与调查：技术研究、代码库调查、日志排查、证据链与研究报告 |
-| `standards-review` | 两轴代码评审：Standards（符合本仓库编码规范）+ Spec（忠实实现原始需求）。**不找 bug**——那是内置 `/code-review` 的职责 |
+| `diff-review` | 三轴代码评审：Correctness（有 bug 吗）+ Standards（符合本仓库编码规范吗）+ Spec（忠实实现需求吗），各轴独立报告。**能力自包含，不依赖任何宿主** |
 | `implementation-workflow` | 实施编排：评估任务、拆分依赖、串行/并行调度 `implementer`、集成验证、按风险调用审计 agent |
 | `complexity-audit` | 复杂度风险审计：用 CRAP 定位「复杂且测试保护不足」的函数，支持 Java / Python / Go / JS / TS |
 | `mutation-testing` | 测试有效性审计：用突变测试找出存活突变体与无覆盖代码，支持 Java / Python / Go / JS / TS |
@@ -83,12 +83,12 @@ dsh --profile web --dump-config | grep -A2 agentforge
 | Agent | 职责 | 工具边界 |
 |---|---|---|
 | `researcher` | 技术调研、代码调查、日志排查、证据收集与研究报告 | Read / Glob / Grep / Edit / Write / Bash / WebSearch / WebFetch |
-| `code-reviewer` | 两轴评审执行者（Standards + Spec） | **只读**：Read / Glob / Grep / Bash |
+| `diff-reviewer` | 三轴评审执行者（Correctness + Standards + Spec） | **只读**：Read / Glob / Grep / Bash |
 | `implementer` | 阅读代码、修改实现、编写测试、局部验证 | Read / Glob / Grep / Edit / Write / Bash |
 | `complexity-auditor` | 复杂度与覆盖率风险审计 | **只读**：Read / Glob / Grep / Bash |
 | `mutation-auditor` | 突变测试与测试有效性审计 | **只读**：Read / Glob / Grep / Bash |
 
-三个只读 agent（`code-reviewer` / `complexity-auditor` / `mutation-auditor`）**只报告、不改码**，从工具层面保证「发现问题」和「实施修复」解耦。
+三个只读 agent（`diff-reviewer` / `complexity-auditor` / `mutation-auditor`）**只报告、不改码**，从工具层面保证「发现问题」和「实施修复」解耦。
 `researcher` 默认只调查不修改，用户要求长报告时才写入 `docs/research/`。
 
 ### 同一个插件在两端的形态
