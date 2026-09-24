@@ -1,6 +1,6 @@
 {
   "name": "agentforge",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "通用 agent 工作流与工程技能集：调研取证、实施编排、复杂度风险审计、测试有效性审计。含 4 个技能与 4 个子 agent，零外部依赖。",
   "author": {
     "name": "lixiuxiu"
