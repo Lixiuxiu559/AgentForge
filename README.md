@@ -1,7 +1,44 @@
 # AgentForge
 
 > 通用 agent 工作流与工程技能集，作为可安装的 Claude Code 插件。
-> **零外部依赖** —— 不依赖 MCP、不依赖网络、不依赖项目预装工具。
+> **零外部依赖** —— 不使用 MCP，不依赖网络，不依赖项目预装工具。
+
+[![validate](https://github.com/Lixiuxiu559/AgentForge/actions/workflows/validate.yml/badge.svg)](https://github.com/Lixiuxiu559/AgentForge/actions/workflows/validate.yml)
+
+---
+
+## 安装
+
+```bash
+claude plugin marketplace add Lixiuxiu559/AgentForge
+claude plugin install agentforge@agentforge
+```
+
+在 Claude Code 交互界面里对应：
+
+```text
+/plugin marketplace add Lixiuxiu559/AgentForge
+/plugin install agentforge@agentforge
+```
+
+安装后**重启 Claude Code** 使其生效。
+
+本地开发时可以装本地目录（原位加载，改动立即生效，不受版本号约束）：
+
+```bash
+claude plugin marketplace add /path/to/AgentForge
+claude plugin install agentforge@agentforge
+```
+
+其他常用命令：
+
+```bash
+claude plugin list                            # 已装插件
+claude plugin details agentforge              # 组件清单与 token 成本
+claude plugin update agentforge@agentforge    # 更新到新版本
+claude plugin disable agentforge              # 临时停用
+claude plugin uninstall agentforge            # 卸载
+```
 
 ---
 
@@ -25,43 +62,44 @@
 | `complexity-auditor` | 复杂度与覆盖率风险审计 | **只读**：Read / Glob / Grep / Bash |
 | `mutation-auditor` | 突变测试与测试有效性审计 | **只读**：Read / Glob / Grep / Bash |
 
-两个审计 agent **只报告、不改码**。`researcher` 默认只读调查，用户要求长报告时才写入 `docs/research/`。
+两个审计 agent **只报告、不改码**，从工具层面保证「发现风险」和「实施修复」解耦。
+`researcher` 默认只调查不修改，用户要求长报告时才写入 `docs/research/`。
 
----
+### token 成本
 
-## 安装
-
-```bash
-/plugin marketplace add /path/to/AgentForge
-/plugin install agentforge@agentforge
-```
-
-安装后可用：
-
-- `/research` —— 启动调研与调查
-- `/implementation-workflow` —— 启动实施编排
-- `/complexity-audit` —— 单独跑复杂度审计
-- `/mutation-testing` —— 单独跑测试有效性审计
-- 4 个技能按 `description` 自动触发
-- 4 个子 agent 可被 Task 工具调用
-
----
-
-## 三个 agent 如何配合
+实测（`claude plugin details`）：
 
 ```text
-implementation-workflow
-        │
-        ├─ 拆分任务
-        ├─ 并行/串行派发 implementer
-        ├─ 集成 + 统一验证
-        ├─ 按风险 → complexity-auditor
-        └─ 按风险 → mutation-auditor
-                ↓
-        implementer 修复
+Always-on:  ~190 tok   # 8 个组件的 description 总和，加到每个会话
 ```
 
-**不是每次都全跑。** 审计 agent 按风险选择性调用：
+技能正文与子 agent 定义按需加载，例如 `implementation-workflow` 触发时约 +660 tok。
+
+---
+
+## 四个 agent 如何配合
+
+```text
+  researcher                    ← 上游：获取事实与证据
+      │                            技术调研 / 代码调查 / 日志排查
+      ↓
+  结论 + 证据链
+      │
+      ↓
+  implementation-workflow       ← 中游：实施编排
+      ├─ 评估规模与风险
+      ├─ 拆分任务、判断串行/并行
+      ├─ 派发 implementer
+      ├─ 集成 + 统一验证
+      ├─ 按风险 → complexity-auditor
+      └─ 按风险 → mutation-auditor
+      ↓
+  implementer 修复
+      ↓
+  重新验证
+```
+
+**审计 agent 不是每次都跑**，按风险选择性调用：
 
 | 变更类型 | complexity-auditor | mutation-auditor |
 |---|---|---|
@@ -73,27 +111,44 @@ implementation-workflow
 
 ---
 
+## 典型用法
+
+```text
+# 调研
+/research 对比一下几个 Java 的 mutation testing 工具
+
+# 实施
+/implementation-workflow 给用户模块加上导出功能
+
+# 单独审计
+/complexity-audit 检查一下这次改动
+/mutation-testing 验证 task 模块的测试有效性
+```
+
+技能也会按 `description` 自动触发，不必显式调用。
+
+---
+
 ## 目录结构
 
 ```text
 AgentForge/
 ├── .claude-plugin/
-│   ├── plugin.json                  # 插件清单
+│   ├── plugin.json                  # 插件清单（version 是发版开关）
 │   └── marketplace.json             # 市场清单（source: "./"）
 │
 ├── skills/                          # 插件自动发现
-│   ├── research/                    # 调研与调查
-│   │   └── SKILL.md
+│   ├── research/SKILL.md
 │   ├── implementation-workflow/
 │   │   ├── SKILL.md                 # 编排入口
-│   │   └── references/              # 拆分/并行/质量门/任务卡模板
+│   │   └── references/              # 拆分 / 并行 / 质量门 / 任务卡模板
 │   ├── complexity-audit/
 │   │   ├── SKILL.md
 │   │   ├── scripts/crap.js          # Java + JaCoCo 的 CRAP 计算器
-│   │   └── references/              # 五语言适配说明
+│   │   └── references/              # 五语言适配
 │   └── mutation-testing/
 │       ├── SKILL.md
-│       └── references/              # 五语言适配说明
+│       └── references/              # 五语言适配
 │
 ├── agents/                          # 插件自动发现
 │   ├── researcher.md
@@ -101,8 +156,14 @@ AgentForge/
 │   ├── complexity-auditor.md
 │   └── mutation-auditor.md
 │
-├── tools/doctor.mjs                 # 结构与资产校验（零依赖）
-└── docs/architecture.md             # 架构与实测结论
+├── tools/
+│   ├── doctor.mjs                   # 结构与资产校验（零依赖）
+│   └── release.mjs                  # 发版脚本
+├── .github/workflows/validate.yml   # push 时校验，不发版
+├── CHANGELOG.md
+└── docs/
+    ├── architecture.md              # 架构决策与实测结论
+    └── releasing.md                 # 发布流程
 ```
 
 ---
@@ -113,11 +174,46 @@ AgentForge/
 node tools/doctor.mjs
 ```
 
-检查 8 项：插件/市场清单、组件目录位置、技能 frontmatter 与目录名一致性、
-子 agent frontmatter 与文件名一致性、只读 agent 是否声明了写工具、
-是否有 MCP 外部依赖、技能内 `references/` 引用是否存在、是否有硬编码绝对路径。
+检查 8 项：
 
-退出码非 0 表示存在 error，可直接接进 CI。
+| 检查 | 抓什么 |
+|---|---|
+| `manifest` | 插件/市场清单缺失、JSON 非法、name 非 kebab-case、市场未声明插件 |
+| `layout` | 组件目录被误放进 `.claude-plugin/`（不会被发现） |
+| `skills` | frontmatter 缺失、name 与目录名不一致、嵌套技能、`references/` 悬空引用 |
+| `agents` | frontmatter 缺失、name 与文件名不一致 |
+| `agents` | 只读 agent 却声明了 Edit/Write |
+| `agents` | 任何 `mcp__*` 依赖（本插件承诺零外部依赖） |
+| `paths` | 硬编码绝对路径（应用 `${CLAUDE_PLUGIN_ROOT}`） |
+
+退出码非 0 表示存在 error，已接进 CI。
+
+也可以用官方校验器：
+
+```bash
+claude plugin validate .
+```
+
+---
+
+## 发版
+
+**`version` 就是发版开关。** 不 bump 它，用户收不到任何更新——所以日常 push 和发版是解耦的。
+
+```bash
+# 日常开发：随便 push，用户无感知
+git push
+
+# 发版：显式动作
+node tools/release.mjs patch      # 0.1.1 → 0.1.2
+git push --follow-tags
+```
+
+`release.mjs` 会依次检查工作区、分支、校验、tag 冲突、CHANGELOG，然后 bump 版本、更新 CHANGELOG、提交、打标签。支持 `--dry-run` 和 `--push`。
+
+版本号判据是**「对使用者是否破坏」**：重命名或删除技能/agent 属 MAJOR，新增能力属 MINOR，措辞与脚本修复属 PATCH。
+
+完整规范见 [`docs/releasing.md`](docs/releasing.md)，版本历史见 [`CHANGELOG.md`](CHANGELOG.md)。
 
 ---
 
