@@ -45,8 +45,12 @@ const die = (msg, hint) => {
   process.exit(1)
 }
 
-const git = (args, opts = {}) =>
-  execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', ...opts }).trim()
+const git = (args, opts = {}) => {
+  const out = execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', ...opts })
+  // stdio: 'inherit'（push 用的）不捕获 stdout，execFileSync 会返回 null，
+  // 直接 .trim() 会抛 TypeError —— 表现为「push 成功了，脚本却崩在 push 那一步」。
+  return out === null ? '' : out.trim()
+}
 
 const SEMVER = /^(\d+)\.(\d+)\.(\d+)$/
 
@@ -197,8 +201,8 @@ if (PUBLISH) {
     console.error(`   修好之后单独重跑：npm publish\n`)
     process.exit(1)
   }
-  console.log(`\n✅ 已发布 agentforge@${next} 到 npm。`)
-  console.log(`   DSH 用户执行 dsh plugin --profile web update agentforge 即可拿到。\n`)
+  console.log(`\n✅ 已发布 ${pkg.name}@${next} 到 npm。`)
+  console.log(`   DSH 用户执行 dsh plugin --profile web update ${pkg.name} 即可拿到。\n`)
 } else if (PUSH) {
   console.log(`\n下一步（可选）：npm publish\n`)
   console.log(`   发到 npm 后，DSH 用户才能按版本号升级，而不必跟 main 分支。\n`)

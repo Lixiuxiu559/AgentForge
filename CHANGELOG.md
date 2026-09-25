@@ -14,9 +14,23 @@
 
 ## [Unreleased]
 
-### Added
+### Changed
 
-- 
+- **npm 包名改为 `dsh-agentforge`**。原打算用 `agentforge`，被 npm 拒绝：
+  `403 Package name too similar to existing package agent-forge`（两者只差一个连字符，
+  命中防误植规则）。改名后 `package.json` 的 `name`、`cordis.patch.yml` 里 insert 的
+  `name`、`src/index.js` 导出的 Cordis 插件名三处必须一致（doctor 会校验）。
+  `id: agentforge`、技能 provider 名与工具名 `agentforge` 均未变。
+- README 的 DSH 安装章节改为以 **npm 为主**，git / tag / 本地路径列为备选，
+  并逐条写明各自的升级语义。
+
+### Fixed
+
+- **`tools/release.mjs` 的 `--push` 一直是坏的**：`git()` 辅助函数对
+  `execFileSync` 的返回值无条件 `.trim()`，而 `stdio: 'inherit'`（push 用的）
+  不捕获 stdout、返回 `null`，于是 push 成功之后脚本立刻崩在
+  `Cannot read properties of null (reading 'trim')`。改为容忍 `null`。
+  这个 bug 让 `--publish` 永远走不到，是 v0.4.1 只发到 git、没发到 npm 的原因。
 
 ---
 

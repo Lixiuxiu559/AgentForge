@@ -33,7 +33,7 @@ Claude Code 用 `.claude-plugin/plugin.json` 的 `version` 字段判断用户是
 | 安装方式 | lockfile 里钉的是什么 | 更新语义 |
 |---|---|---|
 | `dsh plugin --profile web add /abs/path` → `link:` | 路径 | **直接读磁盘**，改动立即生效，版本号不参与 |
-| `dsh plugin --profile web add agentforge`（registry） | semver 范围 | **按 `package.json` 的 `version` 解析——这才是发版开关** |
+| `dsh plugin --profile web add dsh-agentforge`（npm） | semver 范围 | **按 `package.json` 的 `version` 解析——这才是发版开关** |
 | `dsh plugin --profile web add github:owner/repo` | **具体 commit** | 版本号**不参与**；`pnpm update` 会重解析到分支最新 commit |
 | `dsh plugin --profile web add github:owner/repo#v0.4.0` | 该 tag 的 commit | 钉死；`pnpm update` 报 `Already up to date`，不受分支变动影响 |
 

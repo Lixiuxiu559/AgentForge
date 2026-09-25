@@ -23,8 +23,8 @@ import { readFile, readdir } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { dirname, join, resolve } from 'node:path'
 
-/** Cordis 插件名。 */
-export const name = 'agentforge'
+/** Cordis 插件名。与 `package.json` 的 `name` 保持一致（doctor 会校验）。 */
+export const name = 'dsh-agentforge'
 
 /**
  * 硬依赖的服务。

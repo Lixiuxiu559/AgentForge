@@ -1,5 +1,5 @@
 {
-  "name": "agentforge",
+  "name": "dsh-agentforge",
   "version": "0.4.1",
   "description": "通用 agent 工作流与工程技能集，同时作为 Claude Code 插件与 DeepSeek Harness 插件分发。",
   "type": "module",
