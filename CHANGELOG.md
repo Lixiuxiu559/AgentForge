@@ -14,6 +14,14 @@
 
 ## [Unreleased]
 
+### Added
+
+- 
+
+---
+
+## [0.4.2] - 2026-09-25
+
 ### Changed
 
 - **npm 包名改为 `dsh-agentforge`**。原打算用 `agentforge`，被 npm 拒绝：
