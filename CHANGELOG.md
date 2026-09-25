@@ -16,7 +16,24 @@
 
 ### Added
 
-- 
+- **npm 分发**：`package.json` 补 `repository` / `homepage` / `bugs`，`release.mjs` 新增
+  `--publish`。registry 安装按 semver 解析，版本号这才真正成为 DSH 侧的发版开关——
+  在此之前 DSH 只能从 git 安装，而 git 依赖钉的是 commit，`pnpm update` 会重解析到
+  分支最新提交，等于「push 即发布」。
+
+### Fixed
+
+- **`docs/releasing.md` 关于 git 安装的说明有误**。原文称「git 安装时 pnpm 按 semver
+  解析，需 bump `package.json`」，实测不成立：`pnpm add github:owner/repo` 在 lockfile 里
+  钉的是**具体 commit**，`pnpm update` 会重解析到分支新 commit，全程与 `version` 字段无关
+  （实测 `7c35415…` → `5d143c6…`，装完版本号仍显示 `0.4.0`）。钉 tag 安装
+  （`github:owner/repo#v0.4.0`）则 `pnpm update` 报 `Already up to date`，不受影响。
+
+### Changed
+
+- README 的 DSH 安装章节原本只写本地路径，改为官方 `dsh plugin add github:` 装法，
+  并说明 `dsh plugin` 是对 pnpm 的透传、按已安装状态 reconcile `dsh.profile.bundles`。
+- 留档 `awesome-dsh-plugin` 投稿条目（[PR #5910](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5910)）。
 
 ---
 

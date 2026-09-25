@@ -25,18 +25,28 @@ Claude Code 用 `.claude-plugin/plugin.json` 的 `version` 字段判断用户是
 > Claude Code 只读 `plugin.json` 的值，**且不报警告** —— marketplace 里写的会被静默忽略，
 > 造成"明明改了版本号用户却没更新"的假象。
 
-## DSH 侧的机制：没有独立的版本开关
+## DSH 侧的机制：版本开关取决于装法
 
 `dsh plugin --profile <name> <args>` 是对 **pnpm 的透传**：在 profile 目录里跑 `pnpm <args>`，
 然后按**已安装状态**（不是依赖 diff）reconcile `dsh.profile.bundles`。
 
-| 安装方式 | 更新语义 |
-|---|---|
-| `dsh plugin --profile web add /abs/path` → `link:` | **直接读磁盘**，改动立即生效，版本号不参与 |
-| `dsh plugin --profile web add git+https://...` | pnpm 按 semver 解析，需 bump `package.json` |
-| registry 安装 | 同上 |
+| 安装方式 | lockfile 里钉的是什么 | 更新语义 |
+|---|---|---|
+| `dsh plugin --profile web add /abs/path` → `link:` | 路径 | **直接读磁盘**，改动立即生效，版本号不参与 |
+| `dsh plugin --profile web add agentforge`（registry） | semver 范围 | **按 `package.json` 的 `version` 解析——这才是发版开关** |
+| `dsh plugin --profile web add github:owner/repo` | **具体 commit** | 版本号**不参与**；`pnpm update` 会重解析到分支最新 commit |
+| `dsh plugin --profile web add github:owner/repo#v0.4.0` | 该 tag 的 commit | 钉死；`pnpm update` 报 `Already up to date`，不受分支变动影响 |
 
-所以**本地开发用 link 安装时，DSH 侧不需要发版就能拿到最新代码**；只有分发给他人（git / registry）时版本号才起作用。
+> ⚠️ **git 安装没有版本门控。** 实测（2026-09-26）：`pnpm add github:Lixiuxiu559/AgentForge`
+> 在 lockfile 里写的是 `…/tar.gz/<commit>`，`pnpm update agentforge` 会把它重解析到 main 的
+> 新 commit（`7c35415…` → `5d143c6…`），**装完版本号仍显示 `0.4.0`**。
+> 也就是说 **git 安装下「push 到 main」就等于发布**——这跟下面「日常开发 push 不 bump」
+> 的纪律直接冲突。想让 DSH 用户也受版本门控，只能走 **npm**（推荐）或 Release tarball。
+> 同理，`awesome-dsh-plugin` 的站点是按 `dsh plugin --profile web add github:<repo>` 生成
+> 安装命令的，所以**公开用户默认就是跟 main 的**。
+
+所以**本地开发用 link 安装时，DSH 侧不需要发版就能拿到最新代码**；
+分发给他人时，只有 **registry（npm）** 安装才让版本号真正成为开关。
 
 DSH 侧改动的生效条件见 `docs/architecture.md`：**新增 `agents/*.md` 必须重启 profile**
 （`patchReload: live` 只监听用户 patch 文件，不会重新 `apply()`）；技能不受影响，每次重扫。
@@ -54,6 +64,11 @@ git push
 **用户侧无感知。** 不需要打标签，不需要改版本号。
 
 CI 会在 push 时跑校验（见下），但**不会发版**。
+
+> ⚠️ 这条只对 **Claude Code 用户**和 **npm 安装的 DSH 用户**成立。
+> **从 git 安装的 DSH 用户不受版本号保护**：他们 `pnpm update` 就会拿到 main 的最新
+> commit（见上）。所以如果你在 main 上推了半成品，git 安装的用户会直接吃到。
+> 想彻底避免，就让所有人都走 npm。
 
 ---
 
@@ -81,6 +96,17 @@ git push --follow-tags
 ```bash
 node tools/release.mjs patch --push
 ```
+
+加 `--publish` 连 **npm 发布**一起做（必须和 `--push` 同时给，避免 npm 有版本、
+远程没标签）：
+
+```bash
+node tools/release.mjs patch --push --publish
+```
+
+`--publish` 在打标签并推送**之后**才跑 `npm publish`，所以 npm 上的版本和 git tag
+永远指向同一份代码。npm 是不可逆的——同一个版本号发出去就收不回来——所以它是显式开关，
+不跟 `--push` 自动绑定。
 
 加 `--dry-run` 只预览不落盘：
 

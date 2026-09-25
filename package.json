@@ -5,6 +5,14 @@
   "type": "module",
   "main": "src/index.js",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lixiuxiu559/AgentForge.git"
+  },
+  "homepage": "https://github.com/Lixiuxiu559/AgentForge#readme",
+  "bugs": {
+    "url": "https://github.com/Lixiuxiu559/AgentForge/issues"
+  },
   "keywords": [
     "claude-code",
     "claude-code-plugin",
