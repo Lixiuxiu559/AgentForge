@@ -47,11 +47,26 @@ claude plugin uninstall agentforge            # 卸载
 
 ### DeepSeek Harness
 
+从 GitHub 装（推荐，无需克隆）：
+
 ```bash
-dsh plugin --profile web add /path/to/AgentForge
+dsh plugin --profile web add github:Lixiuxiu559/AgentForge
 ```
 
+`dsh plugin` 是 **pnpm 的转发器**：它在 profile 目录（`$DSH_HOME/profiles/<name>`）里执行
+`pnpm <你的参数>`，然后读回 profile 的 `package.json` —— 凡是解析到声明了 `dsh.bundle`
+的依赖，就自动追加进 `dsh.profile.bundles` 层栈（本仓库已声明，见 `package.json`）。
+所以参数可以是 pnpm 接受的任何 spec：
+
+| 装法 | 命令 |
+|---|---|
+| GitHub 简写 | `dsh plugin --profile web add github:Lixiuxiu559/AgentForge` |
+| git URL | `dsh plugin --profile web add git+https://github.com/Lixiuxiu559/AgentForge.git` |
+| 本地目录（开发用） | `dsh plugin --profile web add /path/to/AgentForge` |
+
 装完后**重启该 profile**（`patchReload: startup` 的 profile 必须重启，`live` 的会自动重载）。
+本仓库没有 `prepare` 脚本，因此从 git 安装**不需要** `allowBuilds` 构建授权。
+
 卸载：
 
 ```bash
@@ -63,6 +78,9 @@ dsh plugin --profile web remove agentforge
 ```bash
 dsh --profile web --dump-config | grep -A2 agentforge
 ```
+
+> 已经用 `link:` 装过本地目录的，先 `dsh plugin --profile web remove agentforge`
+> 再按上面的 GitHub 方式重装，否则 profile 里会同时留着 `link:` 记录。
 
 ---
 

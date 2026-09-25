@@ -1,0 +1,23 @@
+# awesome-dsh-plugin 投稿条目
+#
+# 用法：把下面的内容（去掉本注释块）作为
+#   data/plugins/Lixiuxiu559__AgentForge.yml
+# 加进 https://github.com/awesome-dsh-plugin/awesome-dsh-plugin 并开 PR。
+# 一个 PR 加一个文件就是全部投稿；两个 README 由 CI 在合并后自动重新生成，不要手工编辑。
+#
+# 收录要求对照（contributing.md）：
+#   ✅ package.json 声明 dsh.bundle（root 包，patch 指向 ./cordis.patch.yml）
+#   ✅ 仓库有真实可用代码（src/index.js + 6 技能 + 5 子 agent）
+#   ✅ 仓库创建满 1 天（GitHub created_at = 2026-09-23）
+#   ✅ 已加 dsh-plugin topic
+#   ✅ 描述与代码一致：6 技能 / 1 个 agentforge 工具 / 5 子 agent 均已实测
+#   ✅ 非纯聚合包：零 dependencies，自带桥接代码，不是一份依赖清单
+#
+# ⚠️ 描述里含 ": "（冒号加空格）时必须加引号，否则 YAML 会把它当成嵌套键。
+
+url: https://github.com/Lixiuxiu559/AgentForge
+name: Lixiuxiu559/AgentForge
+category: workflow
+description:
+  en: 'One repository that installs as both a Claude Code plugin and a DSH plugin: six engineering skills (research, architecture scouting, implementation orchestration, three-axis diff review, complexity audit, mutation testing) plus one agentforge tool dispatching five subagents.'
+  zh: '同一个仓库同时可装为 Claude Code 插件与 DSH 插件：6 个工程技能（调研、架构侦察、实施编排、三轴 diff 评审、复杂度审计、突变测试），外加一个 agentforge 工具派发 5 个子 agent。'
