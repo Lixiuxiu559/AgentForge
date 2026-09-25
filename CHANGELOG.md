@@ -16,6 +16,14 @@
 
 ### Added
 
+- 
+
+---
+
+## [0.4.1] - 2026-09-25
+
+### Added
+
 - **npm 分发**：`package.json` 补 `repository` / `homepage` / `bugs`，`release.mjs` 新增
   `--publish`。registry 安装按 semver 解析，版本号这才真正成为 DSH 侧的发版开关——
   在此之前 DSH 只能从 git 安装，而 git 依赖钉的是 commit，`pnpm update` 会重解析到
