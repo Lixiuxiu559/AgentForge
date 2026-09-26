@@ -14,6 +14,23 @@
 
 ## [Unreleased]
 
+### Added
+
+- **发布流程的供应链加固**，与 OIDC 发布配套：
+
+  - 两个 workflow 的第三方 action 一律**钉 commit SHA**（不用可移动的 tag），
+    并新增 `.github/dependabot.yml` 每周把 pin 往前推——
+    **钉死不会自己更新，没有 Dependabot 就是烂在原地**，拿不到安全修复。
+  - **幂等发布**：发布前查该版本是否已存在于 npm，存在就跳过。
+    重跑工作流、或 tag 被重新推送时不会撞「版本已存在」而红掉。
+  - **并发互斥**：同一个 tag 只允许一个发布在跑，且 `cancel-in-progress: false`
+    （已开始的发布不该被后来的取消）。
+  - **自动创建 GitHub Release**，正文取自 CHANGELOG 对应段落，
+    避免 Release 页和 CHANGELOG 各说各话。新增 `tools/changelog-section.mjs`
+    负责抽取，并在 `validate.yml` 里提前验一次，免得发布当天才发现抽不出来。
+  - `publish.yml` 权限收敛为 `contents: write`（建 Release）+
+    `id-token: write`（OIDC），其余不授。
+
 ### Changed
 
 - **npm 发布改为 CI/CD（OIDC 可信发布），移除本机发布路径**。新增

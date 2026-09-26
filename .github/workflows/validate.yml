@@ -14,9 +14,10 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      # 第三方 action 钉 commit SHA，尾注版本号供 Dependabot 识别（见 .github/dependabot.yml）
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '20'
 
@@ -32,8 +33,20 @@ jobs:
         run: |
           node --check tools/doctor.mjs
           node --check tools/release.mjs
+          node --check tools/changelog-section.mjs
           node --check src/index.js
           node --check skills/complexity-audit/scripts/crap.js
+
+      - name: CHANGELOG 段落提取可用
+        # publish.yml 用它生成 Release 正文；这里提前验，免得发布当天才发现抽不出来。
+        run: |
+          V=$(node -e "console.log(require('./.claude-plugin/plugin.json').version)")
+          if node tools/changelog-section.mjs "$V" >/dev/null 2>&1; then
+            echo "✅ CHANGELOG 有 [$V] 段落"
+          else
+            echo "::error::CHANGELOG.md 缺少 [$V] 段落，发布时无法生成 Release 正文"
+            exit 1
+          fi
 
       - name: 版本号与 CHANGELOG 一致性
         run: |

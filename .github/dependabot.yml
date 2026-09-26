@@ -1,0 +1,18 @@
+version: 2
+
+updates:
+  # 工作流里的第三方 action 都钉死在 commit SHA 上（防 tag 被移动的供应链攻击）。
+  # 但钉死之后不会自己更新，必须有东西把 pin 往前推——否则就是烂在原地，
+  # 拿不到安全修复。Dependabot 会读 `uses: owner/repo@<sha> # v4` 尾注里的版本号，
+  # 在同一个大版本内有新提交时提 PR。
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: 'chore(ci)'
+    labels:
+      - dependencies
+
+  # 本项目是零依赖的（package.json 没有 dependencies/devDependencies），
+  # 所以不配 npm ecosystem——配了也不会有任何更新，只是噪音。

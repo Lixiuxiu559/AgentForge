@@ -23,16 +23,23 @@ on:
       - 'v*'
 
 permissions:
-  contents: read
+  contents: write # 创建 GitHub Release
   id-token: write # OIDC 可信发布必需
+
+# 同一个 tag 只允许一个发布在跑。发布不可逆，并发没有意义且危险；
+# cancel-in-progress 保持 false——已经开始的发布不该被后来的取消掉。
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
+      # 第三方 action 一律钉 commit SHA，不用可移动的 tag。
+      # 尾注的版本号只是给人看的，Dependabot 会据此提更新 PR（见 .github/dependabot.yml）。
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
@@ -61,7 +68,39 @@ jobs:
       - name: 确认包内容（不发布）
         run: npm pack --dry-run
 
+      - name: 该版本是否已发布
+        # 幂等：重跑工作流、或 tag 被重新推送时，不要撞上「版本已存在」而红掉。
+        # 已发布就跳过发布步骤，后面的 Release 创建仍然会跑。
+        id: published
+        run: |
+          name="$(node -p "require('./package.json').name")"
+          version="$(node -p "require('./package.json').version")"
+          if npm view "${name}@${version}" version >/dev/null 2>&1; then
+            echo "::notice::${name}@${version} 已存在于 npm，跳过发布"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "${name}@${version} 尚未发布"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: 发布
+        if: steps.published.outputs.skip != 'true'
         # publishConfig.access=public 已在 package.json 里声明，无需 --access。
         # provenance 由可信发布自动附带，无需 --provenance。
         run: npm publish
+
+      - name: 创建 GitHub Release
+        # 正文取自 CHANGELOG 对应段落，让 Release 页和 CHANGELOG 不会各说各话。
+        # 独立于上面的 skip 判断：即使包早就发过了，这个 tag 也该有自己的 Release。
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            echo "::notice::Release $GITHUB_REF_NAME 已存在，跳过"
+            exit 0
+          fi
+          node tools/changelog-section.mjs "$version" > /tmp/release-notes.md
+          gh release create "$GITHUB_REF_NAME" \
+            --title "$GITHUB_REF_NAME" \
+            --notes-file /tmp/release-notes.md

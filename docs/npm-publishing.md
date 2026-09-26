@@ -82,9 +82,34 @@ node tools/release.mjs patch --push
 | tag 与 `package.json` 版本一致性 | 不一致就中止（手工打的标签会在这里被拦下） |
 | `node tools/doctor.mjs` | 校验 `files` 白名单没漏掉 `skills/` `agents/` |
 | `npm pack --dry-run` | 打印将发布的内容 |
+| 该版本是否已发布 | **幂等**：已存在就跳过发布，重跑工作流不会红 |
 | `npm publish` | OIDC 可信发布，自动附带 provenance |
+| 创建 GitHub Release | 正文取自 CHANGELOG 对应段落 |
 
 工作流只监听 tag、不提供手动触发——发布不可逆，入口越少越好。
+
+### 供应链加固（与发布流程配套）
+
+| 措施 | 位置 | 说明 |
+|---|---|---|
+| 第三方 action 钉 commit SHA | 两个 workflow | 不用可移动的 tag，防 tag 被指向恶意提交 |
+| Dependabot 每周更新 pin | `.github/dependabot.yml` | **钉死不会自己更新，没有这个就是烂在原地**，拿不到安全修复 |
+| 最小权限 | `publish.yml` | `contents: write`（建 Release）+ `id-token: write`（OIDC），其余不授 |
+| 并发互斥 | `publish.yml` | 同一个 tag 只允许一个发布在跑，且不取消已开始的 |
+| 幂等 | `publish.yml` | 重跑不会撞「版本已存在」 |
+| provenance | OIDC 自带 | 无需 `--provenance` |
+
+### 有意没做的（以及为什么）
+
+- **私有 registry**：不适用——本项目就是要公开发布。
+- **生产环境审批门**（GitHub Environment + required reviewer）：Coveo 那类公司用它卡生产发布，
+  但单人项目是自己批自己，纯摩擦。要加的话在 `publish` job 上挂
+  `environment: npm-publish` 并在仓库设置里配审批人。
+- **分阶段 tag（alpha/beta → latest）**：单包项目用不上；真要做还得先让
+  `release.mjs` 支持预发布版本号（目前它的 SEMVER 正则只接受 `x.y.z`）。
+- **monorepo 拓扑发布**：不适用——单包仓库。
+- **harden-runner**：收益边际，且要多钉一个第三方 action。不值得。
+
 
 ---
 
