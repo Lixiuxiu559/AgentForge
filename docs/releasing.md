@@ -41,12 +41,37 @@ Claude Code 用 `.claude-plugin/plugin.json` 的 `version` 字段判断用户是
 > 在 lockfile 里写的是 `…/tar.gz/<commit>`，`pnpm update agentforge` 会把它重解析到 main 的
 > 新 commit（`7c35415…` → `5d143c6…`），**装完版本号仍显示 `0.4.0`**。
 > 也就是说 **git 安装下「push 到 main」就等于发布**——这跟下面「日常开发 push 不 bump」
-> 的纪律直接冲突。想让 DSH 用户也受版本门控，只能走 **npm**（推荐）或 Release tarball。
-> 同理，`awesome-dsh-plugin` 的站点是按 `dsh plugin --profile web add github:<repo>` 生成
-> 安装命令的，所以**公开用户默认就是跟 main 的**。
+> 的纪律直接冲突。同理，`awesome-dsh-plugin` 的站点是按
+> `dsh plugin --profile web add github:<repo>` 生成安装命令的，
+> 所以**公开用户默认就是跟 main 的**。
+
+**这不是理论。** `dshmarket` 判断「有没有更新」的逻辑（`dshmarket/lib/updates.js`）是：
+
+```js
+// github 安装：拿钉住的 commit 和 git HEAD 比
+const current = githubCommitOfTarget(spec) ?? lockCommits.get(`github.com/${repo}`) ?? null;
+const latest  = await resolveHeadCommit(repo, ...);
+updateAvailable: current !== null && latest !== null && current !== latest
+```
+
+即 **`updateAvailable = 钉住的 commit !== HEAD`**。所以 main 每推一次，
+用户的市场页就显示一次「有更新」，点一下就拿到新代码——**不需要你发版**。
+
+| 装法 | 市场能否检测到更新 | 更新语义 |
+|---|---|---|
+| `github:owner/repo` | ✅ 比 commit 与 HEAD | 跟 main，push 即发布 |
+| npm | ✅ 查 npm `latest` | **版本门控** |
+| Release tarball | ❌ 查 npm 查不到 → 永远 false | 只能手动升级 |
+
+（tarball 那行是 `repoFromTarget()` 的刻意设计：它**明确不识别 Release 资产 URL**，
+因为同一个 URL 在不同时间可能返回不同字节。代码注释原话：
+"This is FOR DISPLAY/LOOKUP PURPOSES ONLY … MUST NOT be used for any decision that
+affects installation, rollback, duplicate detection"。）
 
 所以**本地开发用 link 安装时，DSH 侧不需要发版就能拿到最新代码**；
 分发给他人时，只有 **registry（npm）** 安装才让版本号真正成为开关。
+**不发 npm 的代价就是「main 即发布」**，因此分支策略需要相应考虑——
+见下方「分支策略」。
 
 DSH 侧改动的生效条件见 `docs/architecture.md`：**新增 `agents/*.md` 必须重启 profile**
 （`patchReload: live` 只监听用户 patch 文件，不会重新 `apply()`）；技能不受影响，每次重扫。

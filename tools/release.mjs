@@ -190,8 +190,9 @@ if (PUSH) {
   git(['push', '--follow-tags'], { stdio: 'inherit' })
   console.log(`\n🚀 已推送 ${tag} 到远程。`)
   console.log(`   Claude Code 用户执行 /plugin update 即可拿到 ${next}。`)
-  console.log(`   npm 发布由 tag 触发的 GitHub Actions 完成，见 docs/npm-publishing.md。`)
+  console.log(`   DSH 用户（github: 安装）跑 dsh plugin --profile <p> update 即可拿到。`)
 } else {
   console.log(`\n下一步：git push --follow-tags\n`)
-  console.log(`（推送 tag 会触发 npm 发布；或在下次发版时加 --push 自动推送）\n`)
+  console.log(`（或在下次发版时加 --push 自动推送）\n`)
 }
+// npm 分发当前已停用，见 docs/npm-publishing.md。启用后这里再提示发布流程。

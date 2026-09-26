@@ -1,11 +1,25 @@
 name: Publish to npm
 
-# 由 `node tools/release.mjs <bump> --push` 打标签并推送触发。
+# ⛔ 当前已停用（2026-09-26）。
+#
+# 决定先不发 npm —— 没有下载量可以接受。但工作流若继续监听 tag，每次
+# `release.mjs --push` 推 tag 都会触发它并**必然失败**（可信发布者没配、
+# 包名也不属于本账号），等于每次发版挂一个红叉。
+#
+# 所以把触发方式从「tag 推送」改成「仅手动」，这样 tag 不再触发它，
+# 而文件本身保留下来——将来要发 npm 时，把下面的 `on:` 改回：
+#
+#   on:
+#     push:
+#       tags:
+#         - 'v*'
+#
+# 并把 docs/npm-publishing.md 里的前置条件（首次引导 + 配置可信发布者）走完。
 #
 # 认证走 npm Trusted Publishing（OIDC）：不需要 NPM_TOKEN，每次发布用 GitHub 的
 # id-token 换一个短时效凭据，并自动附带 provenance 证明。
 #
-# ⚠️ 两个前置条件，缺一不可：
+# ⚠️ 启用前必须满足两个条件，缺一不可：
 #
 #   1. npmjs.com 上该包已配置「可信发布者」，指向
 #        仓库 Lixiuxiu559/AgentForge + 工作流 publish.yml
@@ -13,14 +27,11 @@ name: Publish to npm
 #
 #   2. **OIDC 无法发布包的第一个版本** —— 可信发布者配置挂在包自己的设置页上，
 #      包必须先存在。所以首次发布要一次性引导，见 docs/npm-publishing.md。
-#      引导完成后本工作流即可全自动。
 #
-# 本工作流只在 tag 上跑，不接受手动触发：发布不可逆，入口越少越好。
+# 另注：npm 现在默认「暂存发布」，直接发布要显式开启。见 docs/npm-publishing.md。
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
 
 permissions:
   contents: write # 创建 GitHub Release

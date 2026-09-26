@@ -1,5 +1,20 @@
 # npm 分发
 
+> ## ⛔ 当前状态：已停用（2026-09-26）
+>
+> 决定**先不发 npm**——没有下载量可以接受。`.github/workflows/publish.yml`
+> 的触发方式已从「tag 推送」改为「仅手动」，避免每次发版挂红叉。
+>
+> 本文件保留完整的方案与前置条件，将来要启用时照它走即可。
+>
+> **停用后的实际分发方式**：DSH 用户走 `github:` 安装（awesome 市场默认生成的就是
+> 这个命令），而 `dshmarket` 对 github 安装的更新判断是
+> **`钉住的 commit !== HEAD`**（`dshmarket/lib/updates.js`），
+> 所以 **main 每推一次，市场就显示一次「有更新」**——即 push 即发布。
+> 这是不发 npm 的直接代价，见 [`releasing.md`](releasing.md) 关于分支策略的讨论。
+
+---
+
 AgentForge 通过 npm 分发给 DSH 用户。registry 安装按 semver 解析 `package.json`
 的 `version`，所以**版本号是 DSH 侧真正的发版开关**——这是它与 git 安装的关键区别
 （git 依赖钉的是 commit，`pnpm update` 会跟到分支最新提交，等于 push 即发布）。
