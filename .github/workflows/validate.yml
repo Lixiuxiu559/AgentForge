@@ -13,13 +13,20 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 测当前仍受支持的两条 LTS 线（v22 维护期 / v24 活跃期）。
+        # 原先只测 Node 20 —— 它已于 2026-04-30 EOL，EOL 的运行时不该再当验证目标。
+        # 本项目零依赖，跑一遍只要十几秒，所以测两条线的成本可以忽略。
+        node: ['22', '24']
     steps:
       # 第三方 action 钉 commit SHA，尾注版本号供 Dependabot 识别（见 .github/dependabot.yml）
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '20'
+          node-version: ${{ matrix.node }}
 
       - name: 结构与资产校验
         run: node tools/doctor.mjs

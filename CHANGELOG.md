@@ -30,6 +30,12 @@
     负责抽取，并在 `validate.yml` 里提前验一次，免得发布当天才发现抽不出来。
   - `publish.yml` 权限收敛为 `contents: write`（建 Release）+
     `id-token: write`（OIDC），其余不授。
+  - **CI 运行时升到仍受支持的 LTS**：`validate.yml` 原先只测 Node 20，
+    而它已于 2026-04-30 EOL。改为测 `22` / `24` 两条 LTS 线
+    （本项目零依赖，跑一遍十几秒，矩阵成本可忽略）。
+  - 顺带把两个 action 从 v4 升到当前版本（`checkout` v7.0.1、
+    `setup-node` v7.0.0）。后者尤其相关：**v7 移除了 v4 会导出的占位
+    `NODE_AUTH_TOKEN`**，而那正是 OIDC 可信发布里可能干扰认证的东西。
 
 ### Changed
 
