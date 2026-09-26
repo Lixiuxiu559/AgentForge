@@ -78,22 +78,58 @@ DSH 侧改动的生效条件见 `docs/architecture.md`：**新增 `agents/*.md` 
 
 ---
 
-## 日常开发：push 不 bump
+## 分支策略：main 是发布通道，dev 是开发通道
+
+**为什么需要 dev**：DSH 用户走 `github:` 安装，而市场判断更新的依据是
+`钉住的 commit !== HEAD`（见上）。也就是说 **main 就是发布通道**——
+在 main 上推什么，用户点一次「更新」就拿到什么。
+
+所以「攒两三个功能再发一次版本」这个诉求，只能靠分支实现：
+
+| 分支 | 角色 | 谁能拿到 |
+|---|---|---|
+| `dev` | 日常开发 | 只有你自己（CI 会跑校验） |
+| `main` | 已发布状态 | 所有用户 |
+
+### 日常开发
 
 ```bash
+git switch dev
 git add -A
 git commit -m "feat: ..."
 git push
 ```
 
-**用户侧无感知。** 不需要打标签，不需要改版本号。
+**用户侧无感知。** 不需要打标签，不需要改版本号。CI 在 `dev` 上照样跑校验
+（`validate.yml` 的 push 触发包含 `dev`），写坏了立刻能看到。
 
-CI 会在 push 时跑校验（见下），但**不会发版**。
+### 发版（攒够了才做）
 
-> ⚠️ 这条只对 **Claude Code 用户**和 **npm 安装的 DSH 用户**成立。
-> **从 git 安装的 DSH 用户不受版本号保护**：他们 `pnpm update` 就会拿到 main 的最新
-> commit（见上）。所以如果你在 main 上推了半成品，git 安装的用户会直接吃到。
-> 想彻底避免，就让所有人都走 npm。
+```bash
+git switch main
+git merge --no-ff dev                  # 把攒的功能带过来
+node tools/release.mjs patch --push    # bump 两端版本 + 提交 + 打标签 + 推送
+git switch dev
+git merge main                         # 把 bump 提交同步回 dev
+```
+
+> **忘了最后一步基本无害**：main 上的 bump 提交 dev 没碰过，下次 merge 不会冲突，
+> 只是 dev 的版本号落后——开发时无所谓。但养成习惯更省心。
+
+> `release.mjs` 目前**强制要求当前分支是 main**（`if (branch !== 'main') die(...)`）。
+> 如果你觉得「同步回 dev」这步烦，可以给它加 `--branch` 参数，改成在 dev 上发版
+> 再快进 main。
+
+### 注意：默认分支仍是 main
+
+GitHub 的默认分支保持 `main`——它是仓库的门面，也是 awesome 列表指向的地方。
+开发时手动 `git switch dev` 即可。
+
+### 分支保护（可选，未启用）
+
+如果想从机制上防止误推 main，可以在仓库设置里给 `main` 加保护规则
+（Settings → Branches）。但对单人项目来说，强制 PR 会显著增加每次发版的步骤，
+所以目前只靠约定，没有启用。
 
 ---
 

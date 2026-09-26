@@ -6,7 +6,9 @@ name: validate
 
 on:
   push:
-    branches: [main]
+    # dev 也要跑：日常开发在 dev 上，若只监听 main，写坏了要等到开 PR
+    # 那一刻才发现。分支策略见 docs/releasing.md。
+    branches: [main, dev]
   pull_request:
   workflow_dispatch:
 

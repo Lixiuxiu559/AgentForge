@@ -37,6 +37,12 @@
     `setup-node` v7.0.0）。后者尤其相关：**v7 移除了 v4 会导出的占位
     `NODE_AUTH_TOKEN`**，而那正是 OIDC 可信发布里可能干扰认证的东西。
 
+- **新增 `dev` 分支**：`main` 作为发布通道，`dev` 作为开发通道。
+  起因是不发 npm 之后 `main` 就是用户看到的版本——`dshmarket` 判断更新用的是
+  `钉住的 commit !== HEAD`，所以 main 上推什么、用户点一次更新就拿到什么。
+  「攒两三个功能再发版」只能靠分支实现。`validate.yml` 的 push 触发相应
+  加上 `dev`，否则日常开发完全没有 CI。详见 `docs/releasing.md`。
+
 ### Changed
 
 - **npm 发布改为 CI/CD（OIDC 可信发布），移除本机发布路径**。新增
