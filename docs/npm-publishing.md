@@ -123,18 +123,61 @@ npm 的配置优先级（高 → 低），**已实测**：
 | 4 | **用户级** `~/.npmrc`（或 `--userconfig` 指向的文件） | 默认 |
 | 5 | 全局 `<prefix>/etc/npmrc` | — |
 
-### 方案 A：`--userconfig`（推荐）
+### 推荐做法：`npm-account` + `prepublishOnly` 钩子
 
-每条命令显式指定用哪份凭据，互不干扰：
+手动指定 `--userconfig` 的问题是**你得每次都记得加**。并行开发时迟早会忘，
+而 `npm publish` 不可逆。所以推荐两层防护：
+
+**第 1 层 · 凭据集中存放，按项目选账号**
+
+工具装在 `~/.local/bin/npm-account`（已在 PATH 上），凭据存 `~/.npm-accounts/<用户名>.npmrc`
+（chmod 600），与 `~/.npmrc` 完全隔离：
 
 ```bash
-npm whoami                                # → lejugym（公司）
-npm whoami --userconfig ~/.npmrc-personal # → 你的个人账号
+npm-account add <用户名>          # 保存 token（隐藏输入，存好即校验身份）
+npm-account list                  # 列出账号 + 凭据是否有效 + 当前项目绑定谁
+cd <项目> && npm-account use <用户名>   # 写项目根的 .npm-account
+npm-account whoami                # 看本项目解析到谁，并实测
+npm-account publish               # 自动用对账号发布
+npm-account run <npm 参数...>     # 用对账号执行任意 npm 命令
+```
 
+**第 2 层 · 发布前强制校验（关键）**
+
+在 `package.json` 里挂钩子：
+
+```jsonc
+{
+  "scripts": {
+    "prepublishOnly": "npm-account guard"
+  }
+}
+```
+
+`prepublishOnly` 在**任何** `npm publish` 之前运行，退出非 0 就中止发布。
+已实测：项目 `.npm-account` 要求 `another-user`、环境实际是 `lejugym` 时，
+**裸敲 `npm publish` 会被直接拦下**：
+
+```
+❌ 发布身份不符：本项目要求 another-user，当前是 lejugym
+npm error command failed
+npm error command sh -c npm-account guard
+```
+
+钩子还继承外层的 `--userconfig`（通过 `npm_config_userconfig` 传递），
+所以它看到的身份就是真正要发布的那个身份。
+
+> **这个钩子拦得住裸敲的 `npm publish`，是整套方案里最重要的部分。**
+> 只靠「记得用包装命令」不算防护。
+
+### 方案 A：`--userconfig`（手动，等价于工具内部做的事）
+
+```bash
+npm whoami  --userconfig ~/.npmrc-personal
 npm publish --userconfig ~/.npmrc-personal
 ```
 
-**不会修改 `~/.npmrc`**，公司 token 原封不动。这是本项目采用的方案。
+**不会修改 `~/.npmrc`**，公司 token 原封不动。
 
 ### 方案 B：项目级 `./.npmrc`（按目录自动切）
 
@@ -150,6 +193,7 @@ cd ~            # 离开目录即恢复
 ```
 
 ⚠️ **必须加进 `.gitignore`**，否则 token 会被提交进仓库。
+比集中存放更容易泄漏，所以不是首选。
 
 ### 方案 C：环境变量（会话级）
 
@@ -171,7 +215,8 @@ unset NPM_CONFIG_USERCONFIG
 任何操作前先确认身份，避免发错账号：
 
 ```bash
-npm whoami --userconfig ~/.npmrc-personal
+npm-account whoami        # 项目绑定 + 实测身份
+npm-account list          # 所有账号的凭据状态
 ```
 
 ---
@@ -198,15 +243,30 @@ npm whoami --userconfig ~/.npmrc-personal
 
 `id: agentforge`、技能 provider 名、工具名 `agentforge` **都不动**。
 
-**3. 校验 + 发布**：
+**3. 把项目绑定到该账号，并挂上发布前校验**：
 
 ```bash
-node tools/doctor.mjs                                   # 必须 0 error 0 warn
-node tools/release.mjs patch --push                     # git 侧先发
-npm publish --userconfig ~/.npmrc-personal              # npm 侧手工发
+npm-account add <USER>        # 保存个人账号凭据（会立即校验身份）
+npm-account use <USER>        # 在仓库根写 .npm-account
 ```
 
-> **换 scoped 名时不要用 `release.mjs --publish`**：它走默认 `~/.npmrc`（公司 token）。
+然后在 `package.json` 的 `scripts` 里加：
+
+```jsonc
+"prepublishOnly": "npm-account guard"
+```
+
+**4. 校验 + 发布**：
+
+```bash
+node tools/doctor.mjs                    # 必须 0 error 0 warn
+node tools/release.mjs patch --push      # git 侧先发
+npm-account publish                      # npm 侧：自动用对账号，并先校验身份
+```
+
+> **换 scoped 名时不要用 `release.mjs --publish`**：它走默认 `~/.npmrc`（公司 token），
+> 会发到错误账号。用 `npm-account publish`。
+> 挂了 `prepublishOnly` 钩子后，即使误用 `release.mjs --publish` 也会被拦下。
 
 **4. 切换本机 profile**：
 
