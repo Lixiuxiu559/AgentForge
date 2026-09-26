@@ -14,9 +14,21 @@
 
 ## [Unreleased]
 
-### Added
+### Changed
 
-- 
+- **npm 发布改为 CI/CD（OIDC 可信发布），移除本机发布路径**。新增
+  `.github/workflows/publish.yml`：tag 推送触发，用 GitHub 的 id-token 换短时效
+  凭据发布，自动附带 provenance；`release.mjs` 的 `--publish` 相应移除，
+  它现在只负责 git 侧（bump → 提交 → 打标签 → 推送）。
+
+  这么改是因为 npm 的 auth **按 registry 而非按账号**存储：实测同一个
+  `registry.npmjs.org` 写两行 token 只有一行生效，按 scope 配 `@a:registry` /
+  `@b:registry` 也不行（token 键仍是同一个）。两个 npmjs.com 账号无法同时生效，
+  只能切换——而 `npm publish` 不可逆，切错就发错账号。交给 CI 后本机不需要任何
+  npm 长期凭据。
+
+  ⚠️ 已知限制：**OIDC 无法发布包的第一个版本**（可信发布者配置挂在包自己的设置页上，
+  包必须先存在）。首次发布需一次性引导，步骤见 `docs/npm-publishing.md`。
 
 ---
 

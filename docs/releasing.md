@@ -97,20 +97,10 @@ git push --follow-tags
 node tools/release.mjs patch --push
 ```
 
-加 `--publish` 连 **npm 发布**一起做（必须和 `--push` 同时给，避免 npm 有版本、
-远程没标签）：
-
-```bash
-node tools/release.mjs patch --push --publish
-```
-
-`--publish` 在打标签并推送**之后**才跑 `npm publish`，所以 npm 上的版本和 git tag
-永远指向同一份代码。npm 是不可逆的——同一个版本号发出去就收不回来——所以它是显式开关，
-不跟 `--push` 自动绑定。
-
-> `--publish` 用的是默认 `~/.npmrc` 里的 token。**需要换账号或换 scope 发布时不要用它**，
-> 手工跑 `npm publish --userconfig <你的文件>`。账号、scope 与 token 隔离的完整说明见
-> [`npm-publishing.md`](npm-publishing.md)。
+**`release.mjs` 不发布 npm。** 它只做 git 侧：bump 两端版本 → 提交 → 打标签 → 推送。
+推送 tag 会触发 [`.github/workflows/publish.yml`](../.github/workflows/publish.yml)，
+由 CI 通过 OIDC 可信发布把包发到 npm——**本机不需要任何 npm 凭据**。
+为什么不这么做、以及首次发布怎么引导，见 [`npm-publishing.md`](npm-publishing.md)。
 
 加 `--dry-run` 只预览不落盘：
 

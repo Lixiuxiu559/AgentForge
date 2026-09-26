@@ -9,14 +9,17 @@
  *                                link 安装直接读磁盘；**git 安装钉的是 commit，与版本号无关**
  *                                （`pnpm update` 会重解析到分支最新 commit）。见 docs/releasing.md
  *
+ * **本脚本不发布 npm。** 它只 bump 版本、提交、打标签、推送；npm 那一侧由
+ * `.github/workflows/publish.yml` 在 tag 推送后经 OIDC 可信发布完成。
+ * 见 docs/npm-publishing.md。
+ *
  * 用法：
  *   node tools/release.mjs patch              # 0.1.0 -> 0.1.1
  *   node tools/release.mjs minor              # 0.1.0 -> 0.2.0
  *   node tools/release.mjs major              # 0.1.0 -> 1.0.0
  *   node tools/release.mjs 0.2.3              # 显式版本
  *   node tools/release.mjs patch --dry-run    # 只预览
- *   node tools/release.mjs patch --push       # 发版并推送
- *   node tools/release.mjs patch --push --publish   # 发版 + 推送 + 发 npm
+ *   node tools/release.mjs patch --push       # 发版、打标签并推送（触发 npm 发布）
  *
  * 退出码：0 = 成功；1 = 前置检查失败或参数错误
  */
@@ -37,7 +40,6 @@ const bump = positional[0]
 
 const DRY = flags.has('--dry-run')
 const PUSH = flags.has('--push')
-const PUBLISH = flags.has('--publish')
 
 const die = (msg, hint) => {
   console.error(`\n❌ ${msg}`)
@@ -57,13 +59,16 @@ const SEMVER = /^(\d+)\.(\d+)\.(\d+)$/
 /* ─────────────────── 参数 ─────────────────── */
 
 if (!bump) {
-  die('缺少版本参数', '用法：node tools/release.mjs <patch|minor|major|x.y.z> [--dry-run] [--push] [--publish]')
+  die('缺少版本参数', '用法：node tools/release.mjs <patch|minor|major|x.y.z> [--dry-run] [--push]')
 }
 
-// npm 是不可逆的：同一个版本号发出去就收不回来。要求同时给 --push，
-// 免得出现「npm 上有 0.4.1、远程却没有 v0.4.1 标签」这种对不上的状态。
-if (PUBLISH && !PUSH) {
-  die('--publish 必须和 --push 一起用', '例如：node tools/release.mjs patch --push --publish')
+// 显式拦截已移除的 --publish。不拦的话它会被静默忽略，敲的人以为发出去了，
+// 而 npm 那边其实什么都没发生——这类「以为做了其实没做」最难排查。
+if (flags.has('--publish')) {
+  die(
+    '--publish 已移除，本脚本不再发布 npm',
+    'npm 发布改由 CI 完成：--push 推送 tag 后会触发 .github/workflows/publish.yml。见 docs/npm-publishing.md',
+  )
 }
 
 /* ─────────────────── 前置检查 ─────────────────── */
@@ -143,7 +148,6 @@ if (DRY) {
   console.log('--dry-run：未做任何修改。')
   console.log(`将要执行：bump plugin.json 与 package.json ${current} → ${next}，`)
   console.log(`          提交 chore(release): ${tag}，打标签 ${tag}`)
-  if (PUBLISH) console.log(`          推送 --follow-tags，并 npm publish ${next}`)
   console.log()
   process.exit(0)
 }
@@ -186,24 +190,8 @@ if (PUSH) {
   git(['push', '--follow-tags'], { stdio: 'inherit' })
   console.log(`\n🚀 已推送 ${tag} 到远程。`)
   console.log(`   Claude Code 用户执行 /plugin update 即可拿到 ${next}。`)
+  console.log(`   npm 发布由 tag 触发的 GitHub Actions 完成，见 docs/npm-publishing.md。`)
 } else {
   console.log(`\n下一步：git push --follow-tags\n`)
-  console.log(`（或在下次发版时加 --push 自动推送）\n`)
-}
-
-if (PUBLISH) {
-  // 到这一步工作区已在 tag 提交上，且 tag 已推到远程，npm 与 git 不会漂移。
-  console.log(`\n📦 npm publish ${next} …`)
-  try {
-    execFileSync('npm', ['publish'], { cwd: ROOT, stdio: 'inherit' })
-  } catch {
-    console.error(`\n❌ npm publish 失败。git 侧已发布 ${tag}，npm 侧没有。`)
-    console.error(`   修好之后单独重跑：npm publish\n`)
-    process.exit(1)
-  }
-  console.log(`\n✅ 已发布 ${pkg.name}@${next} 到 npm。`)
-  console.log(`   DSH 用户执行 dsh plugin --profile web update ${pkg.name} 即可拿到。\n`)
-} else if (PUSH) {
-  console.log(`\n下一步（可选）：npm publish\n`)
-  console.log(`   发到 npm 后，DSH 用户才能按版本号升级，而不必跟 main 分支。\n`)
+  console.log(`（推送 tag 会触发 npm 发布；或在下次发版时加 --push 自动推送）\n`)
 }

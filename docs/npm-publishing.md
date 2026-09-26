@@ -1,9 +1,33 @@
-# npm 分发与账号管理
+# npm 分发
 
 AgentForge 通过 npm 分发给 DSH 用户。registry 安装按 semver 解析 `package.json`
 的 `version`，所以**版本号是 DSH 侧真正的发版开关**——这是它与 git 安装的关键区别
 （git 依赖钉的是 commit，`pnpm update` 会跟到分支最新提交，等于 push 即发布）。
 机制细节见 [`releasing.md`](releasing.md)。
+
+**发布由 CI 完成，不在本机 `npm publish`。**
+
+---
+
+## 为什么不在本机发布
+
+两个原因，第二个是硬的：
+
+1. **凭据归属。** 本机 `~/.npmrc` 里是公司账号的 token，开源插件不该挂在公司账号上。
+2. **npm 的 auth 是按 registry 存的，不是按账号。** 实测：
+
+   ```
+   同一个 registry 写两行不同 token  →  只有一行生效
+   按 scope 配 @a:registry / @b:registry  →  两者指向同一 registry，
+                                            token 键仍是 //registry.npmjs.org/:_authToken，
+                                            照样只有一个
+   ```
+
+   所以两个 npmjs.com 账号**无法同时生效**，只能切来切去。而 `npm publish`
+   不可逆——切错就是发错账号，收不回来。
+
+把发布交给 CI 就绕开了整件事：CI 用 OIDC 换短时效凭据，**机器上不存在任何长期 token**，
+也就不存在「切错账号」。
 
 ---
 
@@ -18,220 +42,70 @@ AgentForge 通过 npm 分发给 DSH 用户。registry 安装按 semver 解析 `p
 | 该包状态 | **已 deprecate**；unpublish 被拒（见下） |
 | 计划中的包名 | `@<个人账号>/dsh-agentforge`（scoped） |
 
----
-
-## 一、删除公司名下的包（必须人工，agent 做不了）
-
-`npm unpublish` 被 npm 政策拦住，整包和单版本都试过：
+### 为什么删不掉那个包
 
 ```
 npm unpublish dsh-agentforge --force
 npm unpublish dsh-agentforge@0.4.2 --force
 → 403 Granular access tokens that bypass two-factor authentication may not perform this action.
-  https://gh.io/npm-gat-bypass2fa-deprecation
 ```
 
-本机 `~/.npmrc` 里的 token 是**「绕过 2FA」的细粒度令牌**。npm 已禁止这类令牌执行
-unpublish 等破坏性操作——这是政策，不是权限配置问题，改 token 权限也绕不过。
-`npm deprecate` **不在限制范围内**（已实测），所以旧包挂了废弃警告作为临时遮挡。
+本机 token 是**「绕过 2FA」的细粒度令牌**，npm 禁止这类令牌执行 unpublish。
+这是政策，改 token 权限也绕不过。`npm deprecate` 不受限制（已实测），
+所以旧包挂了废弃警告作为遮挡。
 
-### 路线 1：npm 网站（推荐）
+**彻底删除只能由 `lejugym` 账号本人操作**：
 
 1. 用 `lejugym` 登录 <https://www.npmjs.com/login>
 2. 打开 <https://www.npmjs.com/package/dsh-agentforge>
-3. 页面右侧 **Settings** → 拉到底 → **Delete package**
-4. 按提示输入包名确认，并完成 2FA（OTP）
+3. 右侧 **Settings** → 拉到底 → **Delete package** → 输包名 + OTP 确认
 
-### 路线 2：命令行交互式登录
-
-```bash
-cp ~/.npmrc ~/.npmrc.company.bak     # 先备份公司 token
-npm login                            # 交互式，输入 lejugym 的用户名 / 密码 / OTP
-npm unpublish dsh-agentforge --force
-cp ~/.npmrc.company.bak ~/.npmrc     # 用完还原
-```
-
-> **如果 `lejugym` 不是你的账号**，这两条路都走不通，得找账号主人
-> （`liuchang@lejurobot.com`）操作。在那之前废弃警告就是唯一的遮挡。
+如果 `lejugym` 不是你的账号，得找账号主人（`liuchang@lejurobot.com`）。
 
 ---
 
-## 二、注册 npm 账号
+## 发布流程（目标状态）
 
-1. <https://www.npmjs.com/signup>
-2. 填 **Username / Email / Password**，勾选同意条款
-3. 去邮箱点验证链接
-4. 建议立刻开启 **2FA**：<https://www.npmjs.com/settings/`<用户名>`/account>
-   （Two-Factor Authentication → Enable）
+```bash
+# 1. 先把 CHANGELOG 的 [Unreleased] 写清（release.mjs 会拒绝空段落）
+# 2. 发版：同步 bump 两端版本 → 提交 → 打标签 → 推送
+node tools/release.mjs patch --push
 
-⚠️ **用户名是永久的，注册后不能改。** 想清楚再定。
-它同时决定你 scoped 包的 scope：用户名 `lixiuxiu559` → 包名 `@lixiuxiu559/xxx`。
+# 3. 剩下的自动完成：tag 推送触发 .github/workflows/publish.yml
+```
 
-> 名字被占用只能换。`agentforge` 这类通用词大概率已被占，但 scoped 包不受影响——
-> 只要 scope（用户名）是你的，`@你的名字/任何名字` 都可用。
+`release.mjs` **不发布 npm**，它只负责 git 侧。npm 侧由
+[`.github/workflows/publish.yml`](../.github/workflows/publish.yml) 接手：
+
+| 步骤 | 作用 |
+|---|---|
+| tag 与 `package.json` 版本一致性 | 不一致就中止（手工打的标签会在这里被拦下） |
+| `node tools/doctor.mjs` | 校验 `files` 白名单没漏掉 `skills/` `agents/` |
+| `npm pack --dry-run` | 打印将发布的内容 |
+| `npm publish` | OIDC 可信发布，自动附带 provenance |
+
+工作流只监听 tag、不提供手动触发——发布不可逆，入口越少越好。
 
 ---
 
-## 三、登录 npm
+## 一次性引导：OIDC 发不了第一个版本
 
-```bash
-npm login              # 默认走浏览器授权（--auth-type=web）
-npm whoami             # 验证身份
-```
+**这是本方案唯一的坑，必须先处理。**
 
-老式 TTY 流程：`npm login --auth-type=legacy`，然后输入用户名 / 密码 / OTP。
+可信发布者配置挂在**包自己的 npmjs.com 设置页**上，所以包必须先存在。
+npm 官方与社区实践都确认：OIDC 无法完成首次发布。
 
-⚠️ **`npm login` 默认写 `~/.npmrc`，会覆盖里面已有的 token。**
-这台机器的 `~/.npmrc` 存的是公司 token，直接 `npm login` 会把公司登录顶掉。
+参考实例（真实迁移 PR 的注释）：
 
-所以登录个人账号时，指定独立文件：
+> OIDC cannot publish a package's FIRST version (the package must already exist to host
+> the trusted-publisher config), so v0.1.1 was bootstrapped with a one-time local
+> `npm publish`; every release after is OIDC.
+> —— [geocoordinates-rs#16](https://github.com/justin13888/geocoordinates-rs/pull/16)
 
-```bash
-npm login --userconfig ~/.npmrc-personal
-npm whoami  --userconfig ~/.npmrc-personal
-```
+### 引导步骤（不改本机 `~/.npmrc`）
 
-### 或者用 Access Token（更适合多账号 / 自动化）
-
-1. <https://www.npmjs.com/settings/`<用户名>`/tokens> → **Generate New Token**
-2. 选 **Granular Access Token**
-3. **Packages** 权限选 **Read and write**；**Expiration** 按需
-4. 复制 token（**只显示一次**），写进独立文件：
-
-```bash
-cat > ~/.npmrc-personal <<'EOF'
-//registry.npmjs.org/:_authToken=npm_你的token
-EOF
-chmod 600 ~/.npmrc-personal
-```
-
-> **「Bypass 2FA」这个选项要留意**：勾了它，命令行发布不用每次输 OTP，很方便；
-> 但代价正是我们刚踩到的——**该 token 永远无法 unpublish**，要删包只能去网站。
-> 想保留删包能力就别勾，代价是每次发布要输 OTP。
-
----
-
-## 四、一台电脑上切换多个 npm 账号
-
-npm 的配置优先级（高 → 低），**已实测**：
-
-| 优先级 | 来源 | 实测结果 |
-|---|---|---|
-| 1 | CLI flag `--userconfig <file>` | ✅ 压过环境变量与所有 npmrc |
-| 2 | 环境变量 `NPM_CONFIG_USERCONFIG` / `npm_config_userconfig` | ✅ 生效，但若环境里已预设小写形式，大写形式会被压住 |
-| 3 | **项目级** `./.npmrc`（当前目录） | ✅ 覆盖用户级 |
-| 4 | **用户级** `~/.npmrc`（或 `--userconfig` 指向的文件） | 默认 |
-| 5 | 全局 `<prefix>/etc/npmrc` | — |
-
-### 推荐做法：`npm-account` + `prepublishOnly` 钩子
-
-手动指定 `--userconfig` 的问题是**你得每次都记得加**。并行开发时迟早会忘，
-而 `npm publish` 不可逆。所以推荐两层防护：
-
-**第 1 层 · 凭据集中存放，按项目选账号**
-
-工具装在 `~/.local/bin/npm-account`（已在 PATH 上），凭据存 `~/.npm-accounts/<用户名>.npmrc`
-（chmod 600），与 `~/.npmrc` 完全隔离：
-
-```bash
-npm-account add <用户名>          # 保存 token（隐藏输入，存好即校验身份）
-npm-account list                  # 列出账号 + 凭据是否有效 + 当前项目绑定谁
-cd <项目> && npm-account use <用户名>   # 写项目根的 .npm-account
-npm-account whoami                # 看本项目解析到谁，并实测
-npm-account publish               # 自动用对账号发布
-npm-account run <npm 参数...>     # 用对账号执行任意 npm 命令
-```
-
-**第 2 层 · 发布前强制校验（关键）**
-
-在 `package.json` 里挂钩子：
-
-```jsonc
-{
-  "scripts": {
-    "prepublishOnly": "npm-account guard"
-  }
-}
-```
-
-`prepublishOnly` 在**任何** `npm publish` 之前运行，退出非 0 就中止发布。
-已实测：项目 `.npm-account` 要求 `another-user`、环境实际是 `lejugym` 时，
-**裸敲 `npm publish` 会被直接拦下**：
-
-```
-❌ 发布身份不符：本项目要求 another-user，当前是 lejugym
-npm error command failed
-npm error command sh -c npm-account guard
-```
-
-钩子还继承外层的 `--userconfig`（通过 `npm_config_userconfig` 传递），
-所以它看到的身份就是真正要发布的那个身份。
-
-> **这个钩子拦得住裸敲的 `npm publish`，是整套方案里最重要的部分。**
-> 只靠「记得用包装命令」不算防护。
-
-### 方案 A：`--userconfig`（手动，等价于工具内部做的事）
-
-```bash
-npm whoami  --userconfig ~/.npmrc-personal
-npm publish --userconfig ~/.npmrc-personal
-```
-
-**不会修改 `~/.npmrc`**，公司 token 原封不动。
-
-### 方案 B：项目级 `./.npmrc`（按目录自动切）
-
-在项目根放一个 `.npmrc`，在该目录下所有 npm 命令自动用它：
-
-```bash
-cd ~/my-personal-project
-cat > .npmrc <<'EOF'
-//registry.npmjs.org/:_authToken=npm_你的token
-EOF
-npm whoami      # → 你的个人账号
-cd ~            # 离开目录即恢复
-```
-
-⚠️ **必须加进 `.gitignore`**，否则 token 会被提交进仓库。
-比集中存放更容易泄漏，所以不是首选。
-
-### 方案 C：环境变量（会话级）
-
-```bash
-export NPM_CONFIG_USERCONFIG=~/.npmrc-personal
-npm whoami      # → 个人账号
-unset NPM_CONFIG_USERCONFIG
-```
-
-适合「这个终端窗口接下来都发个人包」的场景。
-
-### 不推荐：`npm login` / `npm logout` 反复切
-
-两个命令都直接改 `~/.npmrc`，切来切去很容易忘记当前是谁，
-而且 `npm logout` 会把公司 token 一起清掉。
-
-### 自检
-
-任何操作前先确认身份，避免发错账号：
-
-```bash
-npm-account whoami        # 项目绑定 + 实测身份
-npm-account list          # 所有账号的凭据状态
-```
-
----
-
-## 五、待办：迁移到 scoped 包名
-
-选 scoped 而不是等 24 小时复用 `dsh-agentforge`，有两个理由：
-
-1. scoped 名**绕开 npm 的防误植检查**。`agentforge` 当初就是被这条拒掉的：
-   `403 Package name too similar to existing package agent-forge`。
-2. 归属清晰，一眼看出是个人项目而非公司资产。
-
-### 步骤
-
-**1. 按上面第二、三节拿到个人账号与独立 token 文件。**
+**1. 建个人 npm 账号**，记下用户名 `<USER>`。
+<https://www.npmjs.com/signup> —— ⚠️ 用户名永久不可改，且它决定 scoped 包的前缀。
 
 **2. 改包名三处**（必须一致，`doctor` 会校验后两处）：
 
@@ -243,41 +117,28 @@ npm-account list          # 所有账号的凭据状态
 
 `id: agentforge`、技能 provider 名、工具名 `agentforge` **都不动**。
 
-**3. 把项目绑定到该账号，并挂上发布前校验**：
+**3. 用一次性 token 引导首次发布**（CI 内完成，不用本机）：
 
-```bash
-npm-account add <USER>        # 保存个人账号凭据（会立即校验身份）
-npm-account use <USER>        # 在仓库根写 .npm-account
-```
+- 在 <https://www.npmjs.com/settings/`<USER>`/tokens> 建 **Granular Access Token**
+  （Packages: Read and write）
+- 存进仓库 secret：`gh secret set NPM_TOKEN --repo Lixiuxiu559/AgentForge`
+- 临时给 `publish.yml` 的发布步骤加回：
+  ```yaml
+        - name: 发布
+          run: npm publish
+          env:
+            NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  ```
+- 推一个 tag 触发，包即创建
 
-然后在 `package.json` 的 `scripts` 里加：
+**4. 配置可信发布者**：包的 Settings 页 → Trusted Publisher →
+仓库 `Lixiuxiu559/AgentForge`、工作流 `publish.yml`
 
-```jsonc
-"prepublishOnly": "npm-account guard"
-```
+**5. 拆掉引导脚手架**：删掉 `NPM_TOKEN` secret 和那段 `env:`，
+之后每次发版都走 OIDC，机器上不留任何长期凭据。
 
-**4. 校验 + 发布**：
-
-```bash
-node tools/doctor.mjs                    # 必须 0 error 0 warn
-node tools/release.mjs patch --push      # git 侧先发
-npm-account publish                      # npm 侧：自动用对账号，并先校验身份
-```
-
-> **换 scoped 名时不要用 `release.mjs --publish`**：它走默认 `~/.npmrc`（公司 token），
-> 会发到错误账号。用 `npm-account publish`。
-> 挂了 `prepublishOnly` 钩子后，即使误用 `release.mjs --publish` 也会被拦下。
-
-**4. 切换本机 profile**：
-
-```bash
-dsh plugin --profile web remove dsh-agentforge
-dsh plugin --profile web add @<USER>/dsh-agentforge
-# 然后重启 profile
-```
-
-**5. 同步文档**：README 的 DSH 安装章节、`releasing.md` 的装法表格、CHANGELOG，
-以及 awesome-dsh-plugin 的 PR #5910 评论。
+> 如果你更愿意跳过第 3 步，也可以在本机临时 `npm publish` 一次——
+> 但那会往 `~/.npmrc` 写个人 token，正是本方案要避免的。
 
 ---
 
@@ -294,5 +155,7 @@ dsh plugin --profile web add @<USER>/dsh-agentforge
 
 - **不要手工往 awesome-dsh-plugin 的条目 yml 里加 `npm:` 字段**——会被校验拒绝。
   npm 映射由 registry 自动采集。
-- **不要为了改描述而 `npm publish` 同一个版本号**——npm 不可逆，
-  同一版本号发出去就收不回来，只能发新版本。
+- **不要手工打 tag 发版**——版本号会与 tag 对不上，工作流会拦下，
+  且 npm 不可逆。走 `node tools/release.mjs <bump> --push`。
+- **不要把 npm token 写进仓库或 `.npmrc`**——目标状态是 CI 用 OIDC，
+  本机不需要任何 npm 凭据。
