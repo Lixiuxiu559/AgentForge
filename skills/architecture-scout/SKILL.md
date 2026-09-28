@@ -19,6 +19,10 @@ disable-model-invocation: true
 
 不作为 `implementation-workflow` 每次完成后的必经质量门。`complexity-audit` 分析函数级 CRAP 风险；`diff-review` 评审本次改动；本技能调查**模块级、面向未来改动的摩擦**。
 
+## 委派
+
+需要独立上下文时，用宿主通用子 agent 工具实际派发。传入目标项目的绝对路径、范围/基线、约束、所需技能资源的绝对路径和交付要求（资源不可读时附必要方法）；子 agent 只做分配的任务，回报证据、完成状态与未验证项。仅在任务及文件/工具产物互不冲突时并行；无派发能力时自行执行并说明。
+
 ## 1. 先确定范围
 
 用户指定模块、痛点或即将开展的需求时，以其为范围；否则通过近期相关提交找调查起点。提交热点**只决定先查哪里**，不证明那里需要改造。范围过大时先缩到具体业务概念；不要无目标全仓扫描。
@@ -28,13 +32,13 @@ disable-model-invocation: true
 | 范围 | 调查方式 |
 |---|---|
 | 少数文件、单个明确问题 | 主 Agent 直接查 |
-| 单个模块但调用链较长 | 1 个 `researcher` |
-| 多模块、需要交叉核对 | 并行 2–3 个 `researcher`，按**结构／历史／测试与约束**分工 |
-| 大范围且改造方向有争议 | 可增加第 4 个 researcher 专门找**反证与最小替代** |
+| 单个模块但调用链较长 | 1 个调查子 agent |
+| 多模块、需要交叉核对 | 并行 2–3 个调查子 agent，按**结构／历史／测试与约束**分工 |
+| 大范围且改造方向有争议 | 可增加第 4 个调查子 agent 专门找**反证与最小替代** |
 
-只有调查问题清晰、各方向相对独立、汇总收益大于调度成本时才并行。**researcher 只收集事实和反证，不决定哪个模块该重构。** 每个任务给出范围、时间/版本和统一输出格式，见 `references/research-briefs.md`。没有可用 researcher 通道时，主 Agent 自行分阶段调查，不假装已委派。
+**调查子 agent 只收集事实和反证，不决定哪个模块该重构。** 按 `references/research-briefs.md` 派发，各自返回证据；主 Agent 统一生成报告。
 
-多个报告回来后按**证据**而非投票汇总：去重、核对互相矛盾的观察，抽查关键文件/行号，标记未知项。不得把几个 researcher 的猜测合并成“多方确认”。
+多个报告回来后按**证据**而非投票汇总：去重、核对互相矛盾的观察，抽查关键文件/行号，标记未知项。不得把几个调查子 agent 的猜测合并成“多方确认”。
 
 ## 3. 筛选候选：先过硬门槛
 
@@ -64,6 +68,6 @@ disable-model-invocation: true
 ## References
 
 - `references/deep-module-criteria.md` —— 深/浅边界、删除测试、反证与成本判据
-- `references/research-briefs.md` —— 0–4 个 researcher 的调查分工和统一输出
+- `references/research-briefs.md` —— 0–4 个调查子 agent 的调查分工和统一输出
 - `references/candidate-report.md` —— 候选报告及零候选模板
 - `references/evaluation-cases.md` —— 正例、反例和验收标准

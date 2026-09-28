@@ -73,8 +73,7 @@ affects installation, rollback, duplicate detection"。）
 **不发 npm 的代价就是「main 即发布」**，因此分支策略需要相应考虑——
 见下方「分支策略」。
 
-DSH 侧改动的生效条件见 `docs/architecture.md`：**新增 `agents/*.md` 必须重启 profile**
-（`patchReload: live` 只监听用户 patch 文件，不会重新 `apply()`）；技能不受影响，每次重扫。
+DSH 桥接代码更新后需重启 profile；技能在 provider 下次读取时重扫，宿主可能另有缓存。详见 `docs/architecture.md`。
 
 ---
 
@@ -246,5 +245,5 @@ node tools/release.mjs patch --dry-run
 | tag 已存在导致发版失败 | 该版本已发过，换一个版本号 |
 | 新增了技能但用户看不到 | 未发版；或技能 frontmatter 不合法（CI 应已拦住） |
 | `doctor` 报「两端版本号不一致」 | `plugin.json` 与 `package.json` 漂移，用 `release.mjs` 发版会自动拉齐 |
-| DSH 侧新增 agent 后没生效 | 只重载了插件没重启 profile —— `agentforge` 的工具描述与 enum 在 `apply()` 时固定 |
+| 更新后仍出现旧的 `agentforge` 派发工具 | 当前版本已移除该工具；检查加载路径并重启 profile 清除旧注册 |
 | DSH 侧改了技能没生效 | 技能每次重扫，通常应立即生效；若未生效检查 profile 是否真的挂载了 agentforge bundle |

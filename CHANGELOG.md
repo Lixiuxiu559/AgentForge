@@ -45,6 +45,10 @@
 
 ### Changed
 
+- **技能统一承载执行与委派方法**：六个技能使用宿主通用子 agent 能力，传入自包含任务和资源路径，保留独立上下文与独立任务并行；缺少派发能力时明确降级。
+- **移除自定义 agent（破坏性变更）**：删除五个 agent 定义、DSH `agentforge` 派发工具、工具白名单映射与模型/provider 配置；桥接层仅注册技能。旧调用迁移见 README，版本在正式发布时调整。
+- 更新结构校验并添加技能提供者运行时测试，覆盖动态发现、资源路径和调用策略。
+
 - **npm 发布改为 CI/CD（OIDC 可信发布），移除本机发布路径**。新增
   `.github/workflows/publish.yml`：tag 推送触发，用 GitHub 的 id-token 换短时效
   凭据发布，自动附带 provenance；`release.mjs` 的 `--publish` 相应移除，

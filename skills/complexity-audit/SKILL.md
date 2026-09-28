@@ -14,7 +14,11 @@ user-invocable: true
 - 应该补充测试提高覆盖率
 - 还是当前风险可以接受
 
-本技能不负责修改代码。修改由 `implementer` 执行。
+本技能不负责修改代码。修改由实施子任务执行。
+
+## 委派
+
+需要独立上下文时，用宿主通用子 agent 工具实际派发。传入目标项目的绝对路径、范围/基线、约束、所需技能资源的绝对路径和交付要求（资源不可读时附必要方法）；子 agent 只做分配的任务，回报证据、完成状态与未验证项。仅在任务及文件/工具产物互不冲突时并行；无派发能力时自行执行并说明。
 
 ## 指标说明
 
@@ -51,65 +55,11 @@ CRAP(m) = complexity(m)² × (1 - coverage(m))³ + complexity(m)
 | JavaScript | ESLint complexity / escomplex | c8 / Istanbul | `full-crap` 取决于配置 | `references/javascript-eslint-istanbul.md` |
 | TypeScript | ESLint complexity / escomplex | c8 / Istanbul + source map | `full-crap` 取决于映射 | `references/typescript-eslint-istanbul.md` |
 
-**工具使用原则**：优先复用项目已有工具和配置；不自动安装依赖；不因为语言在表中就假装工具一定可用。
+## 执行
 
-## 执行流程
-
-### 1. 确定范围
-
-按以下优先级确定审计范围：
-
-1. 用户明确指定的文件、目录、模块或方法
-2. 用户要求审计最近改动时，使用 `git diff --name-only` 或指定 git 基线
-3. 用户明确要求全量审计时，才扫描整个项目
-4. 没有范围时，询问用户；不要默认扫描大型仓库
-
-### 2. 识别项目和语言
-
-检查最近的构建声明：
-
-- Java：`pom.xml`、`build.gradle`、`build.gradle.kts`
-- Python：`pyproject.toml`、`setup.py`、`requirements.txt`
-- Go：`go.mod`、`go.work`
-- JavaScript/TypeScript：`package.json`、ESLint 配置、覆盖率配置
-
-多模块仓库按照被审计文件所属模块分别处理。
-
-### 3. 识别数据源
-
-逐项确认：
-
-- 是否存在复杂度工具
-- 是否存在覆盖率工具
-- 覆盖率粒度是函数、方法、文件还是行
-- 报告是否能与源码函数稳定匹配
-- 目标范围是否会被构建配置扩大
-
-缺少数据时选择正确的降级等级，不要拼接无法证明有效的数字。
-
-### 4. 选择适配器
-
-按语言读取对应 reference，再执行项目已有命令：
-
-- Java：查找 JaCoCo XML，可使用本技能内置脚本
-- Python：优先 `radon cc -j` / `xenon`，再检查 coverage.py 报告粒度
-- Go：优先 `gocyclo` / `gocognit`，覆盖率使用 `go test -coverprofile`
-- JavaScript：优先 ESLint complexity 与 c8/Istanbul
-- TypeScript：优先 ESLint complexity 与 c8/Istanbul，并检查 source map
-
-### 5. 输出报告
-
-报告只保留精炼结果，不粘贴完整覆盖率 XML、JSON 或冗长构建日志。
-
-每个风险项至少包含：
-
-- 类名、函数名或方法名
-- 文件位置
-- 复杂度值
-- 覆盖率值（如可得）
-- 结果等级：`full-crap` / `complexity-only` / `file-level-risk`
-- 风险判断
-- 建议拆分、补测试还是先完善分析数据
+1. 范围按用户指定 > 指定 git 基线/最近改动 > 用户明确要求全量确定；不默认扫描整个大型仓库。
+2. 根据目标模块的构建声明和已有报告，确认复杂度工具、覆盖率粒度、函数定位是否能匹配。按支持矩阵读取对应 reference，复用项目已有配置，不自动安装工具。
+3. 只在数据足够时计算 CRAP；否则使用上表的降级等级。报告目标位置、复杂度、可得的覆盖率、等级及建议，并说明命令、数据缺口和实际运行范围。
 
 ## 风险判断
 
@@ -122,9 +72,4 @@ CRAP(m) = complexity(m)² × (1 - coverage(m))³ + complexity(m)
 
 ## 边界
 
-- 只分析，不修改代码
-- 不使用 Edit 或 Write
-- 不自动安装外部工具
-- 不把未实现的语言能力伪装成已支持
-- 不默认扫描全仓库
-- 不与突变测试、行为验收、通用代码评审重复
+只报告风险，不修改业务源码或测试；已有工具可生成分析报告与临时产物。

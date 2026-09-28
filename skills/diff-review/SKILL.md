@@ -14,39 +14,9 @@ user-invocable: true
 | **Standards** | 符合**本仓库文档化的编码规范**吗？ | 仓库规范文件 + `references/standards-baseline.md` |
 | **Spec** | 忠实实现了**原始需求**吗？ | 原始 spec / 需求文档 |
 
-**三条轴互不替代。** 一个改动可以同时满足以下任何组合：
+## 判据
 
-- 符合所有规范，但做错了事 → Standards 通过，Spec 失败
-- 忠实实现了需求，但引入了 bug → Spec 通过，Correctness 失败
-- 修好了 bug，但破坏了项目约定 → Correctness 通过，Standards 失败
-
-所以**不要合并、不要重排、不要在结尾挑"总体最严重"的问题**。
-
-## 能力是自包含的
-
-三条轴**全部由本技能自己完成**，不依赖任何宿主环境专有的命令、技能或工具链。
-
-这意味着：
-
-- 不假设运行环境里有某个配套的评审命令
-- 不把任何一条轴"让给"外部工具
-- 在只有 git 和文件系统的环境里，本技能仍应完整可用
-
-**只依赖 git 和基础文件操作。** 这是本技能能在任何运行环境里工作的前提。
-
-## 核心原则
-
-1. **三轴分开，不合并** —— 见 `references/why-separate-axes.md`
-2. **每条 finding 必须带引用和后果**：
-   - Correctness：触发路径 + 后果（什么输入/时序导致什么错误）
-   - Standards：规范文件 + 规则，或 smell 名 + 代码片段
-   - Spec：spec 原句
-
-   **没有引用或说不出后果的怀疑，不要报。**
-3. **仓库规范压过 smell 基线** —— 仓库明确认可的做法，基线不得标记
-4. **smell 永远是判断项** —— 写成 `possible Feature Envy`，绝不报成硬性违规
-5. **不臆造需求** —— 找不到 spec 就如实降级，不要从代码反推需求
-6. **宁少勿多** —— 不确定就不报
+每条 finding 都要给出位置、证据和后果：Correctness 给触发路径，Standards 引仓库规则或 smell 名称与代码，Spec 引需求原句。仓库明确认可的做法不算违规；smell 仅作判断项。证据不足时不报；三轴结论分别保留。
 
 ## 流程
 
@@ -60,12 +30,7 @@ git status --short                        # 找出未跟踪文件
 git log <固定点>..HEAD --oneline          # Spec 轴找需求线索
 ```
 
-**四个关键点**（详见 `references/fixed-point-and-scope.md`）：
-
-- 用 `git merge-base` 固化基线，避免评审期间固定点被推进导致结果漂移
-- `git diff "$BASE"` **不带第二 ref** → 对比工作区，同时覆盖已提交 / 已暂存 / 未暂存
-- **`git diff` 看不到未跟踪的新文件**，必须用 `git status --short`（`??` 开头）单独找出，它们的全部内容都是新增
-- diff 为空且无未跟踪文件 → **报告"无内容可评审"**，不要虚构结果
+`git diff "$BASE"` 不带第二个 ref，才能包含工作区改动；未跟踪文件须单独读取。没有改动时报告“无内容可评审”。基线细节见 `references/fixed-point-and-scope.md`。
 
 ### 2. 收集判据
 
@@ -87,17 +52,11 @@ git log <固定点>..HEAD --oneline          # Spec 轴找需求线索
 
 **Spec**：找三类——spec 要求但缺失或只做了一半的、diff 里做了但 spec 没要求的（scope creep）、看起来实现了但实现方式可疑的。每条引 spec 原句。
 
-**三轴不要互相参考结论**，写完一轴再开始下一轴。执行细节与并行策略见 `references/verification.md`。
+**三轴互不参考结论**。有通用子 agent 工具时按 `references/verification.md` 派发独立轴，可并行；无派发能力时串行并说明。
 
 ### 4. 输出
 
-严格按 `references/report-format.md` 的模板。要点：
-
-- 三轴各自独立成节
-- 每条 finding 带位置 + 引用 + 后果
-- Standards 轴内区分**硬性违规**与**判断项**
-- 结尾只给「每轴几条 + 每轴最严重的一条」，**不写跨轴冠军**
-- 如实报告降级（无 spec、无规范文档、串行执行）
+按 `references/report-format.md` 分轴报告 finding、数量和各轴最严重项，标注缺少 spec、规范或独立上下文等降级；不合并三轴排名。
 
 ## References
 
