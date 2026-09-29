@@ -7,10 +7,14 @@ AgentForge 同时是 Claude Code 插件和 DeepSeek Harness 插件，所以有**
 | 文件 | 谁读它 | 作用 |
 |---|---|---|
 | `.claude-plugin/plugin.json` | Claude Code | **发版开关** —— 不 bump，CC 用户收不到更新 |
-| `package.json` | DSH / npm | link 安装时读磁盘（版本号仅用于一致性）；**git 或 registry 安装时 pnpm 按 semver 解析，此时它才是开关** |
+| `package.json` | DSH / npm | 装法决定它的作用：`link:` 读磁盘、git 安装钉 commit（**版本号都不参与**）；只有 registry 安装才按 semver 解析，那时它才是开关。详见下方「DSH 侧的机制」 |
 
 > ⚠️ **两者漂移会被 `doctor` 判为 error**，发版脚本第 3 步就会中止。
 > 这是有意的：漂移会导致「发了一端、另一端还是旧版本号」。
+>
+> **当前状态**：本插件没有发布到 npm（曾发过 0.4.2，已下架），所以 `package.json`
+> 的版本号眼下**不参与任何 DSH 用户的升级判断**——它只是为了一致性，以及将来
+> 若恢复 registry 分发时能立刻生效。
 
 ## CC 侧的核心机制：`version` 就是发版开关
 
@@ -33,9 +37,9 @@ Claude Code 用 `.claude-plugin/plugin.json` 的 `version` 字段判断用户是
 | 安装方式 | lockfile 里钉的是什么 | 更新语义 |
 |---|---|---|
 | `dsh plugin --profile web add /abs/path` → `link:` | 路径 | **直接读磁盘**，改动立即生效，版本号不参与 |
-| `dsh plugin --profile web add dsh-agentforge`（npm） | semver 范围 | **按 `package.json` 的 `version` 解析——这才是发版开关** |
 | `dsh plugin --profile web add github:owner/repo` | **具体 commit** | 版本号**不参与**；`pnpm update` 会重解析到分支最新 commit |
 | `dsh plugin --profile web add github:owner/repo#v0.4.0` | 该 tag 的 commit | 钉死；`pnpm update` 报 `Already up to date`，不受分支变动影响 |
+| ~~`dsh plugin --profile web add dsh-agentforge`（npm）~~ | semver 范围 | **当前不可用** —— 本插件未发布到 npm（0.4.2 已下架）。恢复后才是「按 `version` 解析」的唯一途径 |
 
 > ⚠️ **git 安装没有版本门控。** 实测（2026-09-26）：`pnpm add github:Lixiuxiu559/AgentForge`
 > 在 lockfile 里写的是 `…/tar.gz/<commit>`，`pnpm update agentforge` 会把它重解析到 main 的
