@@ -14,6 +14,14 @@
 
 ## [Unreleased]
 
+### Added
+
+- 
+
+---
+
+## [0.5.0] - 2026-09-29
+
 ### Fixed
 
 - **只有 git tag、没有 GitHub Release**。原因是两件事叠在一起：GitHub 上 tag 与
