@@ -1,4 +1,6 @@
-# awesome-dsh-plugin 投稿条目；本次技能化改造尚未发布。
+# awesome-dsh-plugin 条目（v0.5.0 起生效）。
+# v0.4.x 的旧描述称「one agentforge tool dispatching five subagents」，
+# 而 0.5.0 移除了自定义 agent、改为由宿主通用子 agent 能力委派，故更新。
 url: https://github.com/Lixiuxiu559/AgentForge
 name: Lixiuxiu559/AgentForge
 category: workflow
