@@ -34,7 +34,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write # 创建 GitHub Release
+  contents: read # 只需要读代码
   id-token: write # OIDC 可信发布必需
 
 # 同一个 tag 只允许一个发布在跑。发布不可逆，并发没有意义且危险；
@@ -100,18 +100,6 @@ jobs:
         # provenance 由可信发布自动附带，无需 --provenance。
         run: npm publish
 
-      - name: 创建 GitHub Release
-        # 正文取自 CHANGELOG 对应段落，让 Release 页和 CHANGELOG 不会各说各话。
-        # 独立于上面的 skip 判断：即使包早就发过了，这个 tag 也该有自己的 Release。
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          version="${GITHUB_REF_NAME#v}"
-          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
-            echo "::notice::Release $GITHUB_REF_NAME 已存在，跳过"
-            exit 0
-          fi
-          node tools/changelog-section.mjs "$version" > /tmp/release-notes.md
-          gh release create "$GITHUB_REF_NAME" \
-            --title "$GITHUB_REF_NAME" \
-            --notes-file /tmp/release-notes.md
+      # 建 GitHub Release 不在这里——那是 .github/workflows/release.yml 的职责，
+      # 它由 tag 推送触发、与 npm 无关。之前把这一步塞在这里，导致 npm 一停用
+      # 就再也没人建 Release（这正是「有 tag 却看不到 Release」的原因）。

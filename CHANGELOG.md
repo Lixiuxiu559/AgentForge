@@ -16,6 +16,13 @@
 
 ### Fixed
 
+- **只有 git tag、没有 GitHub Release**。原因是两件事叠在一起：GitHub 上 tag 与
+  Release 是两个对象（推 tag 不会自动生成 Release），而唯一会 `gh release create`
+  的步骤被塞在 `publish.yml` 里——npm 一停用、那个工作流改成仅手动触发，
+  就再也没人建 Release 了。现在拆出独立的 `.github/workflows/release.yml`，
+  由 tag 推送触发、**与 npm 无关**，正文取自 CHANGELOG 对应段落。
+  `publish.yml` 相应移除该步骤，权限也从 `contents: write` 收窄为 `contents: read`。
+
 - **README 与 `docs/releasing.md` 里关于 npm 安装的说法已失效**。0.4.2 从 npm
   下架后，`dsh plugin --profile web add dsh-agentforge` 会让全新安装直接失败
   （`ERR_PNPM_NO_VERSIONS`），而 README 还把它标为「推荐」。改为以
