@@ -63,7 +63,21 @@
 ### Changed
 
 - **技能统一承载执行与委派方法**：六个技能使用宿主通用子 agent 能力，传入自包含任务和资源路径，保留独立上下文与独立任务并行；缺少派发能力时明确降级。
-- **移除自定义 agent（破坏性变更）**：删除五个 agent 定义、DSH `agentforge` 派发工具、工具白名单映射与模型/provider 配置；桥接层仅注册技能。旧调用迁移见 README，版本在正式发布时调整。
+- **移除自定义 agent（破坏性变更）**：删除五个 agent 定义、DSH 的 `agentforge` 派发工具、
+  工具白名单映射与模型/provider 配置；桥接层仅注册技能。
+
+  旧调用改为「加载对应技能，再用宿主的通用派发能力」：
+
+  | 旧 agent | 方法入口 |
+  |---|---|
+  | `researcher` | `research` |
+  | `implementer` | `implementation-workflow` 的实施任务卡 |
+  | `diff-reviewer` | `diff-review` |
+  | `complexity-auditor` | `complexity-audit` |
+  | `mutation-auditor` | `mutation-testing` |
+
+  DSH patch 里旧的 `config.toolName`、`config.provider`、`config.agents` 不再生效，
+  应一并移除；更新插件后重启宿主 / profile 让旧注册失效。
 - 更新结构校验并添加技能提供者运行时测试，覆盖动态发现、资源路径和调用策略。
 
 - **npm 发布改为 CI/CD（OIDC 可信发布），移除本机发布路径**。新增

@@ -64,7 +64,7 @@ dsh plugin --profile web add github:Lixiuxiu559/AgentForge
 
 > ⚠️ **git 安装没有版本门控**：lockfile 里钉的是具体 commit，`dsh plugin --profile web update`
 > 会重解析到分支最新提交——等于「push 即发布」。也就是说 **main 分支就是发布通道**。
-> 本插件当前**没有发布到 npm**（曾经发过一版，已下架），所以暂时没有按版本号升级的途径。
+> 本插件未发布到 npm，所以 DSH 侧没有按版本号升级的途径。
 
 装完后**重启该 profile**（`patchReload: live` 只监听用户 patch 文件，不会重新 `apply()`）。
 本仓库没有 `prepare` 脚本，任何装法都**不需要** `allowBuilds` 构建授权。
@@ -121,20 +121,6 @@ Claude Code 通过插件发现技能；DSH 的桥接入口仅注册 skill provid
 ```
 
 Claude Code 可显式使用 `/agentforge:research` 等技能命令。`architecture-scout` 保持用户主动调用策略。
-
-## 从自定义 agent 迁移
-
-本次未发布改动移除了五个 agent 定义及 DSH 的 `agentforge` 派发工具。旧调用需要改为加载技能，再使用宿主的通用派发能力：
-
-| 旧 agent | 方法入口 |
-|---|---|
-| `researcher` | `research` |
-| `implementer` | `implementation-workflow` 的实施任务卡 |
-| `diff-reviewer` | `diff-review` |
-| `complexity-auditor` | `complexity-audit` |
-| `mutation-auditor` | `mutation-testing` |
-
-DSH patch 中旧的 `config.toolName`、`config.provider`、`config.agents` 配置不再使用，应移除。更新插件后重启宿主/profile，使旧注册失效。现有公开版本号保持不变；正式发布按 [发布规则](docs/releasing.md) 处理这次接口移除。
 
 ## 项目结构
 
