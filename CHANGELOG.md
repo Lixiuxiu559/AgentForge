@@ -7,7 +7,7 @@
 
 > **注意**：只有 bump `.claude-plugin/plugin.json` 的 `version` 并打标签才算发版。
 > 日常 push 不改变用户看到的版本。发版时 `release.mjs` 会**同步 bump
-> `package.json`**（DSH / npm 侧版本），两者漂移会被 `doctor` 判为 error。
+> `.codex-plugin/plugin.json` 与 `package.json`**，三处漂移会被 `doctor` 判为 error。
 > 详见 [`docs/releasing.md`](docs/releasing.md)。
 
 ---
@@ -16,7 +16,15 @@
 
 ### Added
 
-- 
+- 新增 Codex 技能插件清单与仓库 marketplace，复用现有六个 Skill；`architecture-scout` 在 Codex 使用独立调用策略、在 DSH 保留显式调用限制，Claude Code 依靠技能说明约束触发。版本同步、结构检查、安装说明和发布文档扩展到第三端。
+
+### Fixed
+
+- **`docs/releasing.md` 的版本规则与实际冲突**。规则原文说「删除技能或 agent → MAJOR」，
+  而 0.5.0 删了 5 个子 agent 却走 MINOR。按 semver 对 `0.y.z` 的定义
+  （「初始开发阶段，任何东西都可能随时变化，公开 API 不应被视为稳定」），
+  0.x 期间用 MINOR 承载破坏性变更是惯例。文档改为：上表列的是 1.0 之后的严格语义，
+  **0.x 期间破坏性变更用 MINOR，`MAJOR` 从 `1.0.0` 起启用**。
 
 ---
 

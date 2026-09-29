@@ -59,7 +59,7 @@ jobs:
         run: npm install -g npm@latest
 
       - name: tag 与 package.json 版本必须一致
-        # release.mjs 会同步 bump 两端清单再打标签，所以正常情况下必然一致。
+        # release.mjs 会同步 bump 三处版本号再打标签，所以正常情况下必然一致。
         # 不一致说明标签是手工打的、或有人改了版本号没走发版脚本——这种时候
         # 发出去就是一个版本号和 tag 对不上的包，且 npm 不可逆，宁可中止。
         run: |
@@ -72,7 +72,7 @@ jobs:
           fi
 
       - name: 结构与资产校验
-        # npm 的 files 白名单漏掉 skills/agents 时，装出来的包会「装载成功但什么都没注册」，
+        # npm 的 files 白名单漏掉 skills/ 时，装出来的包会「装载成功但什么都没注册」，
         # 这是本项目最隐蔽的失败模式，所以发布前必须过一遍 doctor。
         run: node tools/doctor.mjs
 

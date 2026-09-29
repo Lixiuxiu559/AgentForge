@@ -1,16 +1,16 @@
 # 发布流程
 
-## 一次发版，两端同步
+## 一次发版，三处版本同步
 
-AgentForge 同时是 Claude Code 插件和 DeepSeek Harness 插件，所以有**两个版本号**，`release.mjs` 会**一起 bump**，始终保持一致：
+AgentForge 支持 Claude Code、Codex 和 DeepSeek Harness。`release.mjs` 同步更新三个清单中的版本号：
 
 | 文件 | 谁读它 | 作用 |
 |---|---|---|
 | `.claude-plugin/plugin.json` | Claude Code | **发版开关** —— 不 bump，CC 用户收不到更新 |
+| `.codex-plugin/plugin.json` | Codex | 安装副本的插件版本；本地与 Git marketplace 的刷新还取决于安装来源 |
 | `package.json` | DSH / npm | 装法决定它的作用：`link:` 读磁盘、git 安装钉 commit（**版本号都不参与**）；只有 registry 安装才按 semver 解析，那时它才是开关。详见下方「DSH 侧的机制」 |
 
-> ⚠️ **两者漂移会被 `doctor` 判为 error**，发版脚本第 3 步就会中止。
-> 这是有意的：漂移会导致「发了一端、另一端还是旧版本号」。
+> ⚠️ **三处漂移会被 `doctor` 判为 error**，发版脚本第 3 步就会中止。
 >
 > **当前状态**：本插件没有发布到 npm（曾发过 0.4.2，已下架），所以 `package.json`
 > 的版本号眼下**不参与任何 DSH 用户的升级判断**——它只是为了一致性，以及将来
@@ -28,6 +28,12 @@ Claude Code 用 `.claude-plugin/plugin.json` 的 `version` 字段判断用户是
 > ⚠️ **不要同时在 `plugin.json` 和 `marketplace.json` 里设 `version`。**
 > Claude Code 只读 `plugin.json` 的值，**且不报警告** —— marketplace 里写的会被静默忽略，
 > 造成"明明改了版本号用户却没更新"的假象。
+
+## Codex 侧的安装与更新
+
+仓库根的 `.agents/plugins/marketplace.json` 将 `./` 注册为插件源；`.codex-plugin/plugin.json` 指向共用的 `skills/`。本地开发使用 `codex plugin marketplace add /path/to/AgentForge`，安装 `agentforge@agentforge` 后在新任务中验证。发布到 GitHub 默认分支后，用户可用 `codex plugin marketplace add Lixiuxiu559/AgentForge` 添加来源。
+
+已安装插件从 Codex 的缓存副本加载。本地改动后重新安装插件；Git 来源先运行 `codex plugin marketplace upgrade agentforge`，再检查安装副本，必要时重装。开启新任务验证新内容。市场清单不设置版本；发布时同步 bump Codex 插件清单的版本。
 
 ## DSH 侧的机制：版本开关取决于装法
 
@@ -111,7 +117,7 @@ git push
 ```bash
 git switch main
 git merge --no-ff dev                  # 把攒的功能带过来
-node tools/release.mjs patch --push    # bump 两端版本 + 提交 + 打标签 + 推送
+node tools/release.mjs patch --push    # 同步三个版本号 + 提交 + 打标签 + 推送
 git switch dev
 git merge main                         # 把 bump 提交同步回 dev
 ```
@@ -147,10 +153,10 @@ git push --follow-tags
 
 1. 检查工作区是否干净
 2. 检查当前分支是否为 `main`
-3. 跑 `tools/doctor.mjs` 校验（不通过则中止，**含两端版本一致性**）
-4. 计算新版本号（若两端已漂移，会提示并以 `plugin.json` 为基准拉齐）
+3. 跑 `tools/doctor.mjs` 校验（不通过则中止，**含三处版本一致性**）
+4. 计算新版本号（版本漂移会在 doctor 阶段中止，先修复再发版）
 5. 检查目标 tag 是否已存在
-6. **同步更新 `.claude-plugin/plugin.json` 与 `package.json` 的 `version`**
+6. **同步更新 `.claude-plugin/plugin.json`、`.codex-plugin/plugin.json` 与 `package.json` 的 `version`**
 7. 更新 `CHANGELOG.md`（把 `Unreleased` 转成正式版本 + 日期）
 8. 提交 `chore(release): vX.Y.Z`
 9. 打标签 `vX.Y.Z`
@@ -161,10 +167,8 @@ git push --follow-tags
 node tools/release.mjs patch --push
 ```
 
-**`release.mjs` 不发布 npm。** 它只做 git 侧：bump 两端版本 → 提交 → 打标签 → 推送。
-推送 tag 会触发 [`.github/workflows/publish.yml`](../.github/workflows/publish.yml)，
-由 CI 通过 OIDC 可信发布把包发到 npm——**本机不需要任何 npm 凭据**。
-为什么不这么做、以及首次发布怎么引导，见 [`npm-publishing.md`](npm-publishing.md)。
+**`release.mjs` 不发布 npm。** 它只同步三个版本号、提交、打标签并推送。
+推送 tag 触发 [`.github/workflows/release.yml`](../.github/workflows/release.yml) 创建 GitHub Release；npm 发布工作流当前仅手动触发，详见 [`npm-publishing.md`](npm-publishing.md)。
 
 加 `--dry-run` 只预览不落盘：
 
@@ -184,6 +188,11 @@ node tools/release.mjs patch --dry-run
 | **MINOR** | 新增技能、新增子 agent、新增语言支持、新增能力 | `0.1.1` → `0.2.0` |
 | **MAJOR** | 重命名或删除技能/子 agent、改变现有行为契约 | `0.2.0` → `1.0.0` |
 
+> **0.x 期间例外：破坏性变更用 MINOR 承载。** semver 对 `0.y.z` 的定义是
+> 「初始开发阶段，任何东西都可能随时变化，公开 API 不应被视为稳定」，
+> 所以 `MAJOR` 从 `1.0.0` 起才启用。上表列的是 **1.0 之后的严格语义**。
+> 0.5.0 就是这么发的：删除了 5 个子 agent，走的是 MINOR。
+
 ### 重命名是破坏性变更
 
 使用者按名字调用能力：
@@ -195,9 +204,11 @@ node tools/release.mjs patch --dry-run
 技能或子 agent **一旦改名，旧名字立即失效**，用户的习惯、脚本、文档全部断裂。
 所以：
 
-- 重命名技能或 agent → **MAJOR**
-- 删除技能或 agent → **MAJOR**
+- 重命名技能或 agent → **破坏性**
+- 删除技能或 agent → **破坏性**
 - 只改正文内容、不改名字 → PATCH
+
+其中「破坏性」在 **`1.0.0` 之前用 MINOR 承载**，从 `1.0.0` 起升为 **MAJOR**。
 
 > 插件自身的 `name`（`agentforge`）改名更严重，需要 marketplace 的 `renames` 字段做迁移。
 > 当前不计划改动。
@@ -210,11 +221,11 @@ node tools/release.mjs patch --dry-run
 
 - [x] 工作区干净
 - [x] 在 `main` 分支
-- [x] `tools/doctor.mjs` 通过（含两端版本一致性）
+- [x] `tools/doctor.mjs` 通过（含三处版本一致性）
 - [x] 目标 tag 不存在
-- [x] 两端版本号会被同步 bump
+- [x] 三处版本号会被同步 bump
 - [ ] `CHANGELOG.md` 的 `Unreleased` 段写清了本次改动
-- [ ] 本地实测过关键技能能正常加载（CC：`/plugin marketplace add ./` + 安装；DSH：`--dump-config` 看装配）
+- [ ] 本地实测过关键技能能正常加载（Codex：本地 marketplace 安装；CC：`/plugin marketplace add ./`；DSH：`--dump-config` 看装配）
 
 ---
 
@@ -222,7 +233,7 @@ node tools/release.mjs patch --dry-run
 
 `.github/workflows/validate.yml` 在 push 和 PR 时运行：
 
-- `node tools/doctor.mjs` —— 结构与资产校验 + DSH 适配校验
+- `node tools/doctor.mjs` —— 三端结构与资产校验
 - JSON 清单合法性
 - 脚本语法
 - 版本号与 tag 一致性提示
@@ -248,6 +259,7 @@ node tools/release.mjs patch --dry-run
 | 发版后用户仍拿旧版 | 用户没执行 `/plugin update`；或自动更新被关闭 |
 | tag 已存在导致发版失败 | 该版本已发过，换一个版本号 |
 | 新增了技能但用户看不到 | 未发版；或技能 frontmatter 不合法（CI 应已拦住） |
-| `doctor` 报「两端版本号不一致」 | `plugin.json` 与 `package.json` 漂移，用 `release.mjs` 发版会自动拉齐 |
+| `doctor` 报「三处版本号不一致」 | 两份插件清单与 `package.json` 漂移，先统一现有版本再运行 `release.mjs` |
+| Codex 安装后看不到新技能 | 刷新 marketplace/重装插件，并在新任务中检查已安装副本 |
 | 更新后仍出现旧的 `agentforge` 派发工具 | 当前版本已移除该工具；检查加载路径并重启 profile 清除旧注册 |
 | DSH 侧改了技能没生效 | 技能每次重扫，通常应立即生效；若未生效检查 profile 是否真的挂载了 agentforge bundle |

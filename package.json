@@ -1,7 +1,7 @@
 {
   "name": "dsh-agentforge",
   "version": "0.5.0",
-  "description": "通用 agent 工作流与工程技能集，同时作为 Claude Code 插件与 DeepSeek Harness 插件分发。",
+  "description": "通用 agent 工作流与工程技能集，可用于 Codex、Claude Code 与 DeepSeek Harness。",
   "type": "module",
   "main": "src/index.js",
   "license": "MIT",
@@ -31,7 +31,8 @@
     "src",
     "skills",
     "cordis.patch.yml",
-    ".claude-plugin"
+    ".claude-plugin",
+    ".codex-plugin"
   ],
   "publishConfig": {
     "access": "public"

@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
- * AgentForge Doctor —— Claude Code 插件结构与资产体检。
+ * AgentForge Doctor —— 三种宿主的插件结构与资产体检。
  *
  * 零依赖，只用 node: 内置模块。检查项：
  *   1. 插件清单与市场清单
- *   2. 两端版本号一致性（plugin.json 与 package.json）
+ *   2. Claude Code、Codex 与 package.json 的版本号一致性
  *   3. 组件目录位置（必须在插件根，不能嵌进 .claude-plugin/）
  *   4. 技能 frontmatter 与目录名一致性
  *   5. 技能内 references 引用是否存在
@@ -114,33 +114,108 @@ function checkManifests() {
   }
 }
 
-/* ─────────────────────── 1b. 两端版本一致性 ─────────────────────── */
+function checkCodexPlugin() {
+  const manifestPath = path.join(ROOT, '.codex-plugin', 'plugin.json')
+  const marketplacePath = path.join(ROOT, '.agents', 'plugins', 'marketplace.json')
+  let plugin
+  try {
+    plugin = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
+    if (plugin.name !== 'agentforge') add('error', 'codex', 'Codex 插件名必须是 agentforge')
+    if (!plugin.description || plugin.skills !== './skills/') {
+      add('error', 'codex', 'Codex 清单需描述插件并指向 ./skills/')
+    }
+    if (!plugin.interface?.displayName || !plugin.interface?.shortDescription ||
+        !plugin.interface?.longDescription || !plugin.interface?.developerName ||
+        plugin.interface?.category !== 'Developer Tools' ||
+        !Array.isArray(plugin.interface?.capabilities) ||
+        !Array.isArray(plugin.interface?.defaultPrompt)) {
+      add('error', 'codex', 'Codex 清单缺少必要的展示信息')
+    }
+    if ('apps' in plugin || 'mcpServers' in plugin) {
+      add('error', 'codex', '本插件没有 app/MCP 资产，不应声明对应依赖')
+    }
+  } catch (e) {
+    add('error', 'codex', `${rel(manifestPath)} 缺失或不是合法 JSON`, String(e.message))
+  }
+  try {
+    const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'))
+    if (!pkg.files?.includes('.codex-plugin')) {
+      add('error', 'codex', 'npm files 未包含 .codex-plugin，按 npm 分发时会漏掉 Codex 清单')
+    }
+  } catch {
+    // package.json 的错误由 DSH 适配检查报告。
+  }
+
+  try {
+    const marketplace = JSON.parse(fs.readFileSync(marketplacePath, 'utf8'))
+    const entry = marketplace.plugins?.find((p) => p.name === plugin?.name)
+    if (marketplace.name !== 'agentforge' || !entry) {
+      add('error', 'codex', 'Codex marketplace 缺少 agentforge 条目')
+    } else {
+      const source = entry.source
+      if (source?.source !== 'local' || source.path !== './') {
+        add('error', 'codex', 'Codex marketplace 应指向仓库根 ./')
+      }
+      if (entry.policy?.installation !== 'AVAILABLE' || entry.policy?.authentication !== 'ON_INSTALL') {
+        add('error', 'codex', 'Codex marketplace 的安装策略无效')
+      }
+      if (entry.category !== 'Developer Tools') add('error', 'codex', 'Codex marketplace 类别无效')
+    }
+  } catch (e) {
+    add('error', 'codex', `${rel(marketplacePath)} 缺失或不是合法 JSON`, String(e.message))
+  }
+
+  const scoutPolicy = path.join(ROOT, 'skills', 'architecture-scout', 'agents', 'openai.yaml')
+  const scoutSkill = path.join(ROOT, 'skills', 'architecture-scout', 'SKILL.md')
+  if (exists(scoutSkill)) {
+    const parsed = parseFrontmatter(fs.readFileSync(scoutSkill, 'utf8'))
+    if (parsed?.data['disable-model-invocation'] === 'true') {
+      add('error', 'codex', 'architecture-scout 使用了 Codex 插件不接受的 disable-model-invocation: true')
+    }
+    if (parsed?.data['dsh-model-invocable'] !== 'false') {
+      add('error', 'codex', 'architecture-scout 缺少 DSH 显式调用策略')
+    }
+  }
+  try {
+    const text = fs.readFileSync(scoutPolicy, 'utf8')
+    if (!/^\s*allow_implicit_invocation:\s*false\s*$/m.test(text)) {
+      add('error', 'codex', 'architecture-scout 在 Codex 中应仅由用户主动调用')
+    }
+  } catch (e) {
+    add('error', 'codex', `${rel(scoutPolicy)} 缺失或不可读`, String(e.message))
+  }
+}
+
+/* ─────────────────────── 1b. 三处版本一致性 ─────────────────────── */
 
 /**
- * Claude Code 读 `.claude-plugin/plugin.json` 的 version，DSH/npm 读 `package.json` 的 version。
- * 两者漂移会导致「发了一端、另一端版本号还是旧的」，或 git/registry 安装时解析到错误版本。
+ * Claude Code、Codex 分别读取自己的插件清单，DSH/npm 读取 package.json。
+ * 三处漂移会导致各宿主看到不同版本。
  */
 function checkVersionSync() {
   const pluginPath = path.join(ROOT, '.claude-plugin', 'plugin.json')
   const pkgPath = path.join(ROOT, 'package.json')
-  if (!exists(pluginPath) || !exists(pkgPath)) return
+  const codexPath = path.join(ROOT, '.codex-plugin', 'plugin.json')
+  if (!exists(pluginPath) || !exists(pkgPath) || !exists(codexPath)) return
 
   let plugin
   let pkg
+  let codex
   try {
     plugin = JSON.parse(fs.readFileSync(pluginPath, 'utf8'))
     pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'))
+    codex = JSON.parse(fs.readFileSync(codexPath, 'utf8'))
   } catch {
     return // JSON 非法已由 checkManifests 报告
   }
-  if (!plugin.version || !pkg.version) return
+  if (!plugin.version || !pkg.version || !codex.version) return
 
-  if (plugin.version !== pkg.version) {
+  if (plugin.version !== pkg.version || plugin.version !== codex.version) {
     add(
       'error',
       'version',
-      `两端版本号不一致：plugin.json=${plugin.version}，package.json=${pkg.version}`,
-      'Claude Code 用 plugin.json 判断更新，DSH/npm 用 package.json；发版应同步 bump 两者（node tools/release.mjs 已自动同步）',
+      `三处版本号不一致：Claude Code=${plugin.version}，Codex=${codex.version}，npm=${pkg.version}`,
+      '发版应同步 bump 三处版本（node tools/release.mjs 已自动同步）',
     )
   }
 }
@@ -358,7 +433,7 @@ function report() {
     return 0
   }
 
-  const ORDER = ['manifest', 'version', 'layout', 'skills', 'paths', 'dsh']
+  const ORDER = ['manifest', 'codex', 'version', 'layout', 'skills', 'paths', 'dsh']
   const areas = [...new Set(findings.map((f) => f.area))].sort(
     (a, b) => (ORDER.indexOf(a) + 1 || 99) - (ORDER.indexOf(b) + 1 || 99),
   )
@@ -386,6 +461,7 @@ if (!exists(ROOT)) {
 }
 
 checkManifests()
+checkCodexPlugin()
 checkVersionSync()
 checkComponentLayout()
 checkSkills()

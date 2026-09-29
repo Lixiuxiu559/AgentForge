@@ -1,0 +1,37 @@
+{
+  "name": "agentforge",
+  "version": "0.5.0",
+  "description": "调研、实施编排、代码评审与质量审计的六个工程技能。",
+  "author": {
+    "name": "lixiuxiu",
+    "url": "https://github.com/Lixiuxiu559"
+  },
+  "homepage": "https://github.com/Lixiuxiu559/AgentForge",
+  "repository": "https://github.com/Lixiuxiu559/AgentForge",
+  "license": "MIT",
+  "keywords": [
+    "engineering",
+    "skills",
+    "code-review",
+    "workflow"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "AgentForge",
+    "shortDescription": "工程工作流与代码质量技能",
+    "longDescription": "六个工程技能，覆盖调研取证、架构机会侦察、实施编排、三轴代码评审、复杂度审计和突变测试。独立上下文与并行执行使用宿主提供的通用子 agent 能力。",
+    "developerName": "lixiuxiu",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Research",
+      "Code Review",
+      "Development Workflows"
+    ],
+    "websiteURL": "https://github.com/Lixiuxiu559/AgentForge",
+    "defaultPrompt": [
+      "用 AgentForge 调查这个问题的根因并给出证据。",
+      "用 AgentForge 拆分并实现这个功能，独立任务可以并行。",
+      "用 AgentForge 按正确性、规范和需求三轴评审改动。"
+    ]
+  }
+}
