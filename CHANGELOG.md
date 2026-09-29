@@ -16,6 +16,14 @@
 
 ### Added
 
+- 
+
+---
+
+## [0.6.0] - 2026-09-29
+
+### Added
+
 - 新增 Codex 技能插件清单与仓库 marketplace，复用现有六个 Skill；`architecture-scout` 在 Codex 使用独立调用策略、在 DSH 保留显式调用限制，Claude Code 依靠技能说明约束触发。版本同步、结构检查、安装说明和发布文档扩展到第三端。
 
 ### Fixed
