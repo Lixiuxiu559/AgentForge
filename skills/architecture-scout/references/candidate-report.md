@@ -5,7 +5,7 @@
 - 目标模块 / 主题：
 - 调查范围：
 - 使用的 git 基线或时间范围：
-- 调查方式：主 Agent / 1 个 researcher / N 个并行 researcher
+- 调查方式：主 Agent / 1 个调查子 agent / N 个并行调查子 agent
 
 ## 调查结论
 

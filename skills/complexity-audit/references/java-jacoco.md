@@ -19,18 +19,10 @@ find . -path '*/target/site/jacoco/jacoco.xml' \
 
 ## 执行
 
-脚本位于**本技能目录**的 `scripts/crap.js`。两端定位方式不同：
+脚本位于**本技能目录**的 `scripts/crap.js`。从已加载技能的目录（DSH 中为 resourceBase）解析出绝对路径，再在目标项目工作目录运行。派发子任务时传入解析后的路径，不假定环境变量或目标仓库包含插件。
 
 ```bash
-# Claude Code：插件根用 ${CLAUDE_PLUGIN_ROOT} 定位
-node "${CLAUDE_PLUGIN_ROOT}/skills/complexity-audit/scripts/crap.js" \
-  target/site/jacoco/jacoco.xml \
-  --lang java \
-  --threshold 30 \
-  --top 30
-
-# DSH：技能加载时会给出本技能的 Base directory，以它为基准
-node "<技能目录>/scripts/crap.js" \
+node "<技能绝对目录>/scripts/crap.js" \
   target/site/jacoco/jacoco.xml \
   --lang java \
   --threshold 30 \

@@ -95,7 +95,7 @@ node tools/release.mjs patch --push
 | 步骤 | 作用 |
 |---|---|
 | tag 与 `package.json` 版本一致性 | 不一致就中止（手工打的标签会在这里被拦下） |
-| `node tools/doctor.mjs` | 校验 `files` 白名单没漏掉 `skills/` `agents/` |
+| `node tools/doctor.mjs` | 校验 `files` 白名单没漏掉 `skills/` |
 | `npm pack --dry-run` | 打印将发布的内容 |
 | 该版本是否已发布 | **幂等**：已存在就跳过发布，重跑工作流不会红 |
 | `npm publish` | OIDC 可信发布，自动附带 provenance |
@@ -155,7 +155,7 @@ npm 官方与社区实践都确认：OIDC 无法完成首次发布。
 | `cordis.patch.yml` | insert 的 `name` → `@<USER>/dsh-agentforge` |
 | `src/index.js` | `export const name` → `@<USER>/dsh-agentforge` |
 
-`id: agentforge`、技能 provider 名、工具名 `agentforge` **都不动**。
+`id: agentforge` 和技能 provider 名 `agentforge` **都不动**；当前桥接层不注册派发工具。
 
 **3. 用一次性 token 引导首次发布**（CI 内完成，不用本机）：
 

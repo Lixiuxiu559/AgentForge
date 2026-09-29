@@ -30,11 +30,13 @@
   "files": [
     "src",
     "skills",
-    "agents",
     "cordis.patch.yml",
     ".claude-plugin"
   ],
   "publishConfig": {
     "access": "public"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs"
   }
 }

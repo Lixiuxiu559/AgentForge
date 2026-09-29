@@ -14,7 +14,7 @@
 
 - 公共 API、跨模块契约、权限、核心状态机
 - 业务逻辑或错误处理发生变化
-- 大型重构、多个 implementer 参与的集成
+- 大型重构、多个实施子任务参与的集成
 - 提交前需要确认改动符合需求与项目约定
 - 用户明确要求代码评审
 
@@ -30,7 +30,7 @@
 - 没有 spec 时仍可运行 Correctness + Standards，但必须报告 Spec 轴降级
 - 评审不依赖 Claude Code 内置 `/code-review`、DSH 专属命令或其他宿主能力
 
-## complexity-auditor
+## complexity-audit
 
 审计复杂度与覆盖率风险，回答「这段代码是否难以安全修改」。
 
@@ -40,7 +40,7 @@
 - 修改大型 service、controller、parser、状态机
 - 新增大量条件分支
 - 重构核心模块
-- implementer 报告中出现明显深层嵌套
+- 实施子任务报告中出现明显深层嵌套
 - 变更规模较大
 - 用户明确要求复杂度审计
 
@@ -55,7 +55,7 @@
 
 项目存在可用的复杂度或覆盖率工具，或可从现有报告推导。缺失时应说明降级等级（`complexity-only`、`file-level-risk`、`unavailable`），不要伪造 CRAP 值。
 
-## mutation-auditor
+## mutation-testing
 
 审计测试有效性，回答「现有测试是否真的能发现错误」。
 
@@ -80,7 +80,7 @@
 
 ## 组合建议
 
-| 变更类型 | diff-review | complexity-auditor | mutation-auditor |
+| 变更类型 | diff-review | complexity-audit | mutation-testing |
 |---|---|---|---|
 | 文档 / 配置 / 样式 | 跳过或检查契约一致性 | 跳过 | 跳过 |
 | 简单字段或小修复 | 通常跳过 | 跳过 | 跳过 |
@@ -95,15 +95,15 @@
 高风险变更建议：
 
 ```text
-implementer 完成并统一验证通过
+实施子任务完成并统一验证通过
         ↓
 diff-review             ← 正确性 / 规范 / 需求
         ↓
-complexity-auditor      ← 结构复杂度风险
+complexity-audit      ← 结构复杂度风险
         ↓
-mutation-auditor        ← 测试有效性
+mutation-testing        ← 测试有效性
         ↓
-implementer 修复（如有需要）
+实施子任务修复（如有需要）
         ↓
 重新验证相关部分
 ```
@@ -113,7 +113,7 @@ implementer 修复（如有需要）
 ## 结果处理
 
 - 三个审计角色**只报告，不修改代码**
-- 修复由 `implementer` 执行
+- 修复由实施子任务执行
 - 发现高危项时回到实施阶段修复并重新验证
 - 跳过某个审计时，最终报告必须说明原因
 - 不要求反复执行到零 finding；评审与审计都没有收敛保证

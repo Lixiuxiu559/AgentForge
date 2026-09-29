@@ -7,13 +7,9 @@
  *   2. 两端版本号一致性（plugin.json 与 package.json）
  *   3. 组件目录位置（必须在插件根，不能嵌进 .claude-plugin/）
  *   4. 技能 frontmatter 与目录名一致性
- *   5. 子 agent frontmatter 与文件名一致性
- *   6. 只读 agent 不得声明写工具
- *   7. 外部依赖（mcp__* 引用）
- *   8. 技能内 references 引用是否都存在
- *   9. 硬编码绝对路径
- *  10. 与 Claude Code 内置技能重名
- *  11. DSH 适配层：bundle 清单、桥接插件、CC→DSH 工具名映射
+ *   5. 技能内 references 引用是否存在
+ *   6. 硬编码绝对路径与内置技能重名
+ *   7. DSH bundle、发布资产与技能桥接入口
  *
  * 用法：
  *   node tools/doctor.mjs [插件根目录]
@@ -38,7 +34,6 @@ const exists = (p) => {
 }
 const rel = (p) => path.relative(ROOT, p) || '.'
 
-const WRITE_TOOLS = new Set(['Edit', 'Write', 'NotebookEdit'])
 const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/
 
 /** 解析 YAML frontmatter 子集（顶层键 + 单行标量 + 块标量）。 */
@@ -158,8 +153,8 @@ function checkComponentLayout() {
       add('error', 'layout', `${dir}/ 被放在了 .claude-plugin/ 内`, '组件目录必须在插件根级别，否则不会被自动发现')
     }
   }
-  if (!exists(path.join(ROOT, 'skills')) && !exists(path.join(ROOT, 'agents'))) {
-    add('warn', 'layout', '插件既没有 skills/ 也没有 agents/', '该插件不会提供任何能力')
+  if (!exists(path.join(ROOT, 'skills'))) {
+    add('error', 'layout', '缺少 skills/ 目录', '该插件不会提供任何能力')
   }
 }
 
@@ -215,66 +210,10 @@ function checkSkills() {
   for (const p of nested) add('error', 'skills', `${rel(p)}/SKILL.md 是嵌套技能，不会被发现`)
 }
 
-/* ─────────────────────── 4. 子 agent ─────────────────────── */
-
-function checkAgents() {
-  const dir = path.join(ROOT, 'agents')
-  if (!exists(dir)) return
-
-  for (const f of fs.readdirSync(dir)) {
-    if (!f.endsWith('.md')) continue
-    const full = path.join(dir, f)
-    const shown = rel(full)
-    const base = f.replace(/\.md$/, '')
-    const parsed = parseFrontmatter(fs.readFileSync(full, 'utf8'))
-
-    if (parsed === undefined) {
-      add('error', 'agents', `${shown} 缺少 YAML frontmatter`)
-      continue
-    }
-    const { data, body } = parsed
-    if (!data.name) add('error', 'agents', `${shown} 缺少 name`)
-    else if (data.name !== base) add('error', 'agents', `${shown} 的 name="${data.name}" 与文件名 "${base}" 不一致`)
-    if (!data.description) add('error', 'agents', `${shown} 缺少 description`)
-
-    const tools = (data.tools ?? '').split(',').map((t) => t.trim()).filter(Boolean)
-    if (tools.length === 0) {
-      add('warn', 'agents', `${shown} 未声明 tools 白名单`, '默认拥有全部工具，建议按最小权限声明')
-    }
-
-    // maxTurns 已被刻意移除，不要加回来。
-    // 超限时输出被静默标记为 partial（CC <2.1.246 连标记都没有），
-    // 对只读审计 agent 会产生「看起来完整实则被截断」的假阴性；
-    // 且 DSH 无任何对应机制，会造成不可降级的两端行为分歧。
-    if (data.maxTurns !== undefined) {
-      add(
-        'warn',
-        'agents',
-        `${shown} 声明了 maxTurns=${data.maxTurns}`,
-        '本仓库刻意不使用该字段（截断静默、DSH 无对应物）。成本控制请用 model / effort；理由与实测数据见 docs/architecture.md',
-      )
-    }
-
-    const isReadOnly = /只报告|只读分析|不修改代码|不修改生产代码/.test(`${data.description ?? ''}\n${body}`)
-    if (isReadOnly) {
-      const leaked = tools.filter((t) => WRITE_TOOLS.has(t))
-      if (leaked.length) add('error', 'agents', `${shown} 声称只读，但 tools 包含写工具：${leaked.join(', ')}`)
-    }
-
-    const mcp = [...body.matchAll(/mcp__([A-Za-z0-9_-]+)__/g)].map((m) => m[1])
-    for (const s of [...new Set(mcp)]) {
-      add('error', 'agents', `${shown} 依赖 MCP 服务 "mcp__${s}__*"`, '本插件承诺零外部依赖')
-    }
-    if (tools.some((t) => t.startsWith('mcp__'))) {
-      add('error', 'agents', `${shown} 的 tools 白名单包含 MCP 工具`, '本插件承诺零外部依赖')
-    }
-  }
-}
-
-/* ─────────────────────── 5. 硬编码路径 ─────────────────────── */
+/* ─────────────────────── 4. 硬编码路径 ─────────────────────── */
 
 function checkHardcodedPaths() {
-  for (const d of ['skills', 'agents', 'commands', 'hooks']) {
+  for (const d of ['skills', 'commands', 'hooks']) {
     const full = path.join(ROOT, d)
     if (!exists(full)) continue
     const walk = (p) => {
@@ -289,24 +228,19 @@ function checkHardcodedPaths() {
       if (!/\.(md|json|sh|js|mjs|py)$/i.test(p)) return
       const text = fs.readFileSync(p, 'utf8')
       const m = /(?:^|[\s"'(])(\/(?:Users|home)\/[A-Za-z0-9_.-]+\/[^\s"')]*)/.exec(text)
-      if (m) add('warn', 'paths', `${rel(p)} 含硬编码绝对路径`, `${m[1]} —— 插件内应使用 \${CLAUDE_PLUGIN_ROOT}`)
+      if (m) add('warn', 'paths', `${rel(p)} 含硬编码绝对路径`, `${m[1]} —— 运行时根据技能所在目录解析资源路径`)
     }
     walk(full)
   }
 }
 
-/* ─────────────────────── 6. DSH 适配层 ─────────────────────── */
+/* ─────────────────────── 5. DSH 适配层 ─────────────────────── */
 
-/**
- * 从桥接插件里读取工具名映射表。
- *
- * 刻意 import 真源而不是在 doctor 里抄一份：抄一份必然漂移，
- * 而漂移的表现是「DSH 侧静默丢掉工具白名单」，最难排查。
- */
+/** 装载真实桥接入口，检查发布包与运行时契约。 */
 async function loadBridgeExports() {
   const file = path.join(ROOT, 'src', 'index.js')
   if (!exists(file)) {
-    add('error', 'dsh', '缺少 src/index.js', '这是 DSH 侧的桥接插件，没有它技能和子 agent 都不会被注册')
+    add('error', 'dsh', '缺少 src/index.js', '这是 DSH 侧的桥接插件，没有它技能不会被注册')
     return undefined
   }
   try {
@@ -346,7 +280,7 @@ function checkDshAdaptation(bridge) {
     }
   }
 
-  // 2. 装载入口：main 必须是真实文件，且 skills/ agents/ 必须随包发布
+  // 2. 装载入口：main 必须是真实文件，且 skills/ 必须随包发布
   if (pkg !== undefined) {
     const main = pkg.main
     if (typeof main !== 'string' || !exists(path.join(ROOT, main))) {
@@ -355,10 +289,10 @@ function checkDshAdaptation(bridge) {
       add('warn', 'dsh', `package.json 的 main="${main}" 不是 src/index.js`, '确认它确实指向桥接插件')
     }
 
-    // npm 的 files 白名单漏掉 skills/agents 时，装出来的包里没有资产：
+    // npm 的 files 白名单漏掉 skills 时，装出来的包里没有资产：
     // DSH 侧会「装载成功但什么都没注册」，是本项目最隐蔽的失败模式。
     if (Array.isArray(pkg.files)) {
-      for (const needed of ['src', 'skills', 'agents', 'cordis.patch.yml']) {
+      for (const needed of ['src', 'skills', 'cordis.patch.yml']) {
         if (!pkg.files.some((f) => f === needed || f.startsWith(`${needed}/`))) {
           add('error', 'dsh', `package.json 的 files 未包含 ${needed}`, 'npm 发布时会被丢掉，装出来的插件注册不到任何资产')
         }
@@ -373,55 +307,16 @@ function checkDshAdaptation(bridge) {
     add('warn', 'dsh', `src/index.js 导出的插件名 "${bridge.name}" 与包名 "${pkg?.name}" 不一致`, '两者不一致会让排查变困难')
   }
 
-  const map = bridge.CC_TO_DSH_TOOL_NAMES
-  if (map === undefined || typeof map !== 'object') {
-    add('error', 'dsh', 'src/index.js 未导出 CC_TO_DSH_TOOL_NAMES', 'doctor 靠它校验工具白名单映射')
+  if (typeof bridge.apply !== 'function') {
+    add('error', 'dsh', 'src/index.js 未导出 apply 函数')
+  }
+  if (!Array.isArray(bridge.inject) || bridge.inject.length !== 1 || bridge.inject[0] !== 'skills') {
+    add('error', 'dsh', '桥接入口应只依赖 skills 服务')
   }
 
-  const reserved = Array.isArray(bridge.RESERVED_TOOL_NAMES) ? bridge.RESERVED_TOOL_NAMES : []
-
-  // 3. 子 agent：工具白名单必须能映射到 DSH 工具名
-  const dir = path.join(ROOT, 'agents')
-  if (exists(dir)) {
-    /** CC 专属字段：汇总成一条提示，避免每个 agent 各刷一行。 */
-    const ccOnly = []
-    for (const f of fs.readdirSync(dir)) {
-      if (!f.endsWith('.md')) continue
-      const full = path.join(dir, f)
-      const parsed = parseFrontmatter(fs.readFileSync(full, 'utf8'))
-      if (parsed === undefined) continue
-      const { data } = parsed
-      const tools = (data.tools ?? '').split(',').map((t) => t.trim()).filter(Boolean)
-
-      if (tools.length === 0) {
-        add('warn', 'dsh', `${rel(full)} 未声明 tools`, 'DSH 侧将不设工具白名单，子 agent 拥有全部工具')
-      }
-      for (const t of tools) {
-        if (map !== undefined && map[t] === undefined) {
-          add('error', 'dsh', `${rel(full)} 的工具 "${t}" 在 DSH 无对应物`, '会被静默丢弃；请在 src/index.js 的 CC_TO_DSH_TOOL_NAMES 里补映射或从白名单移除')
-        }
-      }
-
-      const ignored = []
-      if (typeof data.model === 'string' && data.model !== '') ignored.push(`model=${data.model}`)
-      if (ignored.length) ccOnly.push(`${f.replace(/\.md$/, '')}(${ignored.join(', ')})`)
-    }
-
-    if (ccOnly.length) {
-      add('info', 'dsh', 'CC 专属字段在 DSH 侧被忽略', `${ccOnly.join('、')} —— 模型名两端不同，需要固定路由时用 patch 行的 config.agents.<name> 指定`)
-    }
-  }
-
-  // 4. 工具名不得占用 DSH 保留名（名字从桥接插件读，不在这里抄一份）
-  const toolName = typeof bridge.DEFAULT_TOOL_NAME === 'string' ? bridge.DEFAULT_TOOL_NAME : undefined
-  if (toolName === undefined) {
-    add('error', 'dsh', 'src/index.js 未导出 DEFAULT_TOOL_NAME', 'doctor 靠它校验工具名是否与 DSH 保留名冲突')
-  } else if (reserved.includes(toolName)) {
-    add('error', 'dsh', `桥接插件的工具名 "${toolName}" 与 DSH 保留名冲突`, 'DSH 侧会直接抛错，插件装载失败')
-  }
 }
 
-/* ─────────────────────── 5. 命名冲突 ─────────────────────── */
+/* ─────────────────────── 6. 命名冲突 ─────────────────────── */
 
 /**
  * Claude Code 内置的 bundled skill 名。
@@ -463,7 +358,7 @@ function report() {
     return 0
   }
 
-  const ORDER = ['manifest', 'version', 'layout', 'skills', 'agents', 'paths', 'dsh']
+  const ORDER = ['manifest', 'version', 'layout', 'skills', 'paths', 'dsh']
   const areas = [...new Set(findings.map((f) => f.area))].sort(
     (a, b) => (ORDER.indexOf(a) + 1 || 99) - (ORDER.indexOf(b) + 1 || 99),
   )
@@ -494,7 +389,6 @@ checkManifests()
 checkVersionSync()
 checkComponentLayout()
 checkSkills()
-checkAgents()
 checkHardcodedPaths()
 checkNaming()
 checkDshAdaptation(await loadBridgeExports())

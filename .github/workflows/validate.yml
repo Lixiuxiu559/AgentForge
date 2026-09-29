@@ -33,6 +33,9 @@ jobs:
       - name: 结构与资产校验
         run: node tools/doctor.mjs
 
+      - name: 技能提供者运行时测试
+        run: npm test
+
       - name: JSON 清单合法性
         run: |
           node -e "JSON.parse(require('fs').readFileSync('.claude-plugin/plugin.json','utf8'))"
