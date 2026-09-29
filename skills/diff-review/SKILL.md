@@ -52,7 +52,7 @@ git log <固定点>..HEAD --oneline          # Spec 轴找需求线索
 
 **Spec**：找三类——spec 要求但缺失或只做了一半的、diff 里做了但 spec 没要求的（scope creep）、看起来实现了但实现方式可疑的。每条引 spec 原句。
 
-**三轴互不参考结论**。有通用子 agent 工具时按 `references/verification.md` 派发独立轴，可并行；无派发能力时串行并说明。
+**三轴互不参考结论**。有通用子 agent 工具时按 `references/verification.md` 派发独立轴，可并行；结构判据未命中、或只有一条轴有实质材料时单遍串行（判据见同一文件），无派发能力时串行并说明。
 
 ### 4. 输出
 
