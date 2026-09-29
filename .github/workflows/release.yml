@@ -1,0 +1,59 @@
+name: Release
+
+# tag 推送时创建 GitHub Release，正文取自 CHANGELOG 对应段落。
+#
+# **这件事和 npm 无关。** 之前的实现把创建 Release 塞在 publish.yml 里，结果
+# npm 一停用、publish.yml 一改成手动触发，Release 就再也不会产生了——
+# 而 git tag 照旧在打，于是「有 tag 但看不到 Release」。
+#
+# GitHub 上 tag 与 Release 是两个对象：推 tag 不会自动生成 Release，
+# 必须显式 create。这个工作流负责那一步，不依赖任何分发渠道。
+#
+# 留着 Release 的实际用处：版本页可读、CHANGELOG 有图形入口，
+# 以及将来若要用 awesome-dsh-plugin 的 `tarball:` 字段，附件挂在这里。
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+# 只读代码 + 建 Release。
+permissions:
+  contents: write
+
+# 同一个 tag 只跑一个；已开始的不取消。
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      # 第三方 action 钉 commit SHA，尾注版本号供 Dependabot 识别（见 .github/dependabot.yml）
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+
+      - name: 创建 GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          version="${tag#v}"
+
+          # 幂等：Release 已存在就跳过，重跑工作流不会红。
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "::notice::Release $tag 已存在，跳过"
+            exit 0
+          fi
+
+          # 正文取自 CHANGELOG 对应段落，避免 Release 页和 CHANGELOG 各说各话。
+          # 抽不出来就让这一步失败——说明这个 tag 没有对应的 CHANGELOG 记录，
+          # 那是发版流程有问题，不该悄悄发一个空 Release 掩盖过去。
+          node tools/changelog-section.mjs "$version" > /tmp/release-notes.md
+
+          gh release create "$tag" \
+            --title "$tag" \
+            --notes-file /tmp/release-notes.md
