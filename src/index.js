@@ -141,8 +141,8 @@ async function scanSkills() {
       description: data.description,
       ...(data.whenToUse === undefined ? {} : { whenToUse: data.whenToUse }),
       invocation: {
-        // `disable-model-invocation: true` 把技能移出模型可见目录
-        modelInvocable: bool(data['disable-model-invocation']) !== true,
+        // 保留 DSH 侧的显式调用策略；Codex 使用技能内 agents/openai.yaml。
+        modelInvocable: bool(data['dsh-model-invocable']) !== false && bool(data['disable-model-invocation']) !== true,
         // `user-invocable: false` 把技能移出人类命令面板
         userInvocable: bool(data['user-invocable']) !== false,
       },

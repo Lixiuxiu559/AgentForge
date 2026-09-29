@@ -20,7 +20,17 @@
 
 ## Claude Code 装配
 
-`.claude-plugin/plugin.json` 与 `marketplace.json` 提供分发元数据，技能由宿主发现。`architecture-scout` 的 `disable-model-invocation: true` 保留用户主动调用策略。没有 `agents/` 注册资产。
+`.claude-plugin/plugin.json` 与 `marketplace.json` 提供分发元数据，技能由宿主发现。`architecture-scout` 在说明中限定用户主动调用；Claude Code 侧由模型遵循该约定。没有根级 `agents/` 注册资产。
+
+## Codex 装配
+
+`.codex-plugin/plugin.json` 指向同一份 `./skills/`；`.agents/plugins/marketplace.json` 把仓库根目录作为可安装插件源。这里只声明技能，不添加 MCP、app 或自定义子 agent。
+
+`skills/architecture-scout/agents/openai.yaml` 是该技能的 Codex 调用策略文件，`allow_implicit_invocation: false` 保留仅用户主动调用的语义。这个 `agents/` 路径是技能元数据目录，不是子 agent 定义。
+
+同一技能的 `dsh-model-invocable: false` 保留 DSH 的模型目录限制。Codex 插件校验器不接受 Claude Code 的 `disable-model-invocation: true`，所以共享 frontmatter 不再使用该字段。
+
+Codex 安装后加载插件副本；修改仓库文件不会自动更新已安装副本。更新 marketplace/插件并开启新任务后再验证技能发现、reference 路径与实际委派行为。独立上下文和并行仍由当前 Codex 宿主提供。
 
 ## DSH 装配
 
@@ -45,6 +55,6 @@
 
 ## 验证边界
 
-`tools/doctor.mjs` 验证结构、清单、版本、技能引用、发布资产与入口契约。Node 内置测试验证在仅有 skills 服务时加载插件、动态扫描、按需加载、资源路径与 invocation 策略。CI 在 Node 22/24 上运行。
+`tools/doctor.mjs` 验证三端结构、清单、版本、技能引用、发布资产与入口契约。Node 内置测试验证在仅有 skills 服务时加载 DSH 插件、动态扫描、按需加载、资源路径与 invocation 策略。CI 在 Node 22/24 上运行。
 
 这些检查验证包内行为，不替代 Claude Code / DSH / 其他宿主的真实派发测试；不声称每个宿主都具备相同并发或上下文能力。

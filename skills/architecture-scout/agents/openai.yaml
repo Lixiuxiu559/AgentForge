@@ -1,0 +1,5 @@
+interface:
+  display_name: "Architecture Scout"
+  short_description: "按证据寻找值得深入的架构机会"
+policy:
+  allow_implicit_invocation: false

@@ -83,14 +83,14 @@ npm unpublish dsh-agentforge@0.4.2 --force
 
 ```bash
 # 1. 先把 CHANGELOG 的 [Unreleased] 写清（release.mjs 会拒绝空段落）
-# 2. 发版：同步 bump 两端版本 → 提交 → 打标签 → 推送
+# 2. 发版：同步 bump 三处版本 → 提交 → 打标签 → 推送
 node tools/release.mjs patch --push
 
-# 3. 剩下的自动完成：tag 推送触发 .github/workflows/publish.yml
+# 3. 当前只会自动创建 GitHub Release；npm 工作流仍需单独启用
 ```
 
-`release.mjs` **不发布 npm**，它只负责 git 侧。npm 侧由
-[`.github/workflows/publish.yml`](../.github/workflows/publish.yml) 接手：
+`release.mjs` **不发布 npm**，它只负责 git 侧。恢复 npm 分发后，
+[`.github/workflows/publish.yml`](../.github/workflows/publish.yml) 才会在 tag 推送时执行：
 
 | 步骤 | 作用 |
 |---|---|
@@ -99,9 +99,8 @@ node tools/release.mjs patch --push
 | `npm pack --dry-run` | 打印将发布的内容 |
 | 该版本是否已发布 | **幂等**：已存在就跳过发布，重跑工作流不会红 |
 | `npm publish` | OIDC 可信发布，自动附带 provenance |
-| 创建 GitHub Release | 正文取自 CHANGELOG 对应段落 |
 
-工作流只监听 tag、不提供手动触发——发布不可逆，入口越少越好。
+当前工作流仅提供手动触发；恢复 npm 分发前，需先完成下文的首次发布与可信发布者配置。
 
 ### 供应链加固（与发布流程配套）
 
@@ -109,7 +108,7 @@ node tools/release.mjs patch --push
 |---|---|---|
 | 第三方 action 钉 commit SHA | 两个 workflow | 不用可移动的 tag，防 tag 被指向恶意提交 |
 | Dependabot 每周更新 pin | `.github/dependabot.yml` | **钉死不会自己更新，没有这个就是烂在原地**，拿不到安全修复 |
-| 最小权限 | `publish.yml` | `contents: write`（建 Release）+ `id-token: write`（OIDC），其余不授 |
+| 最小权限 | `publish.yml` | `contents: read` + `id-token: write`（OIDC），其余不授 |
 | 并发互斥 | `publish.yml` | 同一个 tag 只允许一个发布在跑，且不取消已开始的 |
 | 幂等 | `publish.yml` | 重跑不会撞「版本已存在」 |
 | provenance | OIDC 自带 | 无需 `--provenance` |

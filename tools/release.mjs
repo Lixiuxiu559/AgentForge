@@ -2,16 +2,16 @@
 /**
  * AgentForge 发版脚本。
  *
- * 一次发版同时更新两端清单，两者版本号始终一致：
+ * 一次发版同步更新 Claude Code、Codex 和 npm 清单的版本号：
  *
  *   .claude-plugin/plugin.json   Claude Code 的发版开关 —— 不 bump 它，CC 用户收不到更新
+ *   .codex-plugin/plugin.json    Codex 插件版本；安装来源的更新还取决于 marketplace 刷新
  *   package.json                 npm 侧版本 —— registry 安装按 semver 解析，这才是开关。
  *                                link 安装直接读磁盘；**git 安装钉的是 commit，与版本号无关**
  *                                （`pnpm update` 会重解析到分支最新 commit）。见 docs/releasing.md
  *
- * **本脚本不发布 npm。** 它只 bump 版本、提交、打标签、推送；npm 那一侧由
- * `.github/workflows/publish.yml` 在 tag 推送后经 OIDC 可信发布完成。
- * 见 docs/npm-publishing.md。
+ * **本脚本不发布 npm。** 它只 bump 版本、提交、打标签、推送。
+ * npm 发布工作流目前只支持手动触发，见 docs/npm-publishing.md。
  *
  * 用法：
  *   node tools/release.mjs patch              # 0.1.0 -> 0.1.1
@@ -19,7 +19,7 @@
  *   node tools/release.mjs major              # 0.1.0 -> 1.0.0
  *   node tools/release.mjs 0.2.3              # 显式版本
  *   node tools/release.mjs patch --dry-run    # 只预览
- *   node tools/release.mjs patch --push       # 发版、打标签并推送（触发 npm 发布）
+ *   node tools/release.mjs patch --push       # 发版、打标签并推送（触发 GitHub Release）
  *
  * 退出码：0 = 成功；1 = 前置检查失败或参数错误
  */
@@ -30,6 +30,7 @@ import path from 'node:path'
 
 const ROOT = path.resolve(import.meta.dirname, '..')
 const PLUGIN_JSON = path.join(ROOT, '.claude-plugin', 'plugin.json')
+const CODEX_PLUGIN_JSON = path.join(ROOT, '.codex-plugin', 'plugin.json')
 const PACKAGE_JSON = path.join(ROOT, 'package.json')
 const CHANGELOG = path.join(ROOT, 'CHANGELOG.md')
 
@@ -67,7 +68,7 @@ if (!bump) {
 if (flags.has('--publish')) {
   die(
     '--publish 已移除，本脚本不再发布 npm',
-    'npm 发布改由 CI 完成：--push 推送 tag 后会触发 .github/workflows/publish.yml。见 docs/npm-publishing.md',
+    'npm 发布工作流目前仅支持手动触发。见 docs/npm-publishing.md',
   )
 }
 
@@ -98,16 +99,11 @@ try {
 
 // 4. 计算新版本
 const plugin = JSON.parse(fs.readFileSync(PLUGIN_JSON, 'utf8'))
+const codexPlugin = JSON.parse(fs.readFileSync(CODEX_PLUGIN_JSON, 'utf8'))
 const pkg = JSON.parse(fs.readFileSync(PACKAGE_JSON, 'utf8'))
 const current = plugin.version
 if (typeof current !== 'string' || !SEMVER.test(current)) {
   die(`plugin.json 的 version="${current}" 不是合法 semver`)
-}
-
-// 两端版本漂移时提示，但以 plugin.json 为基准继续 —— 本次发版会把两者拉齐
-if (pkg.version !== current) {
-  console.log(`⚠️  两端版本不一致：package.json=${pkg.version}，plugin.json=${current}`)
-  console.log(`   以 plugin.json 为基准，本次发版将把两者统一为下一个版本`)
 }
 
 const [maj, min, pat] = current.split('.').map(Number)
@@ -119,7 +115,7 @@ else if (SEMVER.test(bump)) next = bump
 else die(`无法识别的版本参数 "${bump}"`, '用 patch / minor / major，或显式 x.y.z')
 
 if (next === current) die(`新版本与当前版本相同（${current}）`)
-console.log(`✅ 版本：${current} → ${next}（两端同步）`)
+console.log(`✅ 版本：${current} → ${next}（三处同步）`)
 
 // 5. tag 不存在
 const tag = `v${next}`
@@ -146,7 +142,7 @@ console.log('✅ CHANGELOG 有 Unreleased 内容')
 if (DRY) {
   console.log('\n' + '─'.repeat(64))
   console.log('--dry-run：未做任何修改。')
-  console.log(`将要执行：bump plugin.json 与 package.json ${current} → ${next}，`)
+  console.log(`将要执行：bump 两份 plugin.json 与 package.json ${current} → ${next}，`)
   console.log(`          提交 chore(release): ${tag}，打标签 ${tag}`)
   console.log()
   process.exit(0)
@@ -156,10 +152,14 @@ if (DRY) {
 
 const today = new Date().toISOString().slice(0, 10)
 
-// 7. 同步更新两端清单版本
+// 7. 同步更新三处清单版本
 plugin.version = next
 fs.writeFileSync(PLUGIN_JSON, `${JSON.stringify(plugin, null, 2)}\n`)
 console.log(`✅ 已更新 .claude-plugin/plugin.json`)
+
+codexPlugin.version = next
+fs.writeFileSync(CODEX_PLUGIN_JSON, `${JSON.stringify(codexPlugin, null, 2)}\n`)
+console.log('✅ 已更新 .codex-plugin/plugin.json')
 
 pkg.version = next
 fs.writeFileSync(PACKAGE_JSON, `${JSON.stringify(pkg, null, 2)}\n`)
@@ -176,7 +176,7 @@ fs.writeFileSync(CHANGELOG, updated)
 console.log('✅ 已更新 CHANGELOG.md')
 
 // 9. 提交 + 打标签
-git(['add', '.claude-plugin/plugin.json', 'package.json', 'CHANGELOG.md'])
+git(['add', '.claude-plugin/plugin.json', '.codex-plugin/plugin.json', 'package.json', 'CHANGELOG.md'])
 git(['commit', '-m', `chore(release): ${tag}`])
 console.log(`✅ 已提交 chore(release): ${tag}`)
 
@@ -190,6 +190,7 @@ if (PUSH) {
   git(['push', '--follow-tags'], { stdio: 'inherit' })
   console.log(`\n🚀 已推送 ${tag} 到远程。`)
   console.log(`   Claude Code 用户执行 /plugin update 即可拿到 ${next}。`)
+  console.log('   Codex 用户刷新 agentforge marketplace 并更新已安装插件。')
   console.log(`   DSH 用户（github: 安装）跑 dsh plugin --profile <p> update 即可拿到。`)
 } else {
   console.log(`\n下一步：git push --follow-tags\n`)

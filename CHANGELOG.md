@@ -7,12 +7,16 @@
 
 > **注意**：只有 bump `.claude-plugin/plugin.json` 的 `version` 并打标签才算发版。
 > 日常 push 不改变用户看到的版本。发版时 `release.mjs` 会**同步 bump
-> `package.json`**（DSH / npm 侧版本），两者漂移会被 `doctor` 判为 error。
+> `.codex-plugin/plugin.json` 与 `package.json`**，三处漂移会被 `doctor` 判为 error。
 > 详见 [`docs/releasing.md`](docs/releasing.md)。
 
 ---
 
 ## [Unreleased]
+
+### Added
+
+- 新增 Codex 技能插件清单与仓库 marketplace，复用现有六个 Skill；`architecture-scout` 在 Codex 使用独立调用策略、在 DSH 保留显式调用限制，Claude Code 依靠技能说明约束触发。版本同步、结构检查、安装说明和发布文档扩展到第三端。
 
 ### Fixed
 

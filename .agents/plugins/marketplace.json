@@ -1,0 +1,20 @@
+{
+  "name": "agentforge",
+  "interface": {
+    "displayName": "AgentForge"
+  },
+  "plugins": [
+    {
+      "name": "agentforge",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}
