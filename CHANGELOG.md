@@ -14,6 +14,16 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- **README 与 `docs/releasing.md` 里关于 npm 安装的说法已失效**。0.4.2 从 npm
+  下架后，`dsh plugin --profile web add dsh-agentforge` 会让全新安装直接失败
+  （`ERR_PNPM_NO_VERSIONS`），而 README 还把它标为「推荐」。改为以
+  `github:` 装法为主，并在两处标注 npm 分发当前不可用。
+- `docs/releasing.md` 开头的表格还留着早先那句错话（「git 或 registry 安装时
+  pnpm 按 semver 解析」）——git 安装钉的是 commit，与版本号无关，正文早已修正，
+  表格漏改。
+
 ### Added
 
 - **发布流程的供应链加固**，与 OIDC 发布配套：

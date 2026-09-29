@@ -47,10 +47,8 @@ claude plugin uninstall agentforge            # 卸载
 
 ### DeepSeek Harness
 
-从 npm 装（推荐 —— 按版本号升级，不受 main 分支变动影响）：
-
 ```bash
-dsh plugin --profile web add dsh-agentforge
+dsh plugin --profile web add github:Lixiuxiu559/AgentForge
 ```
 
 `dsh plugin` 是 **pnpm 的转发器**：它在 profile 目录（`$DSH_HOME/profiles/<name>`）里执行
@@ -60,13 +58,13 @@ dsh plugin --profile web add dsh-agentforge
 
 | 装法 | 命令 | 升级语义 |
 |---|---|---|
-| **npm** | `dsh plugin --profile web add dsh-agentforge` | 按 `version` 解析，**发版才动** |
 | GitHub 简写 | `dsh plugin --profile web add github:Lixiuxiu559/AgentForge` | 钉 commit，`update` 会跟到 main 最新提交 |
-| 钉 tag | `dsh plugin --profile web add github:Lixiuxiu559/AgentForge#v0.4.1` | 钉该 tag 的 commit，不受分支影响 |
+| 钉 tag | `dsh plugin --profile web add github:Lixiuxiu559/AgentForge#v0.4.2` | 钉该 tag 的 commit，不受分支变动影响 |
 | 本地目录（开发用） | `dsh plugin --profile web add /path/to/AgentForge` | 直接读磁盘，改动立即生效 |
 
 > ⚠️ **git 安装没有版本门控**：lockfile 里钉的是具体 commit，`dsh plugin --profile web update`
-> 会重解析到分支最新提交——等于「push 即发布」。想要版本门控请用 npm。
+> 会重解析到分支最新提交——等于「push 即发布」。也就是说 **main 分支就是发布通道**。
+> 本插件当前**没有发布到 npm**（曾经发过一版，已下架），所以暂时没有按版本号升级的途径。
 
 装完后**重启该 profile**（`patchReload: live` 只监听用户 patch 文件，不会重新 `apply()`）。
 本仓库没有 `prepare` 脚本，任何装法都**不需要** `allowBuilds` 构建授权。
@@ -74,9 +72,12 @@ dsh plugin --profile web add dsh-agentforge
 升级 / 卸载：
 
 ```bash
-dsh plugin --profile web update dsh-agentforge     # 升级到符合 semver 范围的新版本
+dsh plugin --profile web update dsh-agentforge     # 拉到 main 最新提交（或所钉分支/tag）
 dsh plugin --profile web remove dsh-agentforge     # 卸载
 ```
+
+> `dsh-agentforge` 是**包名**（`package.json` 的 `name`），不管用哪种 spec 装，
+> 依赖键都是它，所以升级/卸载都用这个名字。
 
 **验证装配**（不启动模型，只看组合后的插件树）：
 
@@ -84,8 +85,8 @@ dsh plugin --profile web remove dsh-agentforge     # 卸载
 dsh --profile web --dump-config | grep -A2 agentforge
 ```
 
-> 已经用 `link:` 或 git 装过的，先 `dsh plugin --profile web remove agentforge`
-> （或 `… remove dsh-agentforge`）再按上面的 npm 方式重装，否则 profile 里会同时留着旧记录。
+> 已经用 `link:` 或 npm 装过的，先 `dsh plugin --profile web remove dsh-agentforge`
+> 再按上面的 GitHub 方式重装，否则 profile 里会同时留着旧记录。
 
 ---
 
