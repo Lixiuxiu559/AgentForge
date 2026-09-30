@@ -1,0 +1,8 @@
+现有生产日志摘录（已脱敏）：
+2026-09-29T02:01:10.000Z request_id=req-a profile.load start
+2026-09-29T02:01:15.012Z request_id=req-a profile.load error name=AbortError
+2026-09-29T02:04:00.000Z request_id=req-b profile.load start
+2026-09-29T02:04:00.080Z request_id=req-b profile.load success
+
+本地只有 client.mjs，没有线上 fetchProfile 实现、网络权限、服务访问凭据或更完整的 trace。
+这两段是全部已提供日志，没有总请求量、上游耗时或运行时资源监控。

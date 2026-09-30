@@ -9,7 +9,7 @@
     {
       "name": "agentforge",
       "source": "./",
-      "description": "调研取证 + 架构机会侦察 + 实施编排 + 三轴代码评审 + 复杂度风险审计 + 测试有效性审计。含 6 个技能，通过宿主通用子 agent 能力按需委派；无需注册自定义 agent。",
+      "description": "调研取证 + Bug 调试与确认后修复 + 架构机会侦察 + 实施编排 + 三轴代码评审 + 复杂度风险审计 + 测试有效性审计。含 7 个技能，通过宿主通用子 agent 能力按需委派；无需注册自定义 agent。",
       "category": "engineering",
       "keywords": [
         "workflow",

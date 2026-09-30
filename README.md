@@ -5,7 +5,7 @@
 
 [![validate](https://github.com/Lixiuxiu559/AgentForge/actions/workflows/validate.yml/badge.svg)](https://github.com/Lixiuxiu559/AgentForge/actions/workflows/validate.yml)
 
-**一份真源，三端共用**：六个技能统一维护在 `skills/`。
+**一份真源，三端共用**：七个技能统一维护在 `skills/`。
 Codex 与 Claude Code 加载技能目录，DSH 使用包内桥接插件（`src/index.js`）。
 
 ---
@@ -28,7 +28,7 @@ codex plugin marketplace add Lixiuxiu559/AgentForge
 codex plugin add agentforge@agentforge
 ```
 
-Codex 桌面端可在 Plugins Directory 选择 AgentForge 安装；安装后开启新任务验证技能。仓库的 `.agents/plugins/marketplace.json` 指向根目录插件，`.codex-plugin/plugin.json` 声明六个技能。`architecture-scout` 在 Codex 侧也只接受主动调用，其技能目录内的 `agents/openai.yaml` 是调用策略元数据，不是自定义子 agent。
+Codex 桌面端可在 Plugins Directory 选择 AgentForge 安装；安装后开启新任务验证技能。仓库的 `.agents/plugins/marketplace.json` 指向根目录插件，`.codex-plugin/plugin.json` 声明七个技能。`architecture-scout` 在 Codex 侧也只接受主动调用，其技能目录内的 `agents/openai.yaml` 是调用策略元数据，不是自定义子 agent。
 
 ### Claude Code
 
@@ -113,6 +113,7 @@ dsh --profile web --dump-config | grep -A2 agentforge
 | 技能 | 作用 |
 |---|---|
 | `research` | 调研取证、代码与日志调查、证据链和报告 |
+| `bug-debugging` | 复现与根因验证；展示原因、证据和方案，用户同意后修复并回归验证 |
 | `architecture-scout` | 用户主动发起的架构机会调查；按需并行取证，允许零候选 |
 | `implementation-workflow` | 拆分任务、串行或并行实施、集成验证与按风险审计 |
 | `diff-review` | Correctness / Standards / Spec 三轴独立评审 |
@@ -133,6 +134,7 @@ Codex 与 Claude Code 通过插件发现技能；DSH 的桥接入口仅注册 sk
 
 ```text
 用 research 调查这个错误的调用链，给出证据和未确认项。
+用 bug-debugging 排查这个异常，先说明原因和修复方案，等我同意后再改。
 用 implementation-workflow 实现这个功能，独立模块可以并行。
 用 diff-review 评审当前改动，分别报告三条轴的结果。
 用 architecture-scout 检查这个模块是否有值得提炼的边界。
@@ -140,17 +142,19 @@ Codex 与 Claude Code 通过插件发现技能；DSH 的桥接入口仅注册 sk
 
 Claude Code 可显式使用 `/agentforge:research` 等技能命令。`architecture-scout` 的触发说明要求用户主动提出架构调查；Codex 与 DSH 另有平台策略约束。
 
+`bug-debugging` 可根据具体错误或修复请求自动选用。它在诊断后等待用户确认具体方案，批准后继续修复；初始“帮我修好”不代表批准尚未展示的方案。复杂调查可复用 `research`，只抽查影响结论的关键证据；复杂实施交给 `implementation-workflow`，沿用同一批准范围。
+
 ## 项目结构
 
 ```text
 .claude-plugin/       Claude Code 插件与市场清单
 .codex-plugin/        Codex 插件清单
 .agents/plugins/      Codex 仓库 marketplace
-skills/              六个技能及各自 references / scripts
+skills/              七个技能及各自 references / scripts
 src/index.js         DSH 技能提供者
 cordis.patch.yml      DSH bundle 装配
 tools/              结构检查与发布工具
-tests/              技能提供者的运行时回归测试
+tests/              技能提供者回归测试与调试行为评估 fixture
 docs/               架构、发布说明与历史调查
 ```
 
@@ -162,5 +166,7 @@ npm test
 ```
 
 结构检查覆盖三端清单、版本、技能引用与 DSH 发布资产；运行时测试覆盖技能发现、按需读取、资源路径、调用策略和动态重扫。真实宿主的派发工具及其并发策略由宿主负责。
+
+调试行为需另行在隔离副本中评估，场景与判据见 [调试技能验收](skills/bug-debugging/references/evaluation-cases.md)；`npm test` 不执行模型行为评估。
 
 设计见 [架构说明](docs/architecture.md)，发布见 [发布流程](docs/releasing.md)。

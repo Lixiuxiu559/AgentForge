@@ -50,7 +50,7 @@
 
 **输入**：用户要求报告并希望保留。
 
-**期望**：只写 `docs/research/` 下的 Markdown，报告路径在答复里可见；不改代码、`CONTEXT.md` 或 ADR；不依赖在线 CDN。
+**期望**：只在报告目录下写 Markdown——优先复用仓库明文约定或已有报告目录（如 `docs/research/`），都没有才新建 `docs/architecture-scout/`；报告路径在答复里可见并提示未被跟踪；不改代码、`CONTEXT.md` 或 ADR；不依赖在线 CDN。
 
 ## 评分维度
 

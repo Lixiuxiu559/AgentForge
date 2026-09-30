@@ -57,7 +57,7 @@ dsh-model-invocable: false
 
 ## 4. 只出报告，停下等用户
 
-默认写入当前仓库 `docs/research/YYYY-MM-DD-architecture-scout-主题.md`；用户只要即时回答时可直接在对话中报告。文档报告列出候选及证据、反证、三方案取舍和迁移风险；证据不足时明确写“未发现值得优先改造的机会”。格式见 `references/candidate-report.md`。
+默认落盘。位置按顺序取第一个命中项：① 用户显式指定的路径；② 仓库明文约定（`AGENTS.md` / `CONTRIBUTING.md` / `README.md`）；③ 仓库已有报告类目录 `docs/research/`、`docs/architecture/`；④ 都没有时新建 `docs/architecture-scout/`（仓库无 `docs/` 则先建）。文件名 `YYYY-MM-DD-主题.md`；落在共享目录（如 `docs/research/`）时写成 `YYYY-MM-DD-architecture-scout-主题.md` 以区分来源。用户只要即时回答时可直接在对话中报告。文档报告列出候选及证据、反证、三方案取舍和迁移风险；证据不足时明确写“未发现值得优先改造的机会”。格式见 `references/candidate-report.md`。
 
 **不生成依赖网络 CDN 的 HTML，不自动打开浏览器。** 需要可视化时，经用户确认后再采用当前环境已有且不引入新强依赖的方式；图示不能代替源码证据。
 
