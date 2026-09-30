@@ -1,6 +1,6 @@
 {
   "name": "agentforge",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "调研、Bug 调试与确认后修复、实施编排、代码评审与质量审计的七个工程技能。",
   "author": {
     "name": "lixiuxiu",
