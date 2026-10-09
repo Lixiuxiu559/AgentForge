@@ -1,6 +1,6 @@
 ---
 name: mutation-testing
-description: 测试有效性审计能力。当需要通过突变测试验证测试是否真正覆盖业务逻辑、定位存活突变体、发现测试漏网点或评估测试质量时使用。支持 Java、Python、Go、JavaScript、TypeScript。该能力只生成审计报告，不修改代码或测试。
+description: 通过项目已有突变测试工具审计现有测试能否发现代码逻辑错误。用户要求运行突变测试、分析存活突变体或无覆盖突变体时使用。支持 Java、Python、Go、JavaScript、TypeScript；只报告，不修改代码或测试。业务测试用例设计与场景充分性评估由 test-design 负责。
 user-invocable: true
 ---
 
