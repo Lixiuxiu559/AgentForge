@@ -5,7 +5,7 @@
 
 [![validate](https://github.com/Lixiuxiu559/AgentForge/actions/workflows/validate.yml/badge.svg)](https://github.com/Lixiuxiu559/AgentForge/actions/workflows/validate.yml)
 
-**一份真源，三端共用**：七个技能统一维护在 `skills/`。
+**一份真源，三端共用**：八个技能统一维护在 `skills/`。
 Codex 与 Claude Code 加载技能目录，DSH 使用包内桥接插件（`src/index.js`）。
 
 ---
@@ -28,7 +28,7 @@ codex plugin marketplace add Lixiuxiu559/AgentForge
 codex plugin add agentforge@agentforge
 ```
 
-Codex 桌面端可在 Plugins Directory 选择 AgentForge 安装；安装后开启新任务验证技能。仓库的 `.agents/plugins/marketplace.json` 指向根目录插件，`.codex-plugin/plugin.json` 声明七个技能。`architecture-scout` 在 Codex 侧也只接受主动调用，其技能目录内的 `agents/openai.yaml` 是调用策略元数据，不是自定义子 agent。
+Codex 桌面端可在 Plugins Directory 选择 AgentForge 安装；安装后开启新任务验证技能。仓库的 `.agents/plugins/marketplace.json` 指向根目录插件，`.codex-plugin/plugin.json` 声明八个技能。`architecture-scout` 在 Codex 侧也只接受主动调用，其技能目录内的 `agents/openai.yaml` 是调用策略元数据，不是自定义子 agent。
 
 ### Claude Code
 
@@ -113,6 +113,7 @@ dsh --profile web --dump-config | grep -A2 agentforge
 | 技能 | 作用 |
 |---|---|
 | `research` | 调研取证、代码与日志调查、证据链和报告 |
+| `test-design` | 按业务规则与项目已有测试设施设计用例、评估场景和断言缺口、制定验证办法；只交付设计 |
 | `bug-debugging` | 复现与根因验证；展示原因、证据和方案，用户同意后修复并回归验证 |
 | `architecture-scout` | 用户主动发起的架构机会调查；按需并行取证，允许零候选 |
 | `implementation-workflow` | 拆分任务、串行或并行实施、集成验证与按风险审计 |
@@ -134,6 +135,7 @@ Codex 与 Claude Code 通过插件发现技能；DSH 的桥接入口仅注册 sk
 
 ```text
 用 research 调查这个错误的调用链，给出证据和未确认项。
+用 test-design 为这项功能设计测试用例，检查业务边界、异常和状态变化是否覆盖充分。
 用 bug-debugging 排查这个异常，先说明原因和修复方案，等我同意后再改。
 用 implementation-workflow 实现这个功能，独立模块可以并行。
 用 diff-review 评审当前改动，分别报告三条轴的结果。
@@ -144,13 +146,15 @@ Claude Code 可显式使用 `/agentforge:research` 等技能命令。`architectu
 
 `bug-debugging` 可根据具体错误或修复请求自动选用。它在诊断后等待用户确认具体方案，批准后继续修复；初始“帮我修好”不代表批准尚未展示的方案。复杂调查可复用 `research`，只抽查影响结论的关键证据；复杂实施交给 `implementation-workflow`，沿用同一批准范围。
 
+`test-design` 可独立调用，输出“业务规则 → 用例 → 验证入口 → 已有断言”的对应关系、缺口及验证办法。它不编写或执行测试；需要实施时由 `implementation-workflow` 使用设计产物组织测试编写和运行。测试方式沿用项目现有设施，缺少设施的场景明确记为验证缺口。`mutation-testing` 专门运行已有突变工具，业务场景设计与充分性检查由 `test-design` 负责。
+
 ## 项目结构
 
 ```text
 .claude-plugin/       Claude Code 插件与市场清单
 .codex-plugin/        Codex 插件清单
 .agents/plugins/      Codex 仓库 marketplace
-skills/              七个技能及各自 references / scripts
+skills/              八个技能及各自 references / scripts
 src/index.js         DSH 技能提供者
 cordis.patch.yml      DSH bundle 装配
 tools/              结构检查与发布工具

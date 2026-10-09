@@ -1,7 +1,7 @@
 {
   "name": "agentforge",
   "version": "0.7.0",
-  "description": "调研、Bug 调试与确认后修复、实施编排、代码评审与质量审计的七个工程技能。",
+  "description": "调研、业务测试设计、Bug 调试与确认后修复、实施编排、代码评审与质量审计的八个工程技能。",
   "author": {
     "name": "lixiuxiu",
     "url": "https://github.com/Lixiuxiu559"
@@ -19,7 +19,7 @@
   "interface": {
     "displayName": "AgentForge",
     "shortDescription": "工程工作流与代码质量技能",
-    "longDescription": "七个工程技能，覆盖调研取证、Bug 调试与确认后修复、架构机会侦察、实施编排、三轴代码评审、复杂度审计和突变测试。独立上下文与并行执行使用宿主提供的通用子 agent 能力。",
+    "longDescription": "八个工程技能，覆盖调研取证、业务测试设计、Bug 调试与确认后修复、架构机会侦察、实施编排、三轴代码评审、复杂度审计和突变测试。独立上下文与并行执行使用宿主提供的通用子 agent 能力。",
     "developerName": "lixiuxiu",
     "category": "Developer Tools",
     "capabilities": [
