@@ -112,7 +112,7 @@ dsh --profile web --dump-config | grep -A2 agentforge
 
 | 技能 | 作用 |
 |---|---|
-| `research` | 调研取证、代码与日志调查、证据链和报告 |
+| `research` | 多步取证、交叉验证与方案比较；默认对话交付，按需保存报告 |
 | `test-design` | 按业务规则与项目已有测试设施设计用例、评估场景和断言缺口、制定验证办法；只交付设计 |
 | `bug-debugging` | 复现与根因验证；展示原因、证据和方案，用户同意后修复并回归验证 |
 | `architecture-scout` | 用户主动发起的架构机会调查；按需并行取证，允许零候选 |
