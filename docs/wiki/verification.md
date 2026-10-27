@@ -6,12 +6,12 @@
 |---|---|
 | 适用范围 | AgentForge 自用 Wiki 的模板、新鲜度复核、候选隔离与机械检查 |
 | 事实状态 | 部分核验 |
-| 核验基线 | d64c4c5 基础提交 + 本次工作区；项目复核记录保存来源与文档内容指纹 |
+| 核验基线 | 功能基线 3e5341d；发布元数据与来源、文档内容按项目复核记录核验 |
 | 核验时间 | 2026-10-27 |
 
 ## 内容
 
-本页记录以 d64c4c5 为基础提交、覆盖本轮工作区与内容指纹记录的本地核验，所有命令从仓库根执行。
+本页记录功能基线 3e5341d 及 v0.9.0 发布准备阶段的本地核验，来源和文档另以内容指纹追溯。所有命令从仓库根执行；此页不自动追踪后续远端发布与 CI 状态。
 
 ### 已执行证据
 
@@ -82,7 +82,7 @@ checker 的 coverage.semantic 为 not_run。review 记录是执行者的明确�
 
 ## 依据与核验
 
-来源为 [provider 测试](../../tests/skill-provider.test.mjs)、[Wiki 基础回归](../../tests/wiki.test.mjs)、[模板回归](../../tests/wiki-templates.test.mjs)、[doctor](../../tools/doctor.mjs)、[新鲜度回归](../../tests/wiki-freshness.test.mjs) 与 [检查协议](../../skills/wiki/references/tools.md)；本轮 npm test、doctor、YAML 解析、打包预览以及真实 Wiki 正向检查和隔离故障验证均已执行。基础提交之后的实现、知识与复核记录仍是本次工作区内容，不宣称已经提交、远端 CI 已通过或已发布。
+来源为 [provider 测试](../../tests/skill-provider.test.mjs)、[Wiki 基础回归](../../tests/wiki.test.mjs)、[模板回归](../../tests/wiki-templates.test.mjs)、[doctor](../../tools/doctor.mjs)、[新鲜度回归](../../tests/wiki-freshness.test.mjs) 与 [检查协议](../../skills/wiki/references/tools.md)；本轮 npm test、doctor、YAML 解析、打包预览以及真实 Wiki 正向检查和隔离故障验证均已执行。功能实现和项目 Wiki 已在 3e5341d 提交；本页记录的是发布准备阶段的本地证据，不将其当作远端 CI 或 Release 成功的证明。
 
 ## 待确认项
 

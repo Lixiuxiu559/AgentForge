@@ -6,12 +6,12 @@
 |---|---|
 | 适用范围 | 三端装配、版本同步和仓库中的验证发布入口 |
 | 事实状态 | 部分核验 |
-| 核验基线 | d64c4c5 基础提交 + 本次工作区；项目复核记录保存来源与文档内容指纹 |
+| 核验基线 | 功能基线 3e5341d；发布元数据与来源、文档内容按项目复核记录核验 |
 | 核验时间 | 2026-10-27 |
 
 ## 用途与边界
 
-Claude Code、Codex 和 DSH 使用同一份 skills 真源。两份插件清单与 package.json 当前版本均为 0.8.1；新增内容位于 Unreleased，本次本地提交没有 bump 版本或推送远端。
+Claude Code、Codex 和 DSH 使用同一份 skills 真源。两份插件清单与 package.json 的发布候选版本均为 0.9.0，新增能力记录在 CHANGELOG 的对应版本段落。本地版本准备、远端 Release 和用户已安装版本是不同状态，应分别核实。
 
 README 与发布文档记录的宿主更新语义在本次只作仓库约定引用，没有用真实安装副本复测。npm 工作流在当前文件中仅支持手动触发，不能从存在 publish.yml 推断 registry 已发布。
 
@@ -22,7 +22,7 @@ README 与发布文档记录的宿主更新语义在本次只作仓库约定引�
 3. package.json 的 files 包含 skills，使技能 references、脚本与 assets 随包分发；项目自身 docs 不是必需运行资产。
 4. release.mjs 要求干净工作区与 main 分支，运行 doctor，同步三处版本和 CHANGELOG，创建提交与标签；可显式选择推送。
 5. PR 的 Wiki 检查 job 明确检出 head，分别运行结构检查与以 base/head 为范围的同步检查门；Git 树中的记录不能被工作区补写替代。
-6. release.yml 在标签推送时负责 GitHub Release；publish.yml 是独立手动 npm 流程。上述发布动作本次均未执行。
+6. release.yml 在标签推送时负责 GitHub Release；publish.yml 是独立手动 npm 流程。本地候选已通过 release.mjs 完成版本准备；后续远端动作以对应 Release 和流水线实际结果为准。
 
 ## 阅读导航
 
