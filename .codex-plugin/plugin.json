@@ -1,7 +1,7 @@
 {
   "name": "agentforge",
   "version": "0.8.1",
-  "description": "调研、业务测试设计、Bug 调试与确认后修复、实施编排、代码评审与质量审计的八个工程技能。",
+  "description": "项目 Wiki 维护、需求澄清、PRD 撰写、调研、业务测试设计、Bug 调试与确认后修复、实施编排、代码评审与质量审计的十个工程技能。",
   "author": {
     "name": "lixiuxiu",
     "url": "https://github.com/Lixiuxiu559"
@@ -19,7 +19,7 @@
   "interface": {
     "displayName": "AgentForge",
     "shortDescription": "工程工作流与代码质量技能",
-    "longDescription": "八个工程技能，覆盖调研取证、业务测试设计、Bug 调试与确认后修复、架构机会侦察、实施编排、三轴代码评审、复杂度审计和突变测试。独立上下文与并行执行使用宿主提供的通用子 agent 能力。",
+    "longDescription": "十个工程技能，覆盖项目 Wiki 维护、需求澄清与 PRD 撰写、调研取证、业务测试设计、Bug 调试与确认后修复、架构机会侦察、实施编排、三轴代码评审、复杂度审计和突变测试。独立上下文与并行执行使用宿主提供的通用子 agent 能力。",
     "developerName": "lixiuxiu",
     "category": "Developer Tools",
     "capabilities": [
@@ -29,6 +29,7 @@
     ],
     "websiteURL": "https://github.com/Lixiuxiu559/AgentForge",
     "defaultPrompt": [
+      "用 AgentForge 把这段需求整理成可评审的 PRD，标出假设和待确认项。",
       "用 AgentForge 调查这个问题的根因并给出证据。",
       "用 AgentForge 排查这个 Bug，说明原因和方案，等我同意后再修复。",
       "用 AgentForge 拆分并实现这个功能，独立任务可以并行。",
