@@ -1,0 +1,30 @@
+# {{title}}
+
+## 文档信息
+
+| 字段 | 内容 |
+|---|---|
+| 适用范围 | {{scope}} |
+| 事实状态 | 草稿 |
+| 核验基线 | {{baseline}} |
+| 核验时间 | 未核验 |
+
+## 项目概览
+
+{{project_overview}}
+
+## 阅读导航
+
+{{links_to_concepts_and_modules}}
+
+## 知识覆盖
+
+{{covered_modules_versions_and_gaps}}
+
+## 依据与核验
+
+{{sources_and_actual_verification}}
+
+## 待确认项
+
+{{open_questions_or_explicit_none}}
