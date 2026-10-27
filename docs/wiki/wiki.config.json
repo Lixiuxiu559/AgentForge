@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "modules": [
+    {
+      "id": "skill-methods",
+      "sources": [
+        "skills",
+        "docs/architecture.md",
+        "docs/design",
+        "docs/research"
+      ],
+      "docs": [
+        "docs/wiki/modules/skill-methods/README.md"
+      ]
+    },
+    {
+      "id": "skill-provider",
+      "sources": [
+        "src",
+        "cordis.patch.yml",
+        "tests/skill-provider.test.mjs"
+      ],
+      "docs": [
+        "docs/wiki/modules/skill-provider/README.md"
+      ]
+    },
+    {
+      "id": "wiki-tooling",
+      "sources": [
+        "skills/wiki",
+        "tests/wiki.test.mjs",
+        "tests/wiki-templates.test.mjs",
+        "docs/wiki/wiki.config.json",
+        "tests/wiki-freshness.test.mjs"
+      ],
+      "docs": [
+        "docs/wiki/README.md",
+        "docs/wiki/concepts.md",
+        "docs/wiki/modules/wiki-tooling/README.md",
+        "docs/wiki/modules/wiki-tooling/rules.md",
+        "docs/wiki/modules/wiki-tooling/code-map.md",
+        "docs/wiki/verification.md",
+        "docs/wiki/freshness.md"
+      ]
+    },
+    {
+      "id": "distribution",
+      "sources": [
+        ".agents/plugins",
+        ".claude-plugin",
+        ".codex-plugin",
+        ".github",
+        "tools",
+        "package.json",
+        "README.md",
+        "awesome-dsh-plugin-entry.yml",
+        "AGENTS.md",
+        "CHANGELOG.md",
+        "LICENSE",
+        "docs/architecture.md",
+        "docs/releasing.md",
+        "docs/npm-publishing.md"
+      ],
+      "docs": [
+        "docs/wiki/modules/distribution/README.md",
+        "docs/wiki/modules/distribution/dependencies.md",
+        "docs/wiki/verification.md"
+      ]
+    }
+  ],
+  "structure": {
+    "preset": "modular"
+  },
+  "freshness": {
+    "records": "docs/wiki/reviews.json"
+  }
+}

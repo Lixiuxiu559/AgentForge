@@ -1,6 +1,8 @@
-# 只读辅助工具
+# 检查与复核辅助工具
 
 工具需要 Node.js；changes 还需要 Git。无 npm 依赖，无必需 MCP、外部模型或网络请求。脚本路径由技能安装位置决定，项目根由 `--root` 显式指定；不从脚本所在仓库推导项目根。
+
+check、changes、freshness 和 gate 只读；review 是显式写入复核记录的命令，且仅写项目配置指定的记录文件。新鲜度、收尾复核、索引/提交快照及检查门协议见 `references/freshness.md`；它们需要 Git，不通过自动改写业务知识消除差异。
 
 ```bash
 node /absolute/skill-directory/scripts/wiki.mjs check --root /absolute/project --wiki docs/wiki
@@ -23,7 +25,7 @@ node /absolute/skill-directory/scripts/wiki.mjs changes --root /absolute/project
 - worktree：工作区相对索引，并包含未跟踪文件；不包含已暂存而工作区未继续修改的内容。
 - range：base 与 head 的 merge-base 到 head；`--base` 必填，head 默认 HEAD。
 
-输出变化路径、状态、映射模块和 unmapped 材料，不自动读取并评审全部 diff。它不是 Git hook，也不会自动接入 CI 或阻止部署。
+changes 输出变化路径、状态、映射模块和 unmapped 材料，不自动读取并评审全部 diff。通用技能不自动安装 Git hook 或修改目标项目 CI；项目可按 freshness 协议显式接入检查门，AgentForge 自用仓库已有对应 PR 工作流。
 
 changes 的 `--root` 必须是 Git 仓库根。尚无首个提交时，staged 以空树为基线。新路径放在 `path`，识别到的重命名同时带 `oldPath`；普通删除以 `path` 记录原路径。存在无法映射的变化时报告 partial，需要 Agent 继续定位影响，不表示采集失败；没有变化时可通过采集检查，语义仍未执行。
 

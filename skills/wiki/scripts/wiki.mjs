@@ -3,6 +3,7 @@ import { execFileSync, spawnSync } from 'node:child_process'
 import { readFile, readdir, realpath, stat } from 'node:fs/promises'
 import { dirname, isAbsolute, relative, resolve, sep } from 'node:path'
 import { checkStructure, structureConfig } from './structure.mjs'
+import { freshnessConfig, runFreshness } from './freshness.mjs'
 
 const coverage = { semantic: 'not_run', limitations: [] }
 const findings = []
@@ -10,9 +11,15 @@ const issue = (code, path, message) => findings.push({ code, path, message })
 const limited = message => { if (!coverage.limitations.includes(message)) coverage.limitations.push(message) }
 function args() {
   const [command, ...tokens] = process.argv.slice(2)
-  if (!['check', 'changes'].includes(command)) throw new Error('Expected check or changes')
+  if (!['check', 'changes', 'freshness', 'review', 'gate'].includes(command)) throw new Error('Expected check, changes, freshness, review, or gate')
   const result = { command }
-  const allowed = command === 'check' ? ['root', 'wiki', 'config'] : ['root', 'scope', 'base', 'head', 'config']
+  const allowed = {
+    check: ['root', 'wiki', 'config'],
+    changes: ['root', 'scope', 'base', 'head', 'config'],
+    freshness: ['root', 'config', 'module'],
+    review: ['root', 'config', 'module', 'decision', 'reason', 'reviewer', 'evidence', 'scope'],
+    gate: ['root', 'config', 'scope', 'base', 'head'],
+  }[command]
   for (let i = 0; i < tokens.length; i += 2) {
     const key = tokens[i].replace(/^--/, '')
     if (tokens[i] !== `--${key}` || !allowed.includes(key) || key in result || !tokens[i + 1] || tokens[i + 1].startsWith('--')) throw new Error(`Invalid argument: ${tokens[i]}`)
@@ -38,8 +45,11 @@ async function safe(root, path) {
 }
 async function config(root, path) {
   if (!path) return { modules: [], structure: structureConfig(root, undefined, local) }
-  const data = JSON.parse(await readFile(await safe(root, local(root, path)), 'utf8'))
-  if (!data || typeof data !== 'object' || Object.keys(data).some(key => !['version', 'modules', 'structure'].includes(key)) || data.version !== 1 || !Array.isArray(data.modules)) throw new Error('Config requires version: 1 and modules: []')
+  return parseConfig(root, await readFile(await safe(root, local(root, path)), 'utf8'), relative(root, local(root, path)).split(sep).join('/'))
+}
+function parseConfig(root, text, configPath) {
+  const data = JSON.parse(text)
+  if (!data || typeof data !== 'object' || Object.keys(data).some(key => !['version', 'modules', 'structure', 'freshness'].includes(key)) || data.version !== 1 || !Array.isArray(data.modules)) throw new Error('Config requires version: 1 and modules: []')
   data.structure = structureConfig(root, data.structure, local)
   const ids = new Set()
   for (const mod of data.modules) {
@@ -50,6 +60,7 @@ async function config(root, path) {
       mod[field] = mod[field].map(p => relative(root, local(root, p)).split(sep).join('/') || '.')
     }
   }
+  data.freshness = freshnessConfig(root, data.freshness, local, data.modules, configPath)
   return data
 }
 async function markdownFiles(root, directory, seen = new Set()) {
@@ -211,8 +222,8 @@ const gitEnvironment = { ...process.env, GIT_OPTIONAL_LOCKS: '0' }
 for (const key of Object.keys(gitEnvironment)) {
   if (/^GIT_(?:DIR|COMMON_DIR|WORK_TREE|INDEX_FILE|OBJECT_DIRECTORY|ALTERNATE_OBJECT_DIRECTORIES|GRAFT_FILE|SHALLOW_FILE|NAMESPACE|REPLACE_REF_BASE|NO_REPLACE_OBJECTS|IMPLICIT_WORK_TREE|PREFIX|CEILING_DIRECTORIES|DISCOVERY_ACROSS_FILESYSTEM|CONFIG|CONFIG_PARAMETERS|CONFIG_COUNT|CONFIG_KEY_\d+|CONFIG_VALUE_\d+)$/.test(key)) delete gitEnvironment[key]
 }
-function git(root, parameters) {
-  return execFileSync('git', ['-C', root, ...parameters], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024, env: gitEnvironment, stdio: ['ignore', 'pipe', 'pipe'] })
+function git(root, parameters, binary = false) {
+  return execFileSync('git', ['-C', root, ...parameters], { encoding: binary ? undefined : 'utf8', maxBuffer: 32 * 1024 * 1024, env: gitEnvironment, stdio: ['ignore', 'pipe', 'pipe'] })
 }
 function revision(root, ref) {
   return git(root, ['rev-parse', '--verify', '--end-of-options', `${ref}^{commit}`]).trim()
@@ -267,8 +278,13 @@ function changes(root, options, profile) {
 }
 try {
   const options = args(), root = await realpath(resolve(options.root))
-  const profile = await config(root, options.config)
-  const result = options.command === 'check' ? await check(root, options, profile) : changes(root, options, profile)
+  let result
+  if (['freshness', 'review', 'gate'].includes(options.command)) {
+    result = await runFreshness({ root, options, parseConfig, local, git, revision, parseChanges, coverage, issue, limited })
+  } else {
+    const profile = await config(root, options.config)
+    result = options.command === 'check' ? await check(root, options, profile) : changes(root, options, profile)
+  }
   const status = findings.length ? 'issues' : coverage.limitations.length ? 'partial' : 'passed'
   console.log(JSON.stringify({ status, root, findings, coverage, ...result }, null, 2))
   process.exitCode = status === 'passed' ? 0 : 1
