@@ -23,7 +23,7 @@
 
 ## 接口与契约
 
-包内 JavaScript 只使用 Node 内置模块，package.json 无 dependencies。Wiki 的 changes、mapping、freshness、review 和 gate 另依赖本机 Git；其他审计技能依赖目标项目已有的相应分析工具，不能将“包零依赖”理解成全部任务不需要外部工具。
+包内 JavaScript 只使用 Node 内置模块，package.json 无 dependencies。Wiki 的 changes、mapping、freshness、review 和 gate 另依赖本机 Git；worktree 技能依赖本机 Git 及所选远端可访问性，用于获取基线或检查远端重名；其他审计技能依赖目标项目已有的相应分析工具，不能将“包零依赖”理解成全部任务不需要外部工具。
 
 [三端插件信息](../../../architecture.md) 规定共享技能与宿主提供执行能力。[CI 配置](../../../../.github/workflows/validate.yml) 声明 Node 22/24 矩阵；本次只在本机 Node v24.15.0 验证，不将配置存在写成两条运行时都通过。
 

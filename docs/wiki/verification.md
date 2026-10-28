@@ -145,6 +145,12 @@ Portunus 验证使用真实工作区的隔离 Git 副本，保留当时已有未
 
 本轮开发工作区已通过 66 项自动测试、doctor，以及 Wiki 结构/来源映射检查；重要结论经主 Agent 对照来源核对后保存复核记录，并执行 worktree freshness 与 gate。未暂存或验证本轮 staged/range 候选，未提交或发布。Correctness、Standards、Spec 只读核对均无可操作发现；本轮以方法、模板和只读路径报告为主，无现成复杂度/突变工具链，未额外引入这两类审计工具。skill-creator 的 quick_validate.py 因系统与捆绑 Python 均缺少 PyYAML 未能运行；未安装新依赖，技能元数据、资源与模板由项目 doctor、provider 回归和 Wiki 回归实际检查。
 
+### Worktree 技能（2026-10-28）
+
+新增 [worktree](../../skills/worktree/SKILL.md)：add 从明确的本地或远端基线创建分支与 `.worktree/<分支>/` 层级目录；remove 检查路径、实际分支及未提交/忽略内容，移除工作树并保留分支提交。最终技能精简为 60 行。配套更新三端说明、发现回归、忽略规则及 Wiki 来源映射。
+
+隔离 Git 演练覆盖本地/远端不同基线、固定提交创建、linked worktree 主根定位、远端重名及查询失败、暂存/未跟踪/忽略内容检测、分支不符、锁定拒绝、无远端删除、未推送提交与同层工作树保留；临时仓库已清理。doctor、技能发现回归、Wiki 结构与 staged 同步门在提交前验证；候选快照另运行全量自动测试。Git 命令演练不替代真实宿主模型行为评估，未安装、发布插件或删除用户实际工作树。skill-creator 独立校验器缺少 PyYAML，未计作通过。
+
 ### 历史已执行证据
 
 | 验证 | 实际结果与范围 |

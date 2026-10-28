@@ -11,7 +11,7 @@
 
 ## 项目概览
 
-AgentForge 是一份技能真源、多宿主使用的工程方法集合。当前工作区含十个技能，分别维护在 skills 的直接子目录；Codex 和 Claude Code 通过各自插件清单发现技能，DSH 通过包内 provider 暴露候选和正文。宿主提供执行、独立上下文和并行能力。
+AgentForge 是一份技能真源、多宿主使用的工程方法集合。当前工作区含十一个技能，分别维护在 skills 的直接子目录；Codex 和 Claude Code 通过各自插件清单发现技能，DSH 通过包内 provider 暴露候选和正文。宿主提供执行、独立上下文和并行能力。
 
 仓库目前提供需求定义、调查、实施、评审和知识维护等方法。完整的需求到上线闭环仍有[设计讨论稿](../design/2026-10-16-lifecycle-workflow.md)，不能据此认为已有自动部署、持久调度或失败恢复引擎。
 
@@ -37,7 +37,7 @@ AgentForge 是一份技能真源、多宿主使用的工程方法集合。当前
 
 | 模块 | 来源边界与相邻能力 |
 |---|---|
-| skill-methods | 九个非 Wiki 技能目录、Wiki 技能入口、架构、设计/研究材料和调试演练 fixture；理解技能职责与交接。Wiki 模板及检查引擎属于 wiki-tooling，不再随整个 skills 目录重复纳入 |
+| skill-methods | 十个非 Wiki 技能目录、Wiki 技能入口、架构、设计/研究材料和调试演练 fixture；理解技能职责与交接。Wiki 模板及检查引擎属于 wiki-tooling，不再随整个 skills 目录重复纳入 |
 | skill-provider | src、装配 patch、provider 测试，以及架构和 architecture-scout 的调用策略；不承担宿主执行 |
 | wiki-tooling | Wiki 技能、资源及四份 Wiki 测试，另映射项目快捷命令、包脚本、AGENTS 与实施技能中的同步触发约定 |
 | distribution | 插件/市场清单、CI、发布工具、包配置及发布说明；保留整份 tools 目录以覆盖发布与校验入口 |

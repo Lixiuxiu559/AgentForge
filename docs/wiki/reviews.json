@@ -2,15 +2,16 @@
   "version": 1,
   "modules": {
     "skill-methods": {
-      "reviewedAt": "2026-10-28T06:02:23.684Z",
+      "reviewedAt": "2026-10-28T07:34:38.312Z",
       "reviewer": "Codex",
-      "decision": "no-change",
-      "reason": "审读暂存Wiki入口的单页三步、按需参考与只读边界；五种意图及需求/实现/发布交接职责未变，不强制普通问答运行全库流程。",
+      "decision": "updated",
+      "reason": "已复核暂存候选中的60行worktree技能、架构创建删除边界及职责页；add来源与远端重名、分层路径、remove数据检查与分支提交保留均一致。与原提交比较，其余技能来源和职责规则未变，未纳入工作区Wiki改版。候选75项测试和doctor通过。",
       "evidence": [
-        "skills/wiki/SKILL.md",
+        "skills/worktree/SKILL.md",
+        "docs/architecture.md",
         "docs/wiki/modules/skill-methods/README.md"
       ],
-      "configDigest": "a6b80069a1ee19d61452bc13b061f2c72b9d4e5fc74ea87a0c0976dc72526806",
+      "configDigest": "d295dc1ecd4ced7c629256d1f52dc85e5520c5c28eb33afa9510bcb881b6e45a",
       "sourceSnapshot": {
         "skills/architecture-scout/SKILL.md": {
           "sha256": "03bad07f48b866ed3a5d098b41c3797425105d26d645262236e28c44bc5b38bd",
@@ -180,12 +181,16 @@
           "sha256": "a71866234447bcf6cf93c5fcbc1c7eed71c614bba240d22b6c7f18bd95c4b639",
           "mode": "100644"
         },
+        "skills/worktree/SKILL.md": {
+          "sha256": "1e1b43688c4efbd08e82b1d4af4e70d0398c6e09d4a9f351a766b514bd682f36",
+          "mode": "100644"
+        },
         "skills/wiki/SKILL.md": {
           "sha256": "9c94bd92ea8c5ee4a673473518fcc7b2c65d3b70354e26bcbb78e5c458e5f957",
           "mode": "100644"
         },
         "docs/architecture.md": {
-          "sha256": "25625f59dbb4ddf908b2fbc2673efea24620e1452108531a955f63b35b84709e",
+          "sha256": "d2c4740682bc33c244930f45adc8cc9cbcf581c745ff0c9a5398cbfa912cab4e",
           "mode": "100644"
         },
         "docs/design/2026-10-16-lifecycle-walkthroughs.md": {
@@ -239,23 +244,22 @@
       },
       "docSnapshot": {
         "docs/wiki/modules/skill-methods/README.md": {
-          "sha256": "48d65b91cd52d71c634a23c946800597c94fbe5d5591e4676eee118c2e6ab052",
+          "sha256": "f504e96d6eb777ec1afb64a35f8249d6a035245e0aa1974f99b9dc4097e775b8",
           "mode": "100644"
         }
       }
     },
     "skill-provider": {
-      "reviewedAt": "2026-10-28T02:15:41.641Z",
-      "reviewer": "Codex 发布候选复核",
-      "decision": "updated",
-      "reason": "暂存候选核对provider实现、调用策略、补充的架构来源与知识页基线；本轮provider行为未变，两个本地回归随71项测试通过，真实宿主状态未核验。",
+      "reviewedAt": "2026-10-28T07:34:38.499Z",
+      "reviewer": "Codex",
+      "decision": "no-change",
+      "reason": "比较暂存候选与原复核来源：仅发现测试增加worktree候选、架构增加方法说明；provider源码、bundle和调用策略字节未变。已读取知识页并执行候选75项测试，动态发现与资源路径契约保持一致，知识无需修改。",
       "evidence": [
         "src/index.js",
         "tests/skill-provider.test.mjs",
-        "docs/architecture.md",
         "docs/wiki/modules/skill-provider/README.md"
       ],
-      "configDigest": "a6b80069a1ee19d61452bc13b061f2c72b9d4e5fc74ea87a0c0976dc72526806",
+      "configDigest": "d295dc1ecd4ced7c629256d1f52dc85e5520c5c28eb33afa9510bcb881b6e45a",
       "sourceSnapshot": {
         "src/index.js": {
           "sha256": "cbeb5a237c842edea34f64ce2d66c126d880bd18be1eaff2afedbe56d80204b4",
@@ -266,11 +270,11 @@
           "mode": "100644"
         },
         "tests/skill-provider.test.mjs": {
-          "sha256": "e4fa17f538f13a60b7f1da0a31f81c844bd355e0a5b64e9a465828a660712305",
+          "sha256": "bc5c45285b5806361d1bbffef2e707fa3fd0796fd52ddb1c6702dc945fbeb562",
           "mode": "100644"
         },
         "docs/architecture.md": {
-          "sha256": "25625f59dbb4ddf908b2fbc2673efea24620e1452108531a955f63b35b84709e",
+          "sha256": "d2c4740682bc33c244930f45adc8cc9cbcf581c745ff0c9a5398cbfa912cab4e",
           "mode": "100644"
         },
         "skills/architecture-scout/SKILL.md": {
@@ -290,18 +294,17 @@
       }
     },
     "wiki-tooling": {
-      "reviewedAt": "2026-10-28T06:03:22.690Z",
+      "reviewedAt": "2026-10-28T07:34:38.944Z",
       "reviewer": "Codex",
       "decision": "updated",
-      "reason": "核对新增能力e9b7e7c及版本准备e06f1c2，package.json已为0.11.0；入口和验证页同步版本、75项测试及单页工具证据范围，不声称Claude Code+DeepSeek已经实测通过。",
+      "reason": "已比较暂存来源和原记录：Wiki引擎、技能、模板、测试全部保持原版本；配置仅新增worktree与.gitignore来源，入口仅更新技能数，验证页增加worktree范围记录。逐项读回后确认规则页和代码映射机制无需变化；候选结构检查与75项测试通过。本声明不含工作区未暂存Wiki改版。",
       "evidence": [
-        "package.json",
-        "skills/wiki/scripts/document-review.mjs",
-        "skills/wiki/SKILL.md",
+        "docs/wiki/wiki.config.json",
         "docs/wiki/README.md",
-        "docs/wiki/verification.md"
+        "docs/wiki/verification.md",
+        "docs/wiki/modules/wiki-tooling/README.md"
       ],
-      "configDigest": "a6b80069a1ee19d61452bc13b061f2c72b9d4e5fc74ea87a0c0976dc72526806",
+      "configDigest": "d295dc1ecd4ced7c629256d1f52dc85e5520c5c28eb33afa9510bcb881b6e45a",
       "sourceSnapshot": {
         "skills/wiki/SKILL.md": {
           "sha256": "9c94bd92ea8c5ee4a673473518fcc7b2c65d3b70354e26bcbb78e5c458e5f957",
@@ -436,7 +439,7 @@
           "mode": "100644"
         },
         "docs/wiki/wiki.config.json": {
-          "sha256": "2c94382f931c49ebdad5d12a556a6c659b4d9e7cdb0237a180311b931e62225f",
+          "sha256": "07b39775f305ab9275a8f9605756b2992c9a9c560b370c8e8f79b038a2eec020",
           "mode": "100644"
         },
         "tests/wiki-freshness.test.mjs": {
@@ -466,7 +469,7 @@
       },
       "docSnapshot": {
         "docs/wiki/README.md": {
-          "sha256": "fe2c169b8205503e9f4ecfec9e22b55ae38bbfeb11c2111a75e0cef8cdb9dd6b",
+          "sha256": "bf584e4843f06299cf3f2f598848bedfda78380efefbc939c2dec7146a562aaf",
           "mode": "100644"
         },
         "docs/wiki/concepts.md": {
@@ -486,7 +489,7 @@
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "c125f7f3e5f9fb9ec3c9abb91b2b9fe39025448abe3cd1bb57bcbfc8c2f2b73f",
+          "sha256": "8d8c56b30f55be86a9b8cd3d9c7ad7e357bb379b6db820532b6efe35fe605025",
           "mode": "100644"
         },
         "docs/wiki/freshness.md": {
@@ -496,36 +499,34 @@
       }
     },
     "distribution": {
-      "reviewedAt": "2026-10-28T06:03:23.307Z",
+      "reviewedAt": "2026-10-28T07:34:39.320Z",
       "reviewer": "Codex",
       "decision": "updated",
-      "reason": "逐项核对三份清单0.11.0、CHANGELOG正式段、README固定标签及环境/分发页面；本地候选与远端Release、CI、实际安装仍分开陈述，发布流程未变。",
+      "reason": "已复核暂存三端清单、README、Unreleased和技能数说明，仅新增worktree add/remove；版本和发布流程未变。依赖页补Git及远端查询条件，验证页保留宿主未实测边界；doctor和候选75项测试通过。未纳入其他Wiki功能、模板、验收脚本或其发布描述。",
       "evidence": [
-        "package.json",
-        ".claude-plugin/plugin.json",
         ".codex-plugin/plugin.json",
-        "CHANGELOG.md",
+        ".claude-plugin/plugin.json",
         "README.md",
-        "docs/wiki/environments.md",
-        "docs/wiki/modules/distribution/README.md",
+        "CHANGELOG.md",
+        "docs/wiki/modules/distribution/dependencies.md",
         "docs/wiki/verification.md"
       ],
-      "configDigest": "a6b80069a1ee19d61452bc13b061f2c72b9d4e5fc74ea87a0c0976dc72526806",
+      "configDigest": "d295dc1ecd4ced7c629256d1f52dc85e5520c5c28eb33afa9510bcb881b6e45a",
       "sourceSnapshot": {
         ".agents/plugins/marketplace.json": {
           "sha256": "16c2a3ed2aea0cc4a24c858df3b05f9e77785ab92181848c31a62bece4cd4dab",
           "mode": "100644"
         },
         ".claude-plugin/marketplace.json": {
-          "sha256": "2888e0b69b8f51df85c86f9f1779cbcd6de6189a052967b0cd5c2435d1317b74",
+          "sha256": "64cc524a42742131a0d1d087cb7048568a84bfaef9582e355c545c1e9fcf0e5e",
           "mode": "100644"
         },
         ".claude-plugin/plugin.json": {
-          "sha256": "3aa99dd602198ba3ed8f9d2d6827c329098dedc9c25921f1ef554ae99cea07f1",
+          "sha256": "614b2fd8d2b4a876b013f47d083d6be67f4f51e8c7e237d7ea9daccca0fa083a",
           "mode": "100644"
         },
         ".codex-plugin/plugin.json": {
-          "sha256": "a325006725397df720a898c1749e501089c96fa87ea4c140e21caccf25558221",
+          "sha256": "3cdeea96f37ee25935472c4361846721c88f672c800233c266a9a527e1cb2d54",
           "mode": "100644"
         },
         ".github/dependabot.yml": {
@@ -565,11 +566,11 @@
           "mode": "100644"
         },
         "README.md": {
-          "sha256": "d87cfe31f118e6083483336cb65bbeee0486d91afe613f302724c406858e88cc",
+          "sha256": "ca9369ed1234c3f3a4b38759d1806144d2705d731fe28e767dd2dc44c2558238",
           "mode": "100644"
         },
         "awesome-dsh-plugin-entry.yml": {
-          "sha256": "ea388dceff4562b53bc938df8f461bab3c039e6fb3dfce3b5fa2cd39c08da4c2",
+          "sha256": "59ef973087b93e9d2c2cfbf59fc930e5036c4cdcea7dfc525aeb59f347bc05d3",
           "mode": "100644"
         },
         "AGENTS.md": {
@@ -577,7 +578,11 @@
           "mode": "100644"
         },
         "CHANGELOG.md": {
-          "sha256": "0c85f9ceae148de02b71bc723601a3d7c1099a76038ffd28e203bd682eb2a2d6",
+          "sha256": "817ed7643777945c2cb5277ce40a4b7a5c8f1f7fafdcf4bfd84f1c49b144ab51",
+          "mode": "100644"
+        },
+        ".gitignore": {
+          "sha256": "f9ff894cb932cc40ccbfcf51c0e91976c8a96e2b52af60514d74b6523d81f411",
           "mode": "100644"
         },
         "LICENSE": {
@@ -585,7 +590,7 @@
           "mode": "100644"
         },
         "docs/architecture.md": {
-          "sha256": "25625f59dbb4ddf908b2fbc2673efea24620e1452108531a955f63b35b84709e",
+          "sha256": "d2c4740682bc33c244930f45adc8cc9cbcf581c745ff0c9a5398cbfa912cab4e",
           "mode": "100644"
         },
         "docs/releasing.md": {
@@ -639,11 +644,11 @@
           "mode": "100644"
         },
         "docs/wiki/modules/distribution/dependencies.md": {
-          "sha256": "4510a2ddd05b9f50821759bb1a8bb2a941b28413e0fe4d09d15cf6faf8a25389",
+          "sha256": "20acb7737edaac6b3b036de5c9159fc6e45d6235b39d0835fcc1b8cc6b0af315",
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "c125f7f3e5f9fb9ec3c9abb91b2b9fe39025448abe3cd1bb57bcbfc8c2f2b73f",
+          "sha256": "8d8c56b30f55be86a9b8cd3d9c7ad7e357bb379b6db820532b6efe35fe605025",
           "mode": "100644"
         },
         "docs/wiki/environments.md": {
