@@ -19,12 +19,12 @@
 
 ## 备份与恢复
 
-{{backup_scope_procedure_restore_verification_and_unverified_or_not_applicable_boundaries}}
+{{environment_specific_backup_paths_scope_proposal_vs_agreement_restore_verification_and_limits}}
 
 ## 依据与核验
 
-{{sources_and_actual_verification}}
+{{claim_sources_actual_scope_verification_and_owning_module_mapping_gaps_or_explicit_none}}
 
 ## 待确认项
 
-{{open_questions_or_explicit_none}}
+{{actionable_unresolved_questions_with_current_impact_checked_evidence_and_next_check_or_explicit_none}}

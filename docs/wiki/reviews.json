@@ -2,13 +2,12 @@
   "version": 1,
   "modules": {
     "skill-methods": {
-      "reviewedAt": "2026-10-28T02:15:41.379Z",
-      "reviewer": "Codex 发布候选复核",
-      "decision": "updated",
-      "reason": "提交前核对暂存技能入口、初始化和架构说明，能力组织与交接页已同步；范围含本轮分类、模板和系统知识扩展，沿用既有技能职责。",
+      "reviewedAt": "2026-10-28T03:15:49.633Z",
+      "reviewer": "Codex v0.10.1 提交复核",
+      "decision": "no-change",
+      "reason": "提交前核对技能入口的待确认项和正文取证约束，方法职责与交接知识仍成立；新规则不增加审批、部署或自动执行阶段。",
       "evidence": [
         "skills/wiki/SKILL.md",
-        "docs/architecture.md",
         "docs/wiki/modules/skill-methods/README.md"
       ],
       "configDigest": "a6b80069a1ee19d61452bc13b061f2c72b9d4e5fc74ea87a0c0976dc72526806",
@@ -182,7 +181,7 @@
           "mode": "100644"
         },
         "skills/wiki/SKILL.md": {
-          "sha256": "822be12d42116c59598bf4961d2b11679988977ccf423bbd0b382fd1ed730424",
+          "sha256": "a1b1ef2655273aa5ecbefae0e7c2069d0799f35b914c6261a874e9577d984216",
           "mode": "100644"
         },
         "docs/architecture.md": {
@@ -291,19 +290,22 @@
       }
     },
     "wiki-tooling": {
-      "reviewedAt": "2026-10-28T02:16:59.145Z",
-      "reviewer": "Codex v0.10.0 发布复核",
+      "reviewedAt": "2026-10-28T03:15:50.265Z",
+      "reviewer": "Codex v0.10.1 提交复核",
       "decision": "updated",
-      "reason": "核对发布脚本仅将package声明版本改为0.10.0，CLI和技能实现不变；入口及验证页同步功能提交与版本准备基线，13篇结构129链接通过，实际远端和用户安装状态仍分开取证。",
+      "reason": "实际审读暂存的两轮优化：待确认项准入/归位，content-verification、13模板、来源反查与跨页一致性；验证页记录Portunus原项目未动、正反向行为和来源扰动实测，71项回归及13页129链接通过，语义仍由实际取证负责。",
       "evidence": [
-        "package.json",
-        "docs/wiki/README.md",
+        "skills/wiki/references/knowledge-classification.md",
+        "skills/wiki/references/content-verification.md",
+        "skills/wiki/references/templates.md",
+        "docs/wiki/modules/wiki-tooling/README.md",
+        "docs/wiki/modules/wiki-tooling/rules.md",
         "docs/wiki/verification.md"
       ],
       "configDigest": "a6b80069a1ee19d61452bc13b061f2c72b9d4e5fc74ea87a0c0976dc72526806",
       "sourceSnapshot": {
         "skills/wiki/SKILL.md": {
-          "sha256": "822be12d42116c59598bf4961d2b11679988977ccf423bbd0b382fd1ed730424",
+          "sha256": "a1b1ef2655273aa5ecbefae0e7c2069d0799f35b914c6261a874e9577d984216",
           "mode": "100644"
         },
         "skills/wiki/assets/schema.json": {
@@ -311,63 +313,67 @@
           "mode": "100644"
         },
         "skills/wiki/assets/templates/architecture.md": {
-          "sha256": "f147e482c381b7db6805167746da62fc2e3815db400cae53927992422177f47b",
+          "sha256": "8e073673d78e341d7a2b7303ee0ade2d6b4190664581b6f8d15bee9bde019dfc",
           "mode": "100644"
         },
         "skills/wiki/assets/templates/code-map.md": {
-          "sha256": "505dec74845de3477d2f015d2597e687fb7a9da9c10f42706f800c2deea04152",
+          "sha256": "a82fef3276ef28bf327c6c3fa699ee2a216e0c4394b558cbb4839a11f7617886",
           "mode": "100644"
         },
         "skills/wiki/assets/templates/concepts.md": {
-          "sha256": "afc195cd8f48dad1df3272985a9113446dc4a1b1b34235b4053340f7925031ee",
+          "sha256": "dc25c4179bdb8a14da8ee6bcf2884cba15ab7cf19abbd9b5632c81b180c18944",
           "mode": "100644"
         },
         "skills/wiki/assets/templates/dependencies.md": {
-          "sha256": "c33a413f7e31888bacb9cde4ef85968fea07b717aeac4ec64e5222676bb0d460",
+          "sha256": "24d646f0829b84035ce995358747cafd789a43daa5532acc6758fb0eb568cf38",
           "mode": "100644"
         },
         "skills/wiki/assets/templates/deployment.md": {
-          "sha256": "75e90ab395d95ac52681181bf89f982b669b49027ddb77962f9e46cab475de64",
+          "sha256": "1ac0ee440181d8fe691be046c6244c6072eb77a57d1fd7fb1c171fc752bd9896",
           "mode": "100644"
         },
         "skills/wiki/assets/templates/environments.md": {
-          "sha256": "f525982dc4204fbfec12b65617216c5332106e51a1593bcd48fb2a98d1d47923",
+          "sha256": "b142c115c49dc0ce890081be1cbc1f50c5474b074f14b1d92c934421ae5672c6",
           "mode": "100644"
         },
         "skills/wiki/assets/templates/guide.md": {
-          "sha256": "be31673fe67c19bd5d37afda7d73f2e44afdc91e56d3d7163e1d52ed6ef6afdb",
+          "sha256": "7bec6c32064c060b548fd7e315376068f18f7c58cc89342d6ce760b1006f7f83",
           "mode": "100644"
         },
         "skills/wiki/assets/templates/index-modular.md": {
-          "sha256": "291599fe2b91cdeb275696225ba4ea8330dfa14775fbb0c994b6abb4b8fb55e9",
+          "sha256": "a24cfc7f13da913a6a0353a8766319ac1ea4296ae9752898a363da463dff2e6f",
           "mode": "100644"
         },
         "skills/wiki/assets/templates/index-small.md": {
-          "sha256": "3c0f2ed8fe591300ca5f31e1e668e6f8024e65deab6427f23a0fdb906426f504",
+          "sha256": "7e26c9c6e20fb4ab014ba0852afd57fdbd09cb16725c3884f7e81997a5574fdb",
           "mode": "100644"
         },
         "skills/wiki/assets/templates/module.md": {
-          "sha256": "d3d8718a9f64265384be781918212ac782a461e2e93a60b0b6f30d44db5d8613",
+          "sha256": "c6199e21a2b2e90f46fbb671cbfceb2a0167c58a4b30e8842f0b79904b5c1954",
           "mode": "100644"
         },
         "skills/wiki/assets/templates/operations.md": {
-          "sha256": "b7fe4cda1ebd5fa305da961df8ae61456c7b7dbded17c2a4365f1dd6e02ce6e3",
+          "sha256": "2e80a819015f37935530b405a72e0e24808f4c85a12a80580129b1e1ff06afdb",
           "mode": "100644"
         },
         "skills/wiki/assets/templates/rules.md": {
-          "sha256": "c9b37166e8b4c69224118354b5ae008d720765097598dc5b68ae190131967666",
+          "sha256": "e72e2f10355d3eb7f0416cb2f22e646085e5f2bf815f4329d625f2208552cee8",
           "mode": "100644"
         },
         "skills/wiki/assets/templates/troubleshooting.md": {
-          "sha256": "c85bf0e66df5d1dd02ee3a0d3352d079d93aa215f049f3f73bb1b0d804fa6697",
+          "sha256": "fc3ba20d6e1ba1c73f2716500dbe502eabeef267a0b54987bbfb29a3fdf382b0",
           "mode": "100644"
         },
         "skills/wiki/references/change-review.md": {
-          "sha256": "b9b701c3eed9d888a62fa562d683473b475908b043efa5a28a5fa087415b3b5c",
+          "sha256": "876d030e083b458195ad697c84dca1001d9b3b8f1bfa646fc96f20cfe4ab20cb",
+          "mode": "100644"
+        },
+        "skills/wiki/references/content-verification.md": {
+          "sha256": "4c6af7531f8e1c3970d9f8c0738050eb7b9d15ccd1135a22b9d64c88587b4f8c",
           "mode": "100644"
         },
         "skills/wiki/references/evaluation-cases.md": {
-          "sha256": "16cb61595dff5ecf2e44c62ae98dce37554039deb3f8f761ea7da4e7592f135d",
+          "sha256": "60615e618517f349cbcfced28c991b5d7998c0bbbe889cdf9c98eb3f2311f461",
           "mode": "100644"
         },
         "skills/wiki/references/freshness.md": {
@@ -375,27 +381,27 @@
           "mode": "100644"
         },
         "skills/wiki/references/initialization.md": {
-          "sha256": "56279d0b995f6dfb46e79106ab168930302045adb185f874e0ebe5a14c137067",
+          "sha256": "b1e44c636b8691c3364d57f9fe57bfd9367f920005481b8b95515e830ff81837",
           "mode": "100644"
         },
         "skills/wiki/references/knowledge-classification.md": {
-          "sha256": "71d8509e72c6783fdb6c41321222db434602f476481f08901de56688d16da817",
+          "sha256": "14e896b7605f48f2d576ab8774b715e06ac0519ddb101be903d45a6acdf24bec",
           "mode": "100644"
         },
         "skills/wiki/references/knowledge-maintenance.md": {
-          "sha256": "0555c5357d30e23233c06cd154c2c0d20c25f859f9bd0054977270efc521843c",
+          "sha256": "fd4f896fa6a58ce21ecf86c0c6e0b38a54b1608004d3ee3920e7f093af79f516",
           "mode": "100644"
         },
         "skills/wiki/references/system-knowledge.md": {
-          "sha256": "b157e364b35548853c08a9eac280c6a507674837eb95740036b62b7d70ab34f6",
+          "sha256": "185bf53ba4fe0c9c5448e3737d3cda232871800195d17b618c42548bc2389d22",
           "mode": "100644"
         },
         "skills/wiki/references/templates.md": {
-          "sha256": "ff16076711fa9576b9b20fe04242604f261c4bc0843eb7aa542fc8696e5f6011",
+          "sha256": "d28e6f5f134eecb87d3e0fb27495342191d585aba36da04e8d26188053c20880",
           "mode": "100644"
         },
         "skills/wiki/references/tools.md": {
-          "sha256": "c332ac087900d11d44ce7c8eb1e5fd94aa99a94c99df300379cbc90f8dcde2b4",
+          "sha256": "93353b76ab8c6057bb3928c51f7225d8fe11e890a98d3f8903471f8b4a5bba63",
           "mode": "100644"
         },
         "skills/wiki/scripts/freshness.mjs": {
@@ -465,19 +471,19 @@
           "mode": "100644"
         },
         "docs/wiki/modules/wiki-tooling/README.md": {
-          "sha256": "20e4fff207004fbd30a57e298bc2ea950f2d8808935d3159c54e9e5d39bcdcea",
+          "sha256": "f02e4a0030eea18ee3020f9fec039024d2736533ebe5989904fdb18ee39bdf9a",
           "mode": "100644"
         },
         "docs/wiki/modules/wiki-tooling/rules.md": {
-          "sha256": "ce2348e46d405aea3f5477c76b976d31de756a705008ca73ea63e4a789862f83",
+          "sha256": "2765a598a928b24f3b4e6acaac94d11eafc747dbb265e7879934797141d87df1",
           "mode": "100644"
         },
         "docs/wiki/modules/wiki-tooling/code-map.md": {
-          "sha256": "7809b4bd0bea139ce7da17a6a99b6711728616f6305b371039f125347cb6aca4",
+          "sha256": "dd41f51bde7eb6b4537394b4d00020e0921a282b14b9c9c8581879e83ba74dda",
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "313e74ad8240b608c9d33a297e84ecf6d35ecd0b9d6fd4b5c18fc9bbabc62ee0",
+          "sha256": "88e279a43829265dd3842ff1af13585804d0024aedc21d1c49d6073a210cca2c",
           "mode": "100644"
         },
         "docs/wiki/freshness.md": {
@@ -487,18 +493,14 @@
       }
     },
     "distribution": {
-      "reviewedAt": "2026-10-28T02:17:00.006Z",
-      "reviewer": "Codex v0.10.0 发布复核",
+      "reviewedAt": "2026-10-28T03:15:50.770Z",
+      "reviewer": "Codex v0.10.1 提交复核",
       "decision": "updated",
-      "reason": "实际核对三份0.10.0清单、CHANGELOG正式段落、README标签示例及环境分发知识；doctor和包预览通过，仅本地版本准备，不声称远端发布或用户升级。",
+      "reason": "核对暂存README、Unreleased及验证页，包清单仍0.10.0，本提交保存两轮方法修正，尚未准备新版本；包预览包含新正文核对资源，原发布/安装边界未变。",
       "evidence": [
-        ".claude-plugin/plugin.json",
-        ".codex-plugin/plugin.json",
-        "package.json",
-        "CHANGELOG.md",
         "README.md",
-        "docs/wiki/environments.md",
-        "docs/wiki/modules/distribution/README.md",
+        "CHANGELOG.md",
+        "package.json",
         "docs/wiki/verification.md"
       ],
       "configDigest": "a6b80069a1ee19d61452bc13b061f2c72b9d4e5fc74ea87a0c0976dc72526806",
@@ -556,7 +558,7 @@
           "mode": "100644"
         },
         "README.md": {
-          "sha256": "9b47113c6d0031187c1ff9e7f8ce459f006693a92f93aadfbeec3fa5d118f249",
+          "sha256": "f741e247fefe34046134ecd756d4ad401dd441ff0a91993269f8c1e8bc84fca1",
           "mode": "100644"
         },
         "awesome-dsh-plugin-entry.yml": {
@@ -568,7 +570,7 @@
           "mode": "100644"
         },
         "CHANGELOG.md": {
-          "sha256": "92744a73099c1240a6e2ec18b8b3290f6902d1427e6ab429791c59f52a86e279",
+          "sha256": "7c54028d07139552822b68d6ce86f9206e43ac1bb9c5bdc2026d109d247fbec4",
           "mode": "100644"
         },
         "LICENSE": {
@@ -630,7 +632,7 @@
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "313e74ad8240b608c9d33a297e84ecf6d35ecd0b9d6fd4b5c18fc9bbabc62ee0",
+          "sha256": "88e279a43829265dd3842ff1af13585804d0024aedc21d1c49d6073a210cca2c",
           "mode": "100644"
         },
         "docs/wiki/environments.md": {
