@@ -1,13 +1,14 @@
 import { lstat } from 'node:fs/promises'
 import { relative, resolve, sep } from 'node:path'
 import { matches } from './snapshot.mjs'
+import { documentReview } from './document-review.mjs'
 
 // Inspect path coverage only. No source contents, model calls, or project writes.
-export async function inspectMapping({ root, profile, git, coverage, issue, limited }) {
+export async function inspectMapping({ root, profile, git, coverage, issue, limited, document }) {
   coverage.mapping = { scope: 'git-visible-worktree', modules: profile.modules.length, assessment: 'path-coverage-only' }
   if (!profile.modules.length) {
     limited('No modules configured for mapping assessment')
-    return { modules: [], overlaps: [], unmappedPaths: [], excludedPaths: [], unsupportedPaths: [] }
+    if (!document) return { modules: [], overlaps: [], unmappedPaths: [], excludedPaths: [], unsupportedPaths: [] }
   }
   if (resolve(git(root, ['rev-parse', '--show-toplevel']).trim()) !== root) throw new Error('--root must be the Git repository root')
   const paths = [...new Set(git(root, ['ls-files', '--cached', '--others', '--exclude-standard', '-z']).split('\0').filter(Boolean))].sort()
@@ -46,6 +47,7 @@ export async function inspectMapping({ root, profile, git, coverage, issue, limi
     for (const path of missingDocuments) issue('missing-mapping-document', path, `${module.id}: document is absent from Git-visible regular files`)
     return { id: module.id, sourceFiles, documents, unmatchedSources, missingDocuments }
   })
+  if (document && !modules.some(module => module.documents.includes(document))) limited(`Selected document has no owning module: ${document}`)
   const overlaps = []
   for (let i = 0; i < modules.length; i++) for (let j = i + 1; j < modules.length; j++) {
     const left = modules[i], right = modules[j], rightFiles = new Set(right.sourceFiles)
@@ -69,5 +71,6 @@ export async function inspectMapping({ root, profile, git, coverage, issue, limi
   coverage.mapping.files = files.length
   coverage.mapping.unmapped = 'informational; assess against requested knowledge scope'
   coverage.mapping.overlaps = 'informational; shared sources require a documented rationale'
+  if (document) return { documentReview: await documentReview({ root, document, files, modules }) }
   return { modules, overlaps, unmappedPaths, excludedPaths, unsupportedPaths }
 }

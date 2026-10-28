@@ -53,7 +53,7 @@ sources 是项目相对文件或目录前缀，按路径边界匹配，不支持
 
 ## 映射覆盖报告
 
-mapping 按配置列出模块的实际 sourceFiles、documents、unmatchedSources 和 missingDocuments。它检查当前 Git 可见工作区的普通文件，包括未被忽略的未跟踪文件；已删除文件不算现有来源，不跟随符号链接。只读取路径元数据，不读取源码正文或判断业务含义。
+mapping 按配置列出模块的实际 sourceFiles、documents、unmatchedSources 和 missingDocuments。它检查当前 Git 可见工作区的普通文件，包括未被忽略的未跟踪文件；已删除文件不算现有来源，不跟随符号链接。默认只读取路径元数据，不读取源码正文或判断业务含义；指定 --document 时另读取所选知识页，生成下述核对包。
 
 overlaps 列出模块对的 sharedFiles、shareOfSources 和 identicalSourceSets。shareOfSources 的两个 0 到 1 比例分别以该模块的实际来源文件数为分母；它们不是“语义重复率”。高重叠可能来自真实共享能力，也可能来自映射过粗，需要按 `references/initialization.md` 核对并说明理由。
 
@@ -73,3 +73,9 @@ mapping 不提取正文语义，也不自动检查“这条结论的依据是否
 | error | 参数、环境、配置或执行失败 | 2 |
 
 保留 findings 与 coverage，不只读取退出码。某些问题与覆盖缺口可能同时存在；即使 status 为 issues，仍需报告未覆盖项。结构检查通过与成功采集变更都不等于语义通过；`coverage.semantic` 未执行时不能写成“文档与代码一致”。脚本失败时报告原始原因，不将异常或空材料改成通过。
+
+## 单页正文核对包
+
+在已有 Git 仓库和配置上执行 `mapping --document <项目相对Markdown路径>`。它只返回所选页面的 documentReview 核对包，避免把全仓路径库存与重叠报告塞入正文核对上下文；默认 mapping 仍输出完整路径报告。核对包包含 owningModules、带行号/章节的 passages，以及行内代码和常见本地 Markdown 链接的 references。候选提供每个本页所属模块的 mappedSource，同名文件保留 ambiguous，不替 Agent 选择。仅读取目标知识页，源码内容不读取或输出；忽略文件、符号链接和越界页面不能作为目标。
+
+此输出是逐段工作的输入，不是语义验收证书。字面引用可能只是导航，正文没写出的真实依赖也不会自动发现；候选未映射不直接使 mapping 失败。正文、来源范围、同名文件实际读写者与跨页冲突仍由 Agent 核实。未归属页面报告 partial。默认不带 document 的 mapping 行为保持不变，不修改项目配置或文档，也不产生新永久台账。

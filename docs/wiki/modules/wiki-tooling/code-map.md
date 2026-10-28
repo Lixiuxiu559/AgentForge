@@ -18,6 +18,7 @@
 - [结构检查](../../../../skills/wiki/scripts/structure.mjs)
 - [新鲜度与复核](../../../../skills/wiki/scripts/freshness.mjs)
 - [来源映射报告](../../../../skills/wiki/scripts/mapping.mjs)
+- [单页核对包](../../../../skills/wiki/scripts/document-review.mjs)
 - [Git 候选快照](../../../../skills/wiki/scripts/snapshot.mjs)
 - [默认结构 schema](../../../../skills/wiki/assets/schema.json)
 
@@ -32,6 +33,7 @@
 | 候选文件快照 | snapshot.mjs 从工作区、索引或提交树读取文件集合、内容和模式，避免混用候选 |
 | 项目接入 | tools/wiki-project.mjs 固定 AgentForge 目标根和配置，提供 npm 命令入口 |
 | 模块来源覆盖 | mapping.mjs 的 inspectMapping 按 Git 可见工作区报告来源、文档、共享比例、缺失项及未映射候选；只测路径，不读取源正文 |
+| 单页核对包 | mapping --document 调用 document-review.mjs，列正文段落/行号和字面路径候选及本页模块覆盖，不读源码正文，不自动判定语义 |
 | Git 变更 | git、revision、parseChanges、changes，分别处理索引、工作区及分支范围 |
 | 项目结构配置 | structure.mjs 的 structureConfig，校验 preset、entry、documents 与显式 type |
 | 默认内容契约 | assets/schema.json 的 common 和 types，供结构检查读取 |

@@ -33,8 +33,8 @@ async function configure(root, modules, extra = {}) {
   await put(root, 'wiki.config.json', JSON.stringify({ version: 1, modules, ...extra }, null, 2) + '\n')
 }
 
-function run(root, entrypoint = script) {
-  const result = spawnSync(process.execPath, [entrypoint, 'mapping', '--root', root, '--config', 'wiki.config.json'], {
+function run(root, entrypoint = script, options = []) {
+  const result = spawnSync(process.execPath, [entrypoint, 'mapping', '--root', root, '--config', 'wiki.config.json', ...options], {
     cwd: tmpdir(), encoding: 'utf8', env,
   })
   assert.equal(result.error, undefined)
@@ -183,4 +183,81 @@ test('relocated package assesses an explicitly selected project from an unrelate
   await cp(join(skill, 'scripts'), join(installation, 'scripts'), { recursive: true })
   await cp(join(skill, 'assets'), join(installation, 'assets'), { recursive: true })
   assert.deepEqual(run(root, join(installation, 'scripts/wiki.mjs')), run(root))
+})
+
+
+test('single-page work packet exposes own-module gaps and ambiguous basenames without reading sources', async t => {
+  const root = await fixture(t)
+  await put(root, 'server/config.json', 'PRIVATE-SOURCE-CONTENT')
+  await put(root, 'desktop/config.json', 'OTHER-PRIVATE-CONTENT')
+  await put(root, 'config.json', 'ROOT-PRIVATE-CONTENT')
+  await put(root, 'server/fail.go', 'SECRET-FAIL-CONTENT')
+  const page = '# Operations\n\n## Recovery\n\nBack up `config.json`.\n\nErrors use `server/fail.go`.\n'
+  await put(root, 'wiki/ops.md', page)
+  await put(root, 'wiki/gateway.md', '# Gateway\n')
+  await configure(root, [
+    { id: 'ops', sources: ['server/config.json'], docs: ['wiki/ops.md'] },
+    { id: 'gateway', sources: ['server/fail.go'], docs: ['wiki/gateway.md'] },
+  ])
+  const result = run(root, script, ['--document', 'wiki/ops.md'])
+  const packet = result.documentReview
+  assert.equal(result.modules, undefined)
+  assert.equal(result.overlaps, undefined)
+  assert.equal(result.status, 'passed') // candidates never claim semantic failure or success
+  assert.deepEqual(packet.owningModules, ['ops'])
+  assert.deepEqual(packet.passages.map(p => [p.line, p.section, p.text]), [[5, 'Recovery', 'Back up `config.json`.'], [7, 'Recovery', 'Errors use `server/fail.go`.']])
+  const ambiguous = packet.references.find(r => r.literal === 'config.json')
+  assert.equal(ambiguous.ambiguous, true)
+  assert.equal(ambiguous.candidates.length, 3)
+  const errorSource = packet.references.find(r => r.literal === 'server/fail.go').candidates[0]
+  assert.deepEqual(errorSource.owners, [{ module: 'ops', mappedSource: false }])
+  assert.ok(!JSON.stringify(result).includes('PRIVATE-SOURCE-CONTENT'))
+  assert.ok(!JSON.stringify(result).includes('SECRET-FAIL-CONTENT'))
+  assert.equal(await readFile(join(root, 'wiki/ops.md'), 'utf8'), page)
+})
+
+test('work packet resolves local source links but keeps navigation and unknown ownership explicit', async t => {
+  const root = await fixture(t)
+  await put(root, 'src/中文 文件.js', 'source')
+  await put(root, 'wiki/ops.md', '# Ops\n\n[Source](../src/%E4%B8%AD%E6%96%87%20%E6%96%87%E4%BB%B6.js) and [Guide](guide.md).\n')
+  await put(root, 'wiki/guide.md', '# Guide\n')
+  await configure(root, [{ id: 'ops', sources: ['src'], docs: ['wiki/ops.md'] }])
+  const result = run(root, script, ['--document', 'wiki/ops.md'])
+  assert.equal(result.documentReview.references.length, 2)
+  assert.equal(result.documentReview.references[0].candidates[0].owners[0].mappedSource, true)
+  assert.equal(result.documentReview.references[1].kind, 'link')
+  const unowned = run(root, script, ['--document', 'wiki/guide.md'])
+  assert.equal(unowned.status, 'partial')
+  assert.deepEqual(unowned.documentReview.owningModules, [])
+  await configure(root, [])
+  assert.equal(run(root, script, ['--document', 'wiki/ops.md']).status, 'partial')
+})
+
+test('work packet refuses ignored, escaped and symlink documents', async t => {
+  const root = await fixture(t)
+  const outside = await fixture(t, false)
+  await put(root, '.gitignore', 'wiki/ignored.md\n')
+  await put(root, 'src/main.js', 'main')
+  await put(root, 'wiki/ops.md', '# Ops')
+  await put(root, 'wiki/ignored.md', '# Ignored')
+  await put(outside, 'private.md', 'PRIVATE-DOCUMENT')
+  await symlink(join(outside, 'private.md'), join(root, 'wiki/link.md'))
+  await configure(root, [{ id: 'ops', sources: ['src'], docs: ['wiki/ops.md'] }])
+  for (const document of ['wiki/ignored.md', '../private.md', 'wiki/link.md']) {
+    const result = run(root, script, ['--document', document])
+    assert.equal(result.status, 'error')
+    assert.ok(!JSON.stringify(result).includes('PRIVATE-DOCUMENT'))
+  }
+})
+
+
+test('work packet retains fenced headings as document text rather than dropping them', async t => {
+  const root = await fixture(t)
+  await put(root, 'src/a.js', 'source')
+  await put(root, 'wiki/a.md', '# Page\n\n## Actual section\n\n```sh\n## This is shell input\necho hello\n```\n')
+  await configure(root, [{ id: 'a', sources: ['src'], docs: ['wiki/a.md'] }])
+  const packet = run(root, script, ['--document', 'wiki/a.md']).documentReview
+  assert.equal(packet.passages.length, 1)
+  assert.equal(packet.passages[0].section, 'Actual section')
+  assert.ok(packet.passages[0].text.includes('## This is shell input'))
 })

@@ -194,7 +194,7 @@ AgentForge 自身的知识入口见 [项目 Wiki](docs/wiki/README.md)，覆盖�
 
 无既有约定的新知识库可采用小型或多模块默认骨架，配套入口、概念、模块、规则、代码映射、依赖和通用主题模板。默认规范检查必需文档、章节、文档信息、未替换占位符及入口导航；已有项目保持原约定，可显式声明自己的必需文件和章节。使用方法见 [Wiki 模板与目录](skills/wiki/references/templates.md)。
 
-知识按业务或对外能力组织，再与代码建立多对多关联。重要条目分别说明预期约定、实现观察、运行验证或推断，以及来源和适用范围；初始化交付区分一次性文档、持续维护、持续同步和检查门。`npm run wiki:mapping` 可查看本项目的文件覆盖、共享比例及未映射候选，供人工核对；这些数据不自动证明划分合理。方法见 [初始化交付与模块来源设计](skills/wiki/references/initialization.md)。
+知识按业务或对外能力组织，再与代码建立多对多关联。重要条目分别说明预期约定、实现观察、运行验证或推断，以及来源和适用范围；初始化交付区分一次性文档、持续维护、持续同步和检查门。`npm run wiki:mapping` 可查看本项目的文件覆盖、共享比例及未映射候选，供人工核对；这些数据不自动证明划分合理。方法见 [初始化交付与模块来源设计](skills/wiki/references/initialization.md)。 正文维护可运行 `npm run wiki:mapping -- --document docs/wiki/modules/wiki-tooling/README.md` 取得单页核对包：列出带行号段落、字面路径候选和本页模块覆盖，供 Agent 逐页取证与读回；不会自动判断语义。
 
 读取 Wiki 前运行 `npm run wiki:freshness`；开发收尾核对实际变更后，用 `npm run wiki:review -- ...` 保存更新、无需更新或冲突结论。交付前运行 `npm run wiki:check` 和 `npm run wiki:gate`；PR 工作流会检查提交树中的同步状态。新鲜度按来源与文档指纹判断，命令不会自动证明语义正确。使用方式见 [新鲜度与收尾同步](docs/wiki/freshness.md)。
 

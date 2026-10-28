@@ -17,7 +17,7 @@ function args() {
   const allowed = {
     check: ['root', 'wiki', 'config'],
     changes: ['root', 'scope', 'base', 'head', 'config'],
-    mapping: ['root', 'config'],
+    mapping: ['root', 'config', 'document'],
     freshness: ['root', 'config', 'module'],
     review: ['root', 'config', 'module', 'decision', 'reason', 'reviewer', 'evidence', 'scope'],
     gate: ['root', 'config', 'scope', 'base', 'head'],
@@ -285,7 +285,7 @@ try {
     result = await runFreshness({ root, options, parseConfig, local, git, revision, parseChanges, coverage, issue, limited })
   } else {
     const profile = await config(root, options.config)
-    if (options.command === 'mapping') result = await inspectMapping({ root, profile, git, coverage, issue, limited })
+    if (options.command === 'mapping') result = await inspectMapping({ root, profile, git, coverage, issue, limited, ...(options.document ? { document: relative(root, local(root, options.document)).split(sep).join('/') } : {}) })
     else result = options.command === 'check' ? await check(root, options, profile) : changes(root, options, profile)
   }
   const status = findings.length ? 'issues' : coverage.limitations.length ? 'partial' : 'passed'
