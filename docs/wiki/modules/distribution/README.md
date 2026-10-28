@@ -11,7 +11,7 @@
 
 ## 用途与边界
 
-Claude Code、Codex 和 DSH 使用同一份 skills 真源。两份插件清单与 package.json 的发布候选版本均为 0.11.0，新增能力记录在 CHANGELOG 的对应版本段落。本地版本准备、远端 Release 和用户已安装版本是不同状态，应分别核实。
+Claude Code、Codex 和 DSH 使用同一份 skills 真源。两份插件清单与 package.json 的发布候选版本均为 0.12.0，新增能力记录在 CHANGELOG 的对应版本段落。本地版本准备、远端 Release 和用户已安装版本是不同状态，应分别核实。
 
 README 与发布文档记录的宿主更新语义在本次只作仓库约定引用，没有用真实安装副本复测。npm 工作流在当前文件中仅支持手动触发，不能从存在 publish.yml 推断 registry 已发布。
 

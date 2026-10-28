@@ -293,18 +293,15 @@
       }
     },
     "wiki-tooling": {
-      "reviewedAt": "2026-10-28T07:45:33.083Z",
+      "reviewedAt": "2026-10-28T07:47:27.646Z",
       "reviewer": "Codex",
       "decision": "updated",
-      "reason": "实际核对待提交的精简入口、参考、模板/schema、直接来源清单和两项新增映射回归；旧模板兼容，既有CLI保留，未发布段落台账已移除。78回归、doctor及结构检查通过，独立审读与Portunus隔离验证范围已记录。",
+      "reason": "版本准备后package仅0.11.0变0.12.0，工具/模板实现不变；验证页补本地候选提交、78回归和索引检查范围，已读回，未把本地标签当远端发布或模型实测。最终结构检查和doctor通过。",
       "evidence": [
+        "package.json",
+        "docs/wiki/verification.md",
         "skills/wiki/SKILL.md",
-        "skills/wiki/references/content-verification.md",
-        "skills/wiki/references/templates.md",
-        "skills/wiki/scripts/document-review.mjs",
-        "tests/wiki-mapping.test.mjs",
-        "tests/wiki-templates.test.mjs",
-        "docs/wiki/verification.md"
+        "skills/wiki/scripts/document-review.mjs"
       ],
       "configDigest": "d295dc1ecd4ced7c629256d1f52dc85e5520c5c28eb33afa9510bcb881b6e45a",
       "sourceSnapshot": {
@@ -445,7 +442,7 @@
           "mode": "100644"
         },
         "package.json": {
-          "sha256": "1f0c11fbf3c415d2a623ba0fd2d52abcc380f9b0633f74905a192f01919467cd",
+          "sha256": "dde3755acc2dd38ded3f9d3360df4e9f9de97727d3f490efbfabe7ab557326d2",
           "mode": "100644"
         },
         "AGENTS.md": {
@@ -479,7 +476,7 @@
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "77caa9546f3bff4517df190af16f35b42f57a17275bfa799db5e7396d3195fa2",
+          "sha256": "4d803404ea9d17c2d5dc7609e4d3eef2e8e94a9f1c9d0bf1e9c90e04f9241138",
           "mode": "100644"
         },
         "docs/wiki/freshness.md": {
@@ -489,15 +486,17 @@
       }
     },
     "distribution": {
-      "reviewedAt": "2026-10-28T07:45:33.509Z",
+      "reviewedAt": "2026-10-28T07:47:28.058Z",
       "reviewer": "Codex",
       "decision": "updated",
-      "reason": "已核对暂存README/Unreleased、包files及验证页：来源清单能力与实际脚本一致，未发布台账能力无残留承诺；79文件预览、doctor通过，版本仍0.11.0且尚未发布，当前检查不推导远端或宿主已更新。",
+      "reason": "对照实际三处版本清单、CHANGELOG0.12.0及README固定tag示例和分发页，确认与本地候选一致；79文件打包预览及doctor通过，未执行npm发布，不推导远端Release、CI或用户已安装。",
       "evidence": [
-        "README.md",
-        "CHANGELOG.md",
+        ".claude-plugin/plugin.json",
+        ".codex-plugin/plugin.json",
         "package.json",
-        "skills/wiki/scripts/document-review.mjs",
+        "CHANGELOG.md",
+        "README.md",
+        "docs/wiki/modules/distribution/README.md",
         "docs/wiki/verification.md"
       ],
       "configDigest": "d295dc1ecd4ced7c629256d1f52dc85e5520c5c28eb33afa9510bcb881b6e45a",
@@ -511,11 +510,11 @@
           "mode": "100644"
         },
         ".claude-plugin/plugin.json": {
-          "sha256": "614b2fd8d2b4a876b013f47d083d6be67f4f51e8c7e237d7ea9daccca0fa083a",
+          "sha256": "e5728d8b66a173ff88c6adc6d1d4f79e7001df42f7977a2743a13e1873ca0b29",
           "mode": "100644"
         },
         ".codex-plugin/plugin.json": {
-          "sha256": "3cdeea96f37ee25935472c4361846721c88f672c800233c266a9a527e1cb2d54",
+          "sha256": "7d1b02a327cd8008c2468f2d3d7ea1d3cc800e2a959be0a3c4b43249e34cc780",
           "mode": "100644"
         },
         ".github/dependabot.yml": {
@@ -551,11 +550,11 @@
           "mode": "100644"
         },
         "package.json": {
-          "sha256": "1f0c11fbf3c415d2a623ba0fd2d52abcc380f9b0633f74905a192f01919467cd",
+          "sha256": "dde3755acc2dd38ded3f9d3360df4e9f9de97727d3f490efbfabe7ab557326d2",
           "mode": "100644"
         },
         "README.md": {
-          "sha256": "9c10803502261ce7f195584eb7a82d79942c0f617964d8b49fb4d146f0cb0d21",
+          "sha256": "ce74bfd72934638d5570c398b2be76f70e96ae0974d71d40a0ca818f7c029425",
           "mode": "100644"
         },
         "awesome-dsh-plugin-entry.yml": {
@@ -567,7 +566,7 @@
           "mode": "100644"
         },
         "CHANGELOG.md": {
-          "sha256": "953d9b9551662a94a1af404e5ef06028e5dc7849d820209ac0819c1f9ac300da",
+          "sha256": "2d9e120ddc8caca4e18917ee814b0f8402a9695f5cdfa4438fb2ac43af257e95",
           "mode": "100644"
         },
         ".gitignore": {
@@ -629,7 +628,7 @@
       },
       "docSnapshot": {
         "docs/wiki/modules/distribution/README.md": {
-          "sha256": "114581e79c3a071ec7fc41ee9be5cbc3de56f94c85b03ada76808a57c5346195",
+          "sha256": "3aeb29cb9f93b237c6115fb3260dac1c6bc50192b78e9bfb3eacebc0d5584e9d",
           "mode": "100644"
         },
         "docs/wiki/modules/distribution/dependencies.md": {
@@ -637,7 +636,7 @@
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "77caa9546f3bff4517df190af16f35b42f57a17275bfa799db5e7396d3195fa2",
+          "sha256": "4d803404ea9d17c2d5dc7609e4d3eef2e8e94a9f1c9d0bf1e9c90e04f9241138",
           "mode": "100644"
         },
         "docs/wiki/environments.md": {
