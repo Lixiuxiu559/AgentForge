@@ -36,6 +36,7 @@
 | 项目结构配置 | structure.mjs 的 structureConfig，校验 preset、entry、documents 与显式 type |
 | 默认内容契约 | assets/schema.json 的 common 和 types，供结构检查读取 |
 | 模板填充 | assets/templates 的十三份文件，由 Agent 按证据填充，不是脚本自动生成 |
+| 正文与证据 | references/content-verification.md 指导 Agent 核对结论范围、配置生效链、反向来源映射与跨页一致性；不是脚本语义检查 |
 | 文档结构 | checkDocument 检查章节、共同及类型额外元数据、状态、日期及未替换占位符 |
 | 入口可达性 | checkStructure 与导航图，以普通本地 Markdown 链接检查可达页面 |
 | 运行时证据 | tests/wiki.test.mjs、wiki-templates.test.mjs、wiki-freshness.test.mjs、wiki-mapping.test.mjs 的隔离 fixture 与 CLI 断言；含新规则三分类及旧规则兼容 |

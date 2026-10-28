@@ -27,8 +27,8 @@
 
 ## 依据与核验
 
-{{sources_and_actual_verification}}
+{{claim_sources_actual_scope_verification_and_owning_module_mapping_gaps_or_explicit_none}}
 
 ## 待确认项
 
-{{open_questions_or_explicit_none}}
+{{actionable_unresolved_questions_with_current_impact_checked_evidence_and_next_check_or_explicit_none}}

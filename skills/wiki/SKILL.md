@@ -14,7 +14,7 @@ user-invocable: true
 |---|---|
 | read：理解项目或模块 | 先按 `references/freshness.md` 检查相关模块新鲜度，再读索引及相关文档；关键结论追溯来源，返回依据、适用版本和未知项 |
 | init：建立知识库 | 阅读 `references/initialization.md`，确定交付范围、模块和维护程度；按 `references/templates.md` 选择所需模板，实际生成并验证 |
-| maintain：更新指定知识 | 阅读 `references/knowledge-maintenance.md`，对照来源做局部修改，保留人工内容和未解决分歧 |
+| maintain：更新指定知识 | 阅读 `references/knowledge-maintenance.md`，对照来源做局部修改，按 `references/content-verification.md` 核对证据范围、实际生效链与来源映射，保留人工内容和未解决分歧 |
 | check：检查知识库 | 阅读 `references/tools.md`，运行适用的结构检查；如用户要求内容核验，再抽查来源 |
 | sync：分析变更影响并同步 | 阅读 `references/change-review.md` 和 `references/freshness.md`，核对变更与知识，按授权更新或说明无需更新，项目已启用新鲜度记录时在实际复核后保存声明 |
 
@@ -28,7 +28,8 @@ user-invocable: true
 - 初始化时评估架构、部署环境和运维排障的覆盖与适用性，相关取证方法见 `references/system-knowledge.md`；缺少线上证据时仍可记录部署方式，不推定实际上线状态。
 - 模块优先按读者需要理解的业务或对外能力划分，再与代码建立多对多映射；不直接照搬目录或按业务名称机械拆分。概览、规则、代码映射和依赖可合并或按需拆分。
 - 新建且无既有约定时，使用 `references/templates.md` 的 small 或 modular 骨架，以及技能 `assets/templates/` 内对应模板；将选择写入项目自有检查配置并显式传给检查工具。已有项目使用 project 约定，需要自动检查时声明其必需文档和章节，不自动搬迁目录或补套默认格式。
-- 重要结论按 `references/knowledge-classification.md` 区分预期约定、实现观察、运行验证和推断，并注明依据、核验方式与适用版本或环境。未知和冲突局部记录；整篇“部分核验”不能代替条目分类。
+- 重要结论按 `references/knowledge-classification.md` 区分预期约定、实现观察、运行验证和推断，并注明依据、核验方式与适用版本或环境。未知和冲突局部记录；“待确认项”只列查证后仍影响当前结论、决策或操作的具体未决问题，已知边界、未执行验证和未被要求的未来能力分别归位；整篇“部分核验”不能代替条目分类。
+- 对初始化或维护的重要正文结论按 `references/content-verification.md` 核对证据能支持的范围、操作描述的实际生效链，以及正文来源是否覆盖到本页所属模块；不以路径覆盖报告代替语义核对。
 - 对影响决策的结论保留来源、适用范围、基线和实际核验时间。阅读过文档不等于核实过事实；无法访问来源时保留未知，不刷新其核验时间。
 - 技能资源从宿主提供的技能目录定位，目标根显式传给脚本。检查命令只读；`review` 仅按显式复核声明保存项目记录，不自动更新知识或判断语义，不调用模型 API。
 - 新鲜度按配置覆盖的来源、文档和内容指纹核对。日期与无关提交不直接决定过期；缺少配置、映射、记录或来源时保留未知。检查通过只说明与记录的快照一致，复核声明真实性仍需证据。

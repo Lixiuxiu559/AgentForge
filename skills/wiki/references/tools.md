@@ -59,6 +59,8 @@ overlaps 列出模块对的 sharedFiles、shareOfSources 和 identicalSourceSets
 
 unmappedPaths 只列本次仓库库存中未关联的候选，不要求把每个文件纳入知识库；记录文件和已明确排除的未映射路径放在 excludedPaths。共享或未映射候选本身不使命令失败，缺少已声明的文件、空覆盖及无法检查的路径仍报告 issues 或 partial。`coverage.mapping.assessment` 固定为 path-coverage-only，不能将路径检查通过描述成模块划分已获业务确认。
 
+mapping 不提取正文语义，也不自动检查“这条结论的依据是否进了本页所属模块”。Agent 按 `references/content-verification.md` 做反向核对，必要时补齐来源映射；报告 passed 不能代替这一检查。
+
 ## 结果解释
 
 命令输出 JSON，包含 `status`、`findings` 和 `coverage`，并有命令对应的材料。

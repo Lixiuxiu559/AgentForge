@@ -22,12 +22,12 @@
 
 ## 配置与差异
 
-{{environment_config_differences_non_sensitive_values_and_external_drift_detection_limits}}
+{{environment_config_differences_actual_overrides_cwd_vs_data_paths_and_external_drift_limits}}
 
 ## 依据与核验
 
-{{sources_and_actual_verification}}
+{{claim_sources_actual_scope_verification_and_owning_module_mapping_gaps_or_explicit_none}}
 
 ## 待确认项
 
-{{open_questions_or_explicit_none}}
+{{actionable_unresolved_questions_with_current_impact_checked_evidence_and_next_check_or_explicit_none}}
