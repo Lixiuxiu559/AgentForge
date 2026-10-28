@@ -12,7 +12,8 @@
 ## 实现入口
 
 - [技能入口](../../../../skills/wiki/SKILL.md)
-- [维护方法](../../../../skills/wiki/references/knowledge-maintenance.md)
+- [模块编写与独立复审](../../../../skills/wiki/references/module-workflow.md)
+- [正文核对](../../../../skills/wiki/references/content-verification.md)
 - [目录与模板约定](../../../../skills/wiki/references/templates.md)
 - [CLI](../../../../skills/wiki/scripts/wiki.mjs)
 - [结构检查](../../../../skills/wiki/scripts/structure.mjs)
@@ -32,7 +33,7 @@
 | 新鲜度与复核 | freshness.mjs 读取指纹及声明，判定状态、显式原子写记录并检查变更覆盖 |
 | 候选文件快照 | snapshot.mjs 从工作区、索引或提交树读取文件集合、内容和模式，避免混用候选 |
 | 项目接入 | tools/wiki-project.mjs 固定 AgentForge 目标根和配置，提供 npm 命令入口 |
-| 模块来源覆盖 | mapping.mjs 的 inspectMapping 按 Git 可见工作区报告来源、文档、共享比例、缺失项及未映射候选；只测路径，不读取源正文 |
+| 模块来源覆盖 | mapping.mjs 的 inspectMapping 按 Git 可见工作区报告来源、文档、共享比例、缺失项及未映射候选；只测路径，不读取源码正文 |
 | 单页核对包 | mapping --document 调用 document-review.mjs，列正文段落/行号和字面路径候选及本页模块覆盖，不读源码正文，不自动判定语义 |
 | Git 变更 | git、revision、parseChanges、changes，分别处理索引、工作区及分支范围 |
 | 项目结构配置 | structure.mjs 的 structureConfig，校验 preset、entry、documents 与显式 type |
@@ -41,12 +42,15 @@
 | 正文与证据 | references/content-verification.md 指导 Agent 核对结论范围、配置生效链、反向来源映射与跨页一致性；不是脚本语义检查 |
 | 文档结构 | checkDocument 检查章节、共同及类型额外元数据、状态、日期及未替换占位符 |
 | 入口可达性 | checkStructure 与导航图，以普通本地 Markdown 链接检查可达页面 |
-| 运行时证据 | tests/wiki.test.mjs、wiki-templates.test.mjs、wiki-freshness.test.mjs、wiki-mapping.test.mjs 的隔离 fixture 与 CLI 断言；含新规则三分类及旧规则兼容 |
+| 运行时证据 | tests/wiki.test.mjs、wiki-templates.test.mjs、wiki-freshness.test.mjs、wiki-mapping.test.mjs 的隔离 fixture 与 CLI 断言；含当前实现规则/条件边界及旧两代规则兼容 |
 
 ## 依据与核验
 
 2026-10-27 按本轮开发工作区静态读取上列方法与 [默认模板](../../../../skills/wiki/assets/templates/index-modular.md)；资源迁移、只读性和失败状态由 [模板测试](../../../../tests/wiki-templates.test.mjs) 及 [基础测试](../../../../tests/wiki.test.mjs) 的实际运行佐证。
 
+
+核验边界：函数和路径映射只对应本页基线；工具内部改动后应重新核对，不能仅刷新日期。
+
 ## 待确认项
 
-函数和路径映射只对应本页基线；工具内部改动后应重新核对，不能仅刷新日期。
+无已知待确认项。

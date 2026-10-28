@@ -15,7 +15,7 @@
 
 ## 规则与实现
 
-{{expectations_implementation_runtime_observations_and_inferences_each_with_source_method_and_scope}}
+{{actual_rules_flows_conditions_errors_and_limits_with_key_code_sources}}
 
 ## 代码与依赖
 
@@ -27,8 +27,8 @@
 
 ## 依据与核验
 
-{{claim_sources_actual_scope_verification_and_owning_module_mapping_gaps_or_explicit_none}}
+{{key_source_files_symbols_actual_inspection_scope_and_tests_run_or_not_run}}
 
 ## 待确认项
 
-{{actionable_unresolved_questions_with_current_impact_checked_evidence_and_next_check_or_explicit_none}}
+{{technical_unknowns_affecting_development_or_current_operations_after_investigation_or_explicit_none}}

@@ -33,6 +33,9 @@ provider 下次读取会反映磁盘变化；宿主可能另有缓存，桥接�
 
 2026-10-27 静态读取 [provider 源码](../../../../src/index.js)、[架构约定](../../../architecture.md)、[Codex 调用策略](../../../../skills/architecture-scout/agents/openai.yaml)；本机已执行 [provider 测试](../../../../tests/skill-provider.test.mjs) 的发现、调用策略、资源路径及迁移重扫场景。
 
+
+核验边界：本次没有启动 DSH、Codex 或 Claude Code 的真实安装副本；未验证宿主缓存与 UI 展示。
+
 ## 待确认项
 
-本次没有启动 DSH、Codex 或 Claude Code 的真实安装副本；未验证宿主缓存与 UI 展示。
+无已知待确认项。

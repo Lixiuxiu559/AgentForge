@@ -142,7 +142,7 @@ dsh --profile web --dump-config | grep -A2 agentforge
 | 技能 | 作用 |
 |---|---|
 | `worktree` | add 从本地或远端基线创建分支与分层目录；remove 检查未提交和忽略内容后移除工作树，保留分支 |
-| `wiki` | 阅读、初始化、增量维护项目知识；检查本地文档链接并分析 Git 改动影响，区分事实、规范与待确认项 |
+| `wiki` | 面向开发人员，按当前代码讲清架构、业务实现、部署与运维；维护来源、新鲜度及跨模块一致性 |
 | `pm` | 按需澄清需求并产出 PRD：问题与目标、范围、业务规则、用户故事、验收标准与开放问题；默认对话交付 |
 | `research` | 多步取证、交叉验证与方案比较；默认对话交付，按需保存报告 |
 | `test-design` | 按业务规则与项目已有测试设施设计用例、评估场景和断言缺口、制定验证办法；只交付设计 |
@@ -199,7 +199,9 @@ AgentForge 自身的知识入口见 [项目 Wiki](docs/wiki/README.md)，覆盖�
 
 无既有约定的新知识库可采用小型或多模块默认骨架，配套入口、概念、模块、规则、代码映射、依赖和通用主题模板。默认规范检查必需文档、章节、文档信息、未替换占位符及入口导航；已有项目保持原约定，可显式声明自己的必需文件和章节。使用方法见 [Wiki 模板与目录](skills/wiki/references/templates.md)。
 
-知识按业务或对外能力组织，再与代码建立多对多关联。重要条目分别说明预期约定、实现观察、运行验证或推断，以及来源和适用范围；初始化交付区分一次性文档、持续维护、持续同步和检查门。`npm run wiki:mapping` 可查看本项目的文件覆盖、共享比例及未映射候选，供人工核对；这些数据不自动证明划分合理。方法见 [初始化交付与模块来源设计](skills/wiki/references/initialization.md)。 正文维护可运行 `npm run wiki:mapping -- --document docs/wiki/modules/wiki-tooling/README.md` 取得单页核对包：列出带行号段落、字面路径候选和本页模块覆盖，供 Agent 逐页取证与读回；不会自动判断语义。
+Wiki 面向开发人员与编码 Agent，以当前代码、配置和工程脚本为主要依据，讲清职责、流程、条件、依赖和修改边界，关键结论附来源；不等待 PRD 或产品批准。模块按开发理解与修改问题组织，与源码多对多关联。实质性多模块任务采用模块编写与独立复审，主 Agent 整合跨模块关系；小修正直接完成。方法见 [初始化与模块来源设计](skills/wiki/references/initialization.md) 和 [模块协作](skills/wiki/references/module-workflow.md)。
+
+`npm run wiki:mapping` 查看路径覆盖；加 `-- --document docs/wiki/modules/wiki-tooling/README.md` 可直接列所选页的覆盖、缺口与歧义，无需解析嵌套字段。来源清单辅助代码核实，正文由模块编写与独立复审保证质量；不要求逐段记录。初始化交付与持续同步/强制门分别说明，沿用项目已有约定。
 
 读取 Wiki 前运行 `npm run wiki:freshness`；开发收尾核对实际变更后，用 `npm run wiki:review -- ...` 保存更新、无需更新或冲突结论。交付前运行 `npm run wiki:check` 和 `npm run wiki:gate`；PR 工作流会检查提交树中的同步状态。新鲜度按来源与文档指纹判断，命令不会自动证明语义正确。使用方式见 [新鲜度与收尾同步](docs/wiki/freshness.md)。
 

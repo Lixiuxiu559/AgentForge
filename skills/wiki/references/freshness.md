@@ -4,7 +4,7 @@
 
 ## 项目配置
 
-沿用已有模块的 sources 和 docs；sources 应覆盖源码、有效规则、配置、相关测试与知识依据，不能只包含实现代码。目录前缀包含当前 Git 可见的子文件；工作区还包含未被 Git 忽略的未跟踪文件。外部网站和未映射资料的变化不在自动检测范围。
+沿用已有模块的 sources 和 docs；sources 应覆盖源码、配置、接口定义、工程脚本、相关测试与知识依据，不能只包含实现代码。目录前缀包含当前 Git 可见的子文件；工作区还包含未被 Git 忽略的未跟踪文件。外部网站和未映射资料的变化不在自动检测范围。
 
 在现有配置中增加：
 
@@ -49,13 +49,13 @@ node /absolute/skill-directory/scripts/wiki.mjs freshness --root /absolute/proje
 
 ## 开发收尾
 
-先读取实际 diff、对应版本的契约与知识，判断是需要更新、无需更新还是未解决冲突。写入知识仍遵守本次用户授权。完成复核后显式保存声明：
+先读取实际 diff、对应版本的代码/配置与知识，判断是需要更新、无需更新还是未解决冲突。写入知识仍遵守本次用户授权。完成复核后显式保存声明：
 
 ```bash
 node /absolute/skill-directory/scripts/wiki.mjs review --root /absolute/project --config docs/wiki/wiki.config.json --module orders --decision no-change --reason "仅调整内部实现，接口与有效规则未变，已核对对应知识" --reviewer "实际执行者" --evidence '["src/orders/service.ts","docs/wiki/orders.md"]'
 ```
 
-decision 可为 updated、no-change、blocked。原因、实际执行者和证据必须明确；证据路径必须属于该模块所记录的来源或文档。updated 用于本次知识已更新；no-change 也必须经过核对；blocked 保留未决规则或实现冲突。命令不会自动判断哪种结论正确，不会改写业务文档，仅保存复核记录。
+decision 可为 updated、no-change、blocked。原因、实际执行者和证据必须明确；证据路径必须属于该模块所记录的来源或文档。updated 用于本次知识已更新；no-change 也必须经过核对；blocked 只保留确实影响必要技术结论或操作且项目策略要求阻断的问题，不因缺少产品批准、资料不同或未执行测试而自动阻断。命令不会自动判断哪种结论正确，不会改写业务文档，仅保存复核记录。
 
 声明是人工或 Agent 的责任记录。内容指纹可以证明与声明时一致，不能证明复核者真正理解了材料；禁止将“命令成功”写成“语义已经自动验证”，禁止为过门机械批量签认。
 

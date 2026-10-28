@@ -32,6 +32,9 @@ README 与发布文档记录的宿主更新语义在本次只作仓库约定引�
 
 2026-10-27 核对 [项目包配置](../../../../package.json)、[发布脚本](../../../../tools/release.mjs)、[结构检查](../../../../tools/doctor.mjs)、[验证工作流](../../../../.github/workflows/validate.yml)、[Release 工作流](../../../../.github/workflows/release.yml) 和 [npm 工作流](../../../../.github/workflows/publish.yml)；doctor 已本机通过，发布路径仅静态阅读。
 
+
+核验边界：未查询远端 CI、标签、GitHub Release、npm registry 或宿主安装副本，也未设置远端分支保护。PR 工作流可报告失败；若要求服务端禁止绕过，需将该检查设为必需状态。仓库文档中的历史分发状态不能替代当前外部服务核验。
+
 ## 待确认项
 
-未查询远端 CI、标签、GitHub Release、npm registry 或宿主安装副本，也未设置远端分支保护。PR 工作流可报告失败；若要求服务端禁止绕过，需将该检查设为必需状态。仓库文档中的历史分发状态不能替代当前外部服务核验。
+无已知待确认项。
