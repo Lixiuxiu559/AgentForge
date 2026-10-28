@@ -15,12 +15,12 @@
 
 ## 接口与契约
 
-{{interface_expectations_implementation_and_runtime_status_with_sources_and_applicable_versions}}
+{{actual_interfaces_data_contracts_failure_handling_and_compatible_versions_with_sources}}
 
 ## 依据与核验
 
-{{claim_sources_actual_scope_verification_and_owning_module_mapping_gaps_or_explicit_none}}
+{{key_source_files_symbols_actual_inspection_scope_and_tests_run_or_not_run}}
 
 ## 待确认项
 
-{{actionable_unresolved_questions_with_current_impact_checked_evidence_and_next_check_or_explicit_none}}
+{{technical_unknowns_affecting_development_or_current_operations_after_investigation_or_explicit_none}}

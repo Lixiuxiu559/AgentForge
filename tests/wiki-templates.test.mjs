@@ -255,31 +255,31 @@ test('image destinations never count as navigation links, including reference-st
   assert.equal(run(root).status, 'passed')
 })
 
-test('new rule pages require separate expectation, implementation, and runtime sections', async t => {
+test('new rule pages explain current code rules and conditions without a product approval section', async t => {
   const root = await rulesFixture(t)
   const rules = await template('rules', {
-    expectations_with_authoritative_sources_scope_and_confirmation_or_explicit_unknown: '待确认：没有找到独立的业务预期来源。',
-    implementation_observations_with_code_baseline_and_inspection_method: '实现观察：当前静态材料记载了参数校验；实际实现尚待核对。',
-    observed_results_with_environment_version_and_method_or_explicit_not_run: '未执行运行验证，开发及生产环境行为均未知。',
+    actual_rules_state_transitions_validation_and_errors_with_key_code_sources: 'createOrder caches request results in this process; src/orders.ts is the implementation source.',
+    entrypoints_configuration_overrides_platform_limits_and_change_impacts: 'Restart loses the cache. Multi-process deduplication is not implemented.',
+    key_source_files_symbols_actual_inspection_scope_and_tests_run_or_not_run: 'Read the current caller and cache implementation; no runtime test executed.',
+    technical_unknowns_affecting_development_or_current_operations_after_investigation_or_explicit_none: 'None.',
   })
   await put(root, 'wiki/modules/orders/rules.md', rules)
   let result = run(root)
   assert.equal(result.status, 'passed')
   assert.deepEqual(result.coverage.structure.legacyDocuments, [])
-  await put(root, 'wiki/modules/orders/rules.md', rules.replace('## 运行验证', '### 运行验证'))
+  await put(root, 'wiki/modules/orders/rules.md', rules.replace('## 条件与边界', '### 条件与边界'))
   assert.equal(run(root).status, 'issues')
-  await put(root, 'wiki/modules/orders/rules.md', replaceSection(rules, '运行验证', ''))
+  await put(root, 'wiki/modules/orders/rules.md', replaceSection(rules, '条件与边界', ''))
   assert.equal(run(root).status, 'issues')
-  await put(root, 'wiki/modules/orders/rules.md', rules.replace('## 运行验证', '```md\n## 运行验证\n```\n\n### 示例'))
+  await put(root, 'wiki/modules/orders/rules.md', rules.replace('## 条件与边界', '```md\n## 条件与边界\n```\n\n### 示例'))
   assert.equal(run(root).status, 'issues')
 })
 
 test('complete legacy rules are reported without forcing migration or claiming semantic verification', async t => {
   const root = await rulesFixture(t)
   const rules = await template('rules')
-  const legacy = rules.replace('## 预期与约定', '## 已确认规则')
-    .replace('## 实现观察', '## 实现观察与差异')
-    .replace(/\n## 运行验证\n[\s\S]*?(?=\n## |$)/, '')
+  const legacy = rules.replace('## 当前实现规则', '## 已确认规则')
+    .replace('## 条件与边界', '## 实现观察与差异')
   await put(root, 'wiki/modules/orders/rules.md', legacy)
   const result = run(root)
   assert.equal(result.status, 'passed')
@@ -387,4 +387,18 @@ test('default Wiki can require existing external architecture without imposing d
   assert.deepEqual(run(root).findings.map(f => f.code), ['missing-section'])
   await put(root, 'docs/design.md', existing)
   assert.equal(await readFile(join(root, 'docs/design.md'), 'utf8'), existing)
+})
+
+
+test('previous three-section rule pages stay compatible without rewriting existing project content', async t => {
+  const root = await rulesFixture(t)
+  const original = (await template('rules'))
+    .replace('## 当前实现规则', '## 预期与约定')
+    .replace('## 条件与边界', '## 实现观察')
+    .replace('## 依据与核验', '## 运行验证\n\n历史验证范围保持原样。\n\n## 依据与核验')
+  await put(root, 'wiki/modules/orders/rules.md', original)
+  const result = run(root)
+  assert.equal(result.status, 'passed')
+  assert.deepEqual(result.coverage.structure.legacyDocuments, ['wiki/modules/orders/rules.md'])
+  assert.equal(await readFile(join(root, 'wiki/modules/orders/rules.md'), 'utf8'), original)
 })

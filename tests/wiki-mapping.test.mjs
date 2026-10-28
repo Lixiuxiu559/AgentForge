@@ -261,3 +261,40 @@ test('work packet retains fenced headings as document text rather than dropping 
   assert.equal(packet.passages[0].section, 'Actual section')
   assert.ok(packet.passages[0].text.includes('## This is shell input'))
 })
+
+test('direct coverage separates owning-module gaps, shared coverage, ambiguity and knowledge navigation', async t => {
+  const root = await fixture(t)
+  await put(root, 'src/actual.js', 'PRIVATE-SOURCE-MARKER')
+  await put(root, 'src/other.js', 'other evidence')
+  await put(root, 'other/actual.js', 'same basename')
+  await put(root, 'wiki/guide.md', '# Guide\n\n`src/actual.js` and `src/other.js`.\n\n`actual.js` and [Other](other.md).\n')
+  await put(root, 'wiki/other.md', '# Other')
+  await configure(root, [
+    { id: 'guide', sources: ['src/actual.js'], docs: ['wiki/guide.md'] },
+    { id: 'shared', sources: ['other'], docs: ['wiki/guide.md', 'wiki/other.md'] },
+  ])
+  const packet = run(root, script, ['--document', 'wiki/guide.md']).documentReview
+  assert.equal(packet.coverageSummary.gaps, 1)
+  assert.equal(packet.sourceGaps[0].path, 'src/other.js')
+  assert.deepEqual(packet.sourceGaps[0].missingModules, ['guide', 'shared'])
+  assert.deepEqual(packet.partiallyCovered[0].coveredModules, ['guide'])
+  assert.equal(packet.ambiguousReferences.length, 1)
+  assert.equal(packet.knowledgeReferences.length, 1)
+  assert.ok(packet.coverageMessage.includes('本页未覆盖候选 1'))
+  assert.ok(!JSON.stringify(packet).includes('PRIVATE-SOURCE-MARKER'))
+})
+
+test('unresolved runtime paths are informational, with no mandatory paragraph receipt in a read-only packet', async t => {
+  const root = await fixture(t)
+  await put(root, 'src/a.js', 'source')
+  const page = '# Guide\n\nRuntime file `userData/config.json`; absent source `src/missing.js`.\n'
+  await put(root, 'wiki/guide.md', page)
+  await configure(root, [{ id: 'guide', sources: ['src'], docs: ['wiki/guide.md'] }])
+  const result = run(root, script, ['--document', 'wiki/guide.md'])
+  assert.equal(result.status, 'passed')
+  assert.deepEqual(result.documentReview.unresolvedReferences.map(r => r.literal), ['userData/config.json', 'src/missing.js'])
+  assert.equal(result.documentReview.sourceGaps.length, 0)
+  assert.equal(result.documentReview.reviewTemplate, undefined)
+  assert.equal(await readFile(join(root, 'wiki/guide.md'), 'utf8'), page)
+  assert.equal(run(root, script, ['--document', 'wiki/guide.md', '--packet', 'before.json', '--review', 'report.json']).status, 'error')
+})

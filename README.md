@@ -5,7 +5,7 @@
 
 [![validate](https://github.com/Lixiuxiu559/AgentForge/actions/workflows/validate.yml/badge.svg)](https://github.com/Lixiuxiu559/AgentForge/actions/workflows/validate.yml)
 
-**一份真源，三端共用**：十个技能统一维护在 `skills/`。
+**一份真源，三端共用**：十一个技能统一维护在 `skills/`。
 Codex 与 Claude Code 加载技能目录，DSH 使用包内桥接插件（`src/index.js`）。
 
 ---
@@ -28,7 +28,7 @@ codex plugin marketplace add Lixiuxiu559/AgentForge
 codex plugin add agentforge@agentforge
 ```
 
-Codex 桌面端可在 Plugins Directory 选择 AgentForge 安装；安装后开启新任务验证技能。仓库的 `.agents/plugins/marketplace.json` 指向根目录插件，`.codex-plugin/plugin.json` 指向包含十个技能的目录。`architecture-scout` 在 Codex 侧也只接受主动调用，其技能目录内的 `agents/openai.yaml` 是调用策略元数据，不是自定义子 agent。
+Codex 桌面端可在 Plugins Directory 选择 AgentForge 安装；安装后开启新任务验证技能。仓库的 `.agents/plugins/marketplace.json` 指向根目录插件，`.codex-plugin/plugin.json` 指向包含十一个技能的目录。`architecture-scout` 在 Codex 侧也只接受主动调用，其技能目录内的 `agents/openai.yaml` 是调用策略元数据，不是自定义子 agent。
 
 ### Claude Code
 
@@ -141,7 +141,8 @@ dsh --profile web --dump-config | grep -A2 agentforge
 
 | 技能 | 作用 |
 |---|---|
-| `wiki` | 阅读、初始化、增量维护项目知识；检查本地文档链接并分析 Git 改动影响，区分事实、规范与待确认项 |
+| `worktree` | add 从本地或远端基线创建分支与分层目录；remove 检查未提交和忽略内容后移除工作树，保留分支 |
+| `wiki` | 面向开发人员，按当前代码讲清架构、业务实现、部署与运维；维护来源、新鲜度及跨模块一致性 |
 | `pm` | 按需澄清需求并产出 PRD：问题与目标、范围、业务规则、用户故事、验收标准与开放问题；默认对话交付 |
 | `research` | 多步取证、交叉验证与方案比较；默认对话交付，按需保存报告 |
 | `test-design` | 按业务规则与项目已有测试设施设计用例、评估场景和断言缺口、制定验证办法；只交付设计 |
@@ -176,6 +177,8 @@ Codex 与 Claude Code 通过插件发现技能；DSH 的桥接入口仅注册 sk
 用 implementation-workflow 实现这个功能，独立模块可以并行。
 用 diff-review 评审当前改动，分别报告三条轴的结果。
 用 architecture-scout 检查这个模块是否有值得提炼的边界。
+/agentforge:worktree add dev feature/login
+/agentforge:worktree remove feature/login
 ```
 
 Claude Code 可显式使用 `/agentforge:research` 等技能命令。`architecture-scout` 的触发说明要求用户主动提出架构调查；Codex 与 DSH 另有平台策略约束。
@@ -183,6 +186,8 @@ Claude Code 可显式使用 `/agentforge:research` 等技能命令。`architectu
 `bug-debugging` 可根据具体错误或修复请求自动选用。它在诊断后等待用户确认具体方案，批准后继续修复；初始“帮我修好”不代表批准尚未展示的方案。复杂调查可复用 `research`，只抽查影响结论的关键证据；复杂实施交给 `implementation-workflow`，沿用同一批准范围。
 
 `test-design` 可独立调用，输出“业务规则 → 用例 → 验证入口 → 已有断言”的对应关系、缺口及验证办法。它不编写或执行测试；需要实施时由 `implementation-workflow` 使用设计产物组织测试编写和运行。测试方式沿用项目现有设施，缺少设施的场景明确记为验证缺口。`mutation-testing` 专门运行已有突变工具，业务场景设计与充分性检查由 `test-design` 负责。
+
+`worktree add <from分支> <新分支>` 创建工作树，例如 `add dev feature/login`，目录为 `<项目主工作树根>/.worktree/feature/login/`。add 询问 from 使用本地还是远端，默认检查 origin（无 origin 时使用唯一远端）；目标分支在本地或该远端已存在就停止。`worktree remove <分支>` 核对路径和实际分支，检查未提交、未跟踪及忽略内容后移除工作树，保留分支和提交；存在数据风险时先停止等待处理。remove 不查询远端，两种操作都不自动推送或删除分支。
 
 ### 项目 Wiki
 
@@ -194,7 +199,9 @@ AgentForge 自身的知识入口见 [项目 Wiki](docs/wiki/README.md)，覆盖�
 
 无既有约定的新知识库可采用小型或多模块默认骨架，配套入口、概念、模块、规则、代码映射、依赖和通用主题模板。默认规范检查必需文档、章节、文档信息、未替换占位符及入口导航；已有项目保持原约定，可显式声明自己的必需文件和章节。使用方法见 [Wiki 模板与目录](skills/wiki/references/templates.md)。
 
-知识按业务或对外能力组织，再与代码建立多对多关联。重要条目分别说明预期约定、实现观察、运行验证或推断，以及来源和适用范围；初始化交付区分一次性文档、持续维护、持续同步和检查门。`npm run wiki:mapping` 可查看本项目的文件覆盖、共享比例及未映射候选，供人工核对；这些数据不自动证明划分合理。方法见 [初始化交付与模块来源设计](skills/wiki/references/initialization.md)。 正文维护可运行 `npm run wiki:mapping -- --document docs/wiki/modules/wiki-tooling/README.md` 取得单页核对包：列出带行号段落、字面路径候选和本页模块覆盖，供 Agent 逐页取证与读回；不会自动判断语义。
+Wiki 面向开发人员与编码 Agent，以当前代码、配置和工程脚本为主要依据，讲清职责、流程、条件、依赖和修改边界，关键结论附来源；不等待 PRD 或产品批准。模块按开发理解与修改问题组织，与源码多对多关联。实质性多模块任务采用模块编写与独立复审，主 Agent 整合跨模块关系；小修正直接完成。方法见 [初始化与模块来源设计](skills/wiki/references/initialization.md) 和 [模块协作](skills/wiki/references/module-workflow.md)。
+
+`npm run wiki:mapping` 查看路径覆盖；加 `-- --document docs/wiki/modules/wiki-tooling/README.md` 可直接列所选页的覆盖、缺口与歧义，无需解析嵌套字段。来源清单辅助代码核实，正文由模块编写与独立复审保证质量；不要求逐段记录。初始化交付与持续同步/强制门分别说明，沿用项目已有约定。
 
 读取 Wiki 前运行 `npm run wiki:freshness`；开发收尾核对实际变更后，用 `npm run wiki:review -- ...` 保存更新、无需更新或冲突结论。交付前运行 `npm run wiki:check` 和 `npm run wiki:gate`；PR 工作流会检查提交树中的同步状态。新鲜度按来源与文档指纹判断，命令不会自动证明语义正确。使用方式见 [新鲜度与收尾同步](docs/wiki/freshness.md)。
 
@@ -204,7 +211,7 @@ AgentForge 自身的知识入口见 [项目 Wiki](docs/wiki/README.md)，覆盖�
 .claude-plugin/       Claude Code 插件与市场清单
 .codex-plugin/        Codex 插件清单
 .agents/plugins/      Codex 仓库 marketplace
-skills/              十个技能及各自 references / scripts
+skills/              十一个技能及各自 references / scripts
 src/index.js         DSH 技能提供者
 cordis.patch.yml      DSH bundle 装配
 tools/              结构检查与发布工具
