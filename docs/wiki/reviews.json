@@ -2,10 +2,10 @@
   "version": 1,
   "modules": {
     "skill-methods": {
-      "reviewedAt": "2026-10-28T07:45:32.323Z",
+      "reviewedAt": "2026-10-28T08:45:51.972Z",
       "reviewer": "Codex",
-      "decision": "updated",
-      "reason": "已读待提交技能入口及方法页diff：Wiki以代码服务开发，模块编写/独立复审和跨模块整合明确，小修正降级；核验边界归位。其余技能职责保留，78回归通过，未扩签跨宿主行为。",
+      "decision": "no-change",
+      "reason": "核对待提交Wiki入口与技能方法总览：职责和交接未变，新增合计3个运行子Agent的排队约定，无需改方法页；未作宿主负载实测。",
       "evidence": [
         "skills/wiki/SKILL.md",
         "docs/wiki/modules/skill-methods/README.md"
@@ -185,7 +185,7 @@
           "mode": "100644"
         },
         "skills/wiki/SKILL.md": {
-          "sha256": "7bc0a301a90a7dec340582ee1e1386d044ba5472aaa530ae01c5d252ee9a178d",
+          "sha256": "231a12244287aa786ac01cb79daeadd8eef895c9b8baf2f8a00ffac4b1c5ef8a",
           "mode": "100644"
         },
         "docs/architecture.md": {
@@ -293,20 +293,21 @@
       }
     },
     "wiki-tooling": {
-      "reviewedAt": "2026-10-28T07:47:27.646Z",
+      "reviewedAt": "2026-10-28T08:45:52.430Z",
       "reviewer": "Codex",
       "decision": "updated",
-      "reason": "版本准备后package仅0.11.0变0.12.0，工具/模板实现不变；验证页补本地候选提交、78回归和索引检查范围，已读回，未把本地标签当远端发布或模型实测。最终结构检查和doctor通过。",
+      "reason": "核对暂存入口、模块协作、评估场景和自用规则：编写/复审/返工共享3名额，主Agent统一调度，限流降并发、未停超时不重开；属技能约定而非脚本硬限流。78回归、doctor和结构检查通过，未声称宿主负载测试。",
       "evidence": [
-        "package.json",
-        "docs/wiki/verification.md",
         "skills/wiki/SKILL.md",
-        "skills/wiki/scripts/document-review.mjs"
+        "skills/wiki/references/module-workflow.md",
+        "skills/wiki/references/evaluation-cases.md",
+        "docs/wiki/modules/wiki-tooling/README.md",
+        "docs/wiki/modules/wiki-tooling/rules.md"
       ],
       "configDigest": "d295dc1ecd4ced7c629256d1f52dc85e5520c5c28eb33afa9510bcb881b6e45a",
       "sourceSnapshot": {
         "skills/wiki/SKILL.md": {
-          "sha256": "7bc0a301a90a7dec340582ee1e1386d044ba5472aaa530ae01c5d252ee9a178d",
+          "sha256": "231a12244287aa786ac01cb79daeadd8eef895c9b8baf2f8a00ffac4b1c5ef8a",
           "mode": "100644"
         },
         "skills/wiki/assets/schema.json": {
@@ -370,7 +371,7 @@
           "mode": "100644"
         },
         "skills/wiki/references/evaluation-cases.md": {
-          "sha256": "561dcc8a6d9723fb31c9f202114905f04bfb59851d00dd09b5b0415074b13ce4",
+          "sha256": "fae9189df1223890969bd5cfdf8ac31fde51c75a3cc55dbe282de43bff34ad37",
           "mode": "100644"
         },
         "skills/wiki/references/freshness.md": {
@@ -382,7 +383,7 @@
           "mode": "100644"
         },
         "skills/wiki/references/module-workflow.md": {
-          "sha256": "f1ee6781119c9a2879b4a0b62a2e3225395903b0b3acdf6bb76ece6b853e7475",
+          "sha256": "686782c4d671240ca50204d33acf2c1934a3be31cd363da3db42c61d419b8850",
           "mode": "100644"
         },
         "skills/wiki/references/templates.md": {
@@ -464,11 +465,11 @@
           "mode": "100644"
         },
         "docs/wiki/modules/wiki-tooling/README.md": {
-          "sha256": "c7a4307c13295ba840004fe9ee639482848f4efc51e1035ac74234edf2e463f8",
+          "sha256": "56a7789ff973256ea2ee69b5f59b1f96eee2b471d87ce99db4ab3f00fe7d6b81",
           "mode": "100644"
         },
         "docs/wiki/modules/wiki-tooling/rules.md": {
-          "sha256": "a6626f1dfb4ddf242d5c7039b636d332b7c19a441cffeddea9750207d6fdfa63",
+          "sha256": "ade474c804de169df79cf42bdeb88709024dc079a04c3b70c0abf60130f0dc70",
           "mode": "100644"
         },
         "docs/wiki/modules/wiki-tooling/code-map.md": {
@@ -486,18 +487,14 @@
       }
     },
     "distribution": {
-      "reviewedAt": "2026-10-28T07:47:28.058Z",
+      "reviewedAt": "2026-10-28T08:45:52.822Z",
       "reviewer": "Codex",
-      "decision": "updated",
-      "reason": "对照实际三处版本清单、CHANGELOG0.12.0及README固定tag示例和分发页，确认与本地候选一致；79文件打包预览及doctor通过，未执行npm发布，不推导远端Release、CI或用户已安装。",
+      "decision": "no-change",
+      "reason": "暂存分发相关变化仅Unreleased中的Wiki调度说明，三处版本仍0.12.0且发布流程未改，分发正文仍准确；不能据该记录声称新版本已经发布。",
       "evidence": [
-        ".claude-plugin/plugin.json",
-        ".codex-plugin/plugin.json",
-        "package.json",
         "CHANGELOG.md",
-        "README.md",
-        "docs/wiki/modules/distribution/README.md",
-        "docs/wiki/verification.md"
+        "package.json",
+        "docs/wiki/modules/distribution/README.md"
       ],
       "configDigest": "d295dc1ecd4ced7c629256d1f52dc85e5520c5c28eb33afa9510bcb881b6e45a",
       "sourceSnapshot": {
@@ -566,7 +563,7 @@
           "mode": "100644"
         },
         "CHANGELOG.md": {
-          "sha256": "2d9e120ddc8caca4e18917ee814b0f8402a9695f5cdfa4438fb2ac43af257e95",
+          "sha256": "6a7910282f64960311f40740a56c2435cdc5692ea966575578f10e63477d8e01",
           "mode": "100644"
         },
         ".gitignore": {
