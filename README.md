@@ -79,7 +79,7 @@ DSH 有两种形态，安装入口不同：
 | 装法 | 填入 | 升级语义 |
 |---|---|---|
 | GitHub 简写 | `github:Lixiuxiu559/AgentForge` | 钉 commit；升级要卸载后按同一 spec 重装，跟到 main 最新提交 |
-| 钉 tag | `github:Lixiuxiu559/AgentForge#v0.10.1` | 钉该 tag 的 commit，不受分支变动影响 |
+| 钉 tag | `github:Lixiuxiu559/AgentForge#v0.10.2` | 钉该 tag 的 commit，不受分支变动影响 |
 | 本地目录（开发用） | `/path/to/AgentForge` | 直接读磁盘，改动立即生效 |
 
 点**安装**之后：
@@ -106,7 +106,7 @@ dsh plugin --profile web add github:Lixiuxiu559/AgentForge
 | 装法 | 命令 | 升级语义 |
 |---|---|---|
 | GitHub 简写 | `dsh plugin --profile web add github:Lixiuxiu559/AgentForge` | 钉 commit，`update` 会跟到 main 最新提交 |
-| 钉 tag | `dsh plugin --profile web add github:Lixiuxiu559/AgentForge#v0.10.1` | 钉该 tag 的 commit，不受分支变动影响 |
+| 钉 tag | `dsh plugin --profile web add github:Lixiuxiu559/AgentForge#v0.10.2` | 钉该 tag 的 commit，不受分支变动影响 |
 | 本地目录（开发用） | `dsh plugin --profile web add /path/to/AgentForge` | 直接读磁盘，改动立即生效 |
 
 > ⚠️ **git 安装没有版本门控**：lockfile 里钉的是具体 commit，`dsh plugin --profile web update`
