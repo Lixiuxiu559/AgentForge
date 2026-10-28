@@ -171,3 +171,7 @@ node /absolute/skill-directory/scripts/wiki.mjs check --root /absolute/project -
 ```
 
 project 未声明 type 时只按显式配置检查必需文件和章节，不强加默认元数据；主动声明 type 的页面才接受相应模板契约。配置 entry 时才启用从入口到知识目录各 Markdown 页面的导航检查；没有 entry 时不额外要求统一入口。修改配置前确认它反映已有项目约定，不为使检查通过而降低项目实际要求。
+
+## 填充后的正文验收
+
+模板槽位填完不等于内容已核验。按 `references/content-verification.md` 核对实际断言和本页来源映射，修改摘要、表格、步骤中越出证据的表述，再读回重复位置。已有页面同样适用，不能只追加“实现观察”标签而保留原来的错误结论；工作记录无需加入项目模板契约。
