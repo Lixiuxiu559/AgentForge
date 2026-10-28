@@ -152,6 +152,8 @@ dsh --profile web --dump-config | grep -A2 agentforge
 | `complexity-audit` | 复杂度与覆盖率风险审计；数据不足时明确降级 |
 | `mutation-testing` | 使用现有突变测试工具查找存活突变体和测试漏洞 |
 
+Wiki 初始化同时评估架构、部署环境与运维排障；已有架构和发布手册优先复用。专用模板按需显式选型，环境状态保留观察时间与证据，仓库配置不代表实际部署。
+
 ## 如何协作
 
 Skill 规定任务怎样拆分、每个子任务怎样执行、结果怎样汇总。需要委派时，由主 Agent 调用宿主实际提供的通用子 agent 工具，创建独立上下文；相互独立的任务可以并行。
@@ -191,6 +193,8 @@ AgentForge 自身的知识入口见 [项目 Wiki](docs/wiki/README.md)，覆盖�
 读取、初始化与维护由宿主 Agent 按证据执行；`check` 检查文档结构和本地链接，`changes` 收集暂存区、工作区或分支改动并按可选配置映射模块。机械检查通过不代表业务语义一致，也不代表已上线。命令、配置及覆盖限制见 [Wiki 检查协议](skills/wiki/references/tools.md)。
 
 无既有约定的新知识库可采用小型或多模块默认骨架，配套入口、概念、模块、规则、代码映射、依赖和通用主题模板。默认规范检查必需文档、章节、文档信息、未替换占位符及入口导航；已有项目保持原约定，可显式声明自己的必需文件和章节。使用方法见 [Wiki 模板与目录](skills/wiki/references/templates.md)。
+
+知识按业务或对外能力组织，再与代码建立多对多关联。重要条目分别说明预期约定、实现观察、运行验证或推断，以及来源和适用范围；初始化交付区分一次性文档、持续维护、持续同步和检查门。`npm run wiki:mapping` 可查看本项目的文件覆盖、共享比例及未映射候选，供人工核对；这些数据不自动证明划分合理。方法见 [初始化交付与模块来源设计](skills/wiki/references/initialization.md)。
 
 读取 Wiki 前运行 `npm run wiki:freshness`；开发收尾核对实际变更后，用 `npm run wiki:review -- ...` 保存更新、无需更新或冲突结论。交付前运行 `npm run wiki:check` 和 `npm run wiki:gate`；PR 工作流会检查提交树中的同步状态。新鲜度按来源与文档指纹判断，命令不会自动证明语义正确。使用方式见 [新鲜度与收尾同步](docs/wiki/freshness.md)。
 

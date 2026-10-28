@@ -4,6 +4,7 @@ import { relative, resolve, sep } from 'node:path'
 const arrayOfNames = value => Array.isArray(value) && value.every(name => typeof name === 'string' && name.trim() && !/[\r\n]/.test(name)) && new Set(value).size === value.length
 const object = value => value !== null && typeof value === 'object' && !Array.isArray(value)
 const only = (value, keys) => Object.keys(value).every(key => keys.includes(key))
+const documentTypes = ['index-small', 'index-modular', 'concepts', 'module', 'rules', 'code-map', 'dependencies', 'guide', 'architecture', 'deployment', 'environments', 'operations', 'troubleshooting']
 
 export function structureConfig(root, value, local) {
   if (value === undefined) return { preset: 'project', documents: [] }
@@ -19,11 +20,11 @@ export function structureConfig(root, value, local) {
     if (!Array.isArray(value.documents)) throw new Error('structure.documents must be an array')
     const seen = new Set()
     result.documents = value.documents.map(document => {
-      if (!object(document) || !only(document, ['path', 'requiredSections']) || (document.requiredSections !== undefined && (!arrayOfNames(document.requiredSections) || !document.requiredSections.length))) throw new Error('Invalid structure document configuration')
+      if (!object(document) || !only(document, ['path', 'requiredSections', 'type']) || (document.type !== undefined && !documentTypes.includes(document.type)) || (document.requiredSections !== undefined && (!arrayOfNames(document.requiredSections) || !document.requiredSections.length))) throw new Error('Invalid structure document configuration')
       const documentPath = path(document.path)
       if (seen.has(documentPath)) throw new Error('Duplicate structure document path')
       seen.add(documentPath)
-      return { path: documentPath, requiredSections: document.requiredSections ?? [] }
+      return { path: documentPath, ...(document.type ? { type: document.type } : {}), requiredSections: document.requiredSections ?? [] }
     })
   }
   return result
@@ -31,8 +32,11 @@ export function structureConfig(root, value, local) {
 
 async function schema() {
   const data = JSON.parse(await readFile(new URL('../assets/schema.json', import.meta.url), 'utf8'))
-  const types = ['index-small', 'index-modular', 'concepts', 'module', 'rules', 'code-map', 'dependencies', 'guide']
-  if (!object(data) || data.version !== 1 || !object(data.common) || !arrayOfNames(data.common.sections) || !arrayOfNames(data.common.fields) || !arrayOfNames(data.common.states) || !object(data.types) || types.some(type => !object(data.types[type]) || !arrayOfNames(data.types[type].sections))) throw new Error('Invalid packaged Wiki structure schema')
+  const types = documentTypes
+  if (!object(data) || data.version !== 1 || !object(data.common) || !arrayOfNames(data.common.sections) || !arrayOfNames(data.common.fields) || !arrayOfNames(data.common.states) || !object(data.types) || types.some(type => {
+    const definition = data.types[type]
+    return !object(definition) || !arrayOfNames(definition.sections) || (definition.fields !== undefined && !arrayOfNames(definition.fields)) || (definition.legacySections !== undefined && (!Array.isArray(definition.legacySections) || definition.legacySections.some(set => !arrayOfNames(set) || !set.length)))
+  })) throw new Error('Invalid packaged Wiki structure schema')
   return data
 }
 
@@ -76,7 +80,7 @@ function calendarDate(value) {
   return !Number.isNaN(date.valueOf()) && date.toISOString().slice(0, 10) === value
 }
 
-function checkDocument(text, path, requiredSections, spec, issue, prose) {
+function checkDocument(text, path, requiredSections, spec, issue, prose, extraFields = []) {
   const headings = sections(text)
   for (const heading of requiredSections) {
     if (!headings.has(heading)) issue('missing-section', path, `Required H2 section: ${heading}`)
@@ -93,7 +97,7 @@ function checkDocument(text, path, requiredSections, spec, issue, prose) {
   const placeholder = /\{\{[^{}]+\}\}/
   const titles = visibleText.split('\n').filter(line => /^ {0,3}#\s/.test(line)).join('\n')
   if (placeholder.test(prose(text)) || placeholder.test(titles) || [...metadata.values()].some(value => placeholder.test(value))) issue('unresolved-placeholder', path, 'Replace template placeholders with evidence or explicit unknowns')
-  for (const field of spec.common.fields) if (!metadata.get(field)) issue('missing-document-field', path, `Required document information: ${field}`)
+  for (const field of [...spec.common.fields, ...extraFields]) if (!metadata.get(field)) issue('missing-document-field', path, `Required document information: ${field}`)
   const state = metadata.get('事实状态'), verified = metadata.get('核验时间')
   if (state && !spec.common.states.includes(state)) issue('invalid-document-state', path, `Unknown fact state: ${state}`)
   if (verified && !(calendarDate(verified) || (state === '草稿' && verified === '未核验'))) issue('invalid-verification-date', path, 'Use a calendar date YYYY-MM-DD, or 未核验 for drafts')
@@ -102,7 +106,7 @@ function checkDocument(text, path, requiredSections, spec, issue, prose) {
 export async function checkStructure({ root, wiki, files, profile, texts, graph, navigationTargets, safe, local, prose, issue, coverage }) {
   const structure = profile.structure ?? { preset: 'project', documents: [] }
   const defaults = structure.preset !== 'project'
-  const spec = defaults ? await schema() : undefined
+  const spec = defaults || structure.documents?.some(document => document.type) ? await schema() : undefined
   const requirements = new Map()
   const required = (path, type) => {
     const previous = requirements.get(path)
@@ -127,10 +131,10 @@ export async function checkStructure({ root, wiki, files, profile, texts, graph,
   }
   for (const document of structure.documents ?? []) {
     const path = local(root, document.path)
-    required(path)
+    required(path, document.type)
     requirements.get(path).sections = document.requiredSections
   }
-  coverage.structure = { preset: structure.preset, documents: 0, navigation: 'not_requested' }
+  coverage.structure = { preset: structure.preset, documents: 0, navigation: 'not_requested', legacyDocuments: [] }
   for (const [path, requirement] of requirements) {
     let actual
     try {
@@ -141,8 +145,21 @@ export async function checkStructure({ root, wiki, files, profile, texts, graph,
       throw error
     }
     const text = texts.get(actual) ?? await readFile(actual, 'utf8')
-    const headings = [...new Set([...(spec ? [...spec.common.sections, ...spec.types[requirement.type ?? 'guide'].sections] : []), ...requirement.sections])]
-    checkDocument(text, relative(root, path), headings, spec, issue, prose)
+    const documentSpec = requirement.type ? spec : undefined
+    const definition = documentSpec?.types[requirement.type ?? 'guide']
+    let typeSections = definition?.sections ?? []
+    if (definition?.legacySections) {
+      const present = sections(text)
+      if (!typeSections.every(heading => present.has(heading))) {
+        const legacy = definition.legacySections.find(set => set.every(heading => present.has(heading)))
+        if (legacy) {
+          typeSections = legacy
+          coverage.structure.legacyDocuments.push(relative(root, path))
+        }
+      }
+    }
+    const headings = [...new Set([...(documentSpec ? [...documentSpec.common.sections, ...typeSections] : []), ...requirement.sections])]
+    checkDocument(text, relative(root, path), headings, documentSpec, issue, prose, definition?.fields)
     coverage.structure.documents++
   }
   const entry = structure.entry ? local(root, structure.entry) : defaults ? wikiPath('README.md') : undefined

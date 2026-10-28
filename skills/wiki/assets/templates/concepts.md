@@ -11,7 +11,7 @@
 
 ## 术语与概念
 
-{{project_terms_definitions_and_relationships}}
+{{project_terms_definitions_and_relationships_with_sources_and_inferences_labelled}}
 
 ## 依据与核验
 

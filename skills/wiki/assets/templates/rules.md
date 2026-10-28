@@ -9,13 +9,17 @@
 | 核验基线 | {{baseline}} |
 | 核验时间 | 未核验 |
 
-## 已确认规则
+## 预期与约定
 
-{{confirmed_rules_with_scope_and_sources}}
+{{expectations_with_authoritative_sources_scope_and_confirmation_or_explicit_unknown}}
 
-## 实现观察与差异
+## 实现观察
 
-{{implementation_observations_conflicts_and_status}}
+{{implementation_observations_with_code_baseline_and_inspection_method}}
+
+## 运行验证
+
+{{observed_results_with_environment_version_and_method_or_explicit_not_run}}
 
 ## 依据与核验
 

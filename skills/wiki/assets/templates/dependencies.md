@@ -15,7 +15,7 @@
 
 ## 接口与契约
 
-{{interface_contracts_sources_and_versions}}
+{{interface_expectations_implementation_and_runtime_status_with_sources_and_applicable_versions}}
 
 ## 依据与核验
 

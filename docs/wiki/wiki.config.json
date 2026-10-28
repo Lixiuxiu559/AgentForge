@@ -4,10 +4,20 @@
     {
       "id": "skill-methods",
       "sources": [
-        "skills",
+        "skills/architecture-scout",
+        "skills/bug-debugging",
+        "skills/complexity-audit",
+        "skills/diff-review",
+        "skills/implementation-workflow",
+        "skills/mutation-testing",
+        "skills/pm",
+        "skills/research",
+        "skills/test-design",
+        "skills/wiki/SKILL.md",
         "docs/architecture.md",
         "docs/design",
-        "docs/research"
+        "docs/research",
+        "tests/fixtures/bug-debugging"
       ],
       "docs": [
         "docs/wiki/modules/skill-methods/README.md"
@@ -18,7 +28,10 @@
       "sources": [
         "src",
         "cordis.patch.yml",
-        "tests/skill-provider.test.mjs"
+        "tests/skill-provider.test.mjs",
+        "docs/architecture.md",
+        "skills/architecture-scout/SKILL.md",
+        "skills/architecture-scout/agents/openai.yaml"
       ],
       "docs": [
         "docs/wiki/modules/skill-provider/README.md"
@@ -31,7 +44,12 @@
         "tests/wiki.test.mjs",
         "tests/wiki-templates.test.mjs",
         "docs/wiki/wiki.config.json",
-        "tests/wiki-freshness.test.mjs"
+        "tests/wiki-freshness.test.mjs",
+        "tests/wiki-mapping.test.mjs",
+        "tools/wiki-project.mjs",
+        "package.json",
+        "AGENTS.md",
+        "skills/implementation-workflow/SKILL.md"
       ],
       "docs": [
         "docs/wiki/README.md",
@@ -59,17 +77,48 @@
         "LICENSE",
         "docs/architecture.md",
         "docs/releasing.md",
-        "docs/npm-publishing.md"
+        "docs/npm-publishing.md",
+        "src/index.js",
+        "cordis.patch.yml",
+        "skills/wiki/scripts",
+        "skills/wiki/references/freshness.md"
       ],
       "docs": [
         "docs/wiki/modules/distribution/README.md",
         "docs/wiki/modules/distribution/dependencies.md",
-        "docs/wiki/verification.md"
+        "docs/wiki/verification.md",
+        "docs/wiki/environments.md",
+        "docs/wiki/operations.md"
       ]
     }
   ],
   "structure": {
-    "preset": "modular"
+    "preset": "modular",
+    "documents": [
+      {
+        "path": "docs/architecture.md",
+        "requiredSections": [
+          "技能作为方法真源",
+          "组件与数据流",
+          "架构核验范围"
+        ]
+      },
+      {
+        "path": "docs/releasing.md",
+        "requiredSections": [
+          "发版：一条命令",
+          "常见错误"
+        ]
+      },
+      {
+        "path": "docs/wiki/environments.md",
+        "type": "environments"
+      },
+      {
+        "path": "docs/wiki/operations.md",
+        "type": "operations"
+      }
+    ]
   },
   "freshness": {
     "records": "docs/wiki/reviews.json"

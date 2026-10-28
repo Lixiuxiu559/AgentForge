@@ -6,7 +6,7 @@
 |---|---|
 | 适用范围 | 技能内容、provider、工具和外部宿主之间的依赖关系 |
 | 事实状态 | 部分核验 |
-| 核验基线 | 功能基线 3e5341d；发布元数据与来源、文档内容按项目复核记录核验 |
+| 核验基线 | 历史功能基线 3e5341d；本轮 ee58dfd 后开发工作区的来源与文档按复核指纹核验 |
 | 核验时间 | 2026-10-27 |
 
 ## 上下游关系
@@ -23,7 +23,7 @@
 
 ## 接口与契约
 
-包内 JavaScript 只使用 Node 内置模块，package.json 无 dependencies。Wiki 的 changes 另依赖本机 Git；其他审计技能依赖目标项目已有的相应分析工具，不能将“包零依赖”理解成全部任务不需要外部工具。
+包内 JavaScript 只使用 Node 内置模块，package.json 无 dependencies。Wiki 的 changes、mapping、freshness、review 和 gate 另依赖本机 Git；其他审计技能依赖目标项目已有的相应分析工具，不能将“包零依赖”理解成全部任务不需要外部工具。
 
 [三端插件信息](../../../architecture.md) 规定共享技能与宿主提供执行能力。[CI 配置](../../../../.github/workflows/validate.yml) 声明 Node 22/24 矩阵；本次只在本机 Node v24.15.0 验证，不将配置存在写成两条运行时都通过。
 

@@ -4,6 +4,7 @@ import { readFile, readdir, realpath, stat } from 'node:fs/promises'
 import { dirname, isAbsolute, relative, resolve, sep } from 'node:path'
 import { checkStructure, structureConfig } from './structure.mjs'
 import { freshnessConfig, runFreshness } from './freshness.mjs'
+import { inspectMapping } from './mapping.mjs'
 
 const coverage = { semantic: 'not_run', limitations: [] }
 const findings = []
@@ -11,11 +12,12 @@ const issue = (code, path, message) => findings.push({ code, path, message })
 const limited = message => { if (!coverage.limitations.includes(message)) coverage.limitations.push(message) }
 function args() {
   const [command, ...tokens] = process.argv.slice(2)
-  if (!['check', 'changes', 'freshness', 'review', 'gate'].includes(command)) throw new Error('Expected check, changes, freshness, review, or gate')
+  if (!['check', 'changes', 'mapping', 'freshness', 'review', 'gate'].includes(command)) throw new Error('Expected check, changes, mapping, freshness, review, or gate')
   const result = { command }
   const allowed = {
     check: ['root', 'wiki', 'config'],
     changes: ['root', 'scope', 'base', 'head', 'config'],
+    mapping: ['root', 'config'],
     freshness: ['root', 'config', 'module'],
     review: ['root', 'config', 'module', 'decision', 'reason', 'reviewer', 'evidence', 'scope'],
     gate: ['root', 'config', 'scope', 'base', 'head'],
@@ -283,7 +285,8 @@ try {
     result = await runFreshness({ root, options, parseConfig, local, git, revision, parseChanges, coverage, issue, limited })
   } else {
     const profile = await config(root, options.config)
-    result = options.command === 'check' ? await check(root, options, profile) : changes(root, options, profile)
+    if (options.command === 'mapping') result = await inspectMapping({ root, profile, git, coverage, issue, limited })
+    else result = options.command === 'check' ? await check(root, options, profile) : changes(root, options, profile)
   }
   const status = findings.length ? 'issues' : coverage.limitations.length ? 'partial' : 'passed'
   console.log(JSON.stringify({ status, root, findings, coverage, ...result }, null, 2))

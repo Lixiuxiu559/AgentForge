@@ -19,7 +19,7 @@
 
 ## 知识覆盖
 
-{{covered_modules_versions_and_gaps}}
+{{delivery_level_scope_progress_and_overview_capabilities_architecture_deployment_operations_coverage_or_inapplicability}}
 
 ## 依据与核验
 

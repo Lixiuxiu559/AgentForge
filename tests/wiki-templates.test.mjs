@@ -49,6 +49,19 @@ function replaceSection(text, heading, content) {
   return text.slice(0, start) + `## ${heading}\n\n${content}\n` + (end < 0 ? '' : text.slice(end))
 }
 
+async function rulesFixture(t) {
+  const root = await fixture(t)
+  await put(root, 'wiki/README.md', await template('index-modular', {
+    links_to_concepts_and_modules: '[概念](concepts.md)\n\n[模块](modules/orders/README.md)',
+  }))
+  await put(root, 'wiki/concepts.md', await template('concepts'))
+  await put(root, 'wiki/modules/orders/README.md', await template('module', {
+    links_to_related_knowledge: '[规则](rules.md)',
+  }))
+  await profile(root, { preset: 'modular' })
+  return root
+}
+
 test('small default uses its actual template as a single draft with explicit unknowns', async t => {
   const root = await fixture(t)
   const text = await template('index-small')
@@ -240,4 +253,138 @@ test('image destinations never count as navigation links, including reference-st
   }
   await put(root, 'wiki/README.md', replaceSection(original, '阅读导航', '[页面](hidden.md)'))
   assert.equal(run(root).status, 'passed')
+})
+
+test('new rule pages require separate expectation, implementation, and runtime sections', async t => {
+  const root = await rulesFixture(t)
+  const rules = await template('rules', {
+    expectations_with_authoritative_sources_scope_and_confirmation_or_explicit_unknown: '待确认：没有找到独立的业务预期来源。',
+    implementation_observations_with_code_baseline_and_inspection_method: '实现观察：当前静态材料记载了参数校验；实际实现尚待核对。',
+    observed_results_with_environment_version_and_method_or_explicit_not_run: '未执行运行验证，开发及生产环境行为均未知。',
+  })
+  await put(root, 'wiki/modules/orders/rules.md', rules)
+  let result = run(root)
+  assert.equal(result.status, 'passed')
+  assert.deepEqual(result.coverage.structure.legacyDocuments, [])
+  await put(root, 'wiki/modules/orders/rules.md', rules.replace('## 运行验证', '### 运行验证'))
+  assert.equal(run(root).status, 'issues')
+  await put(root, 'wiki/modules/orders/rules.md', replaceSection(rules, '运行验证', ''))
+  assert.equal(run(root).status, 'issues')
+  await put(root, 'wiki/modules/orders/rules.md', rules.replace('## 运行验证', '```md\n## 运行验证\n```\n\n### 示例'))
+  assert.equal(run(root).status, 'issues')
+})
+
+test('complete legacy rules are reported without forcing migration or claiming semantic verification', async t => {
+  const root = await rulesFixture(t)
+  const rules = await template('rules')
+  const legacy = rules.replace('## 预期与约定', '## 已确认规则')
+    .replace('## 实现观察', '## 实现观察与差异')
+    .replace(/\n## 运行验证\n[\s\S]*?(?=\n## |$)/, '')
+  await put(root, 'wiki/modules/orders/rules.md', legacy)
+  const result = run(root)
+  assert.equal(result.status, 'passed')
+  assert.deepEqual(result.coverage.structure.legacyDocuments, ['wiki/modules/orders/rules.md'])
+  assert.equal(result.coverage.semantic, 'not_run')
+  assert.equal(await readFile(join(root, 'wiki/modules/orders/rules.md'), 'utf8'), legacy)
+  // One old title plus a new implementation title is not the complete legacy layout.
+  await put(root, 'wiki/modules/orders/rules.md', legacy.replace('## 实现观察与差异', '## 实现观察'))
+  assert.equal(run(root).status, 'issues')
+})
+
+test('project rule conventions remain explicit and unfilled new rule templates fail', async t => {
+  const root = await rulesFixture(t)
+  await put(root, 'wiki/modules/orders/rules.md', await readFile(join(skill, 'assets/templates/rules.md'), 'utf8'))
+  assert.equal(run(root).status, 'issues')
+  const legacy = '# Existing rules\n\n## 已确认规则\n\n项目约定保持原样。\n\n## 实现观察与差异\n\n来源不足的内容保留待确认。\n'
+  await put(root, 'wiki/modules/orders/rules.md', legacy)
+  await profile(root, { preset: 'project', documents: [{
+    path: 'wiki/modules/orders/rules.md', requiredSections: ['已确认规则', '实现观察与差异'],
+  }] })
+  const result = run(root)
+  assert.equal(result.status, 'passed')
+  assert.deepEqual(result.coverage.structure.legacyDocuments, [])
+})
+
+test('system knowledge templates are opt-in, navigable and require their specific content', async t => {
+  const root = await fixture(t)
+  const types = ['architecture', 'deployment', 'environments', 'operations', 'troubleshooting']
+  const spec = JSON.parse(await readFile(join(skill, 'assets/schema.json'), 'utf8'))
+  const documents = types.map(type => ({ path: `wiki/custom/${type}.md`, type }))
+  await put(root, 'wiki/README.md', await template('index-small', {
+    reading_navigation: types.map(type => `[${type}](custom/${type}.md)`).join('\n\n'),
+  }))
+  for (const type of types) await put(root, `wiki/custom/${type}.md`, await template(type))
+  await profile(root, { preset: 'small', documents })
+  assert.equal(run(root).status, 'passed')
+  for (const type of types) {
+    const path = `wiki/custom/${type}.md`, original = await template(type)
+    await put(root, path, replaceSection(original, spec.types[type].sections[0], ''))
+    assert.ok(run(root).findings.some(f => f.code === 'empty-section' && f.path === path))
+    await put(root, path, await readFile(join(skill, `assets/templates/${type}.md`), 'utf8'))
+    assert.ok(run(root).findings.some(f => f.code === 'unresolved-placeholder' && f.path === path))
+    await put(root, path, original)
+  }
+})
+
+test('environment observations require provenance fields but accept explicit unknown runtime state', async t => {
+  const root = await fixture(t)
+  const original = await template('environments', {
+    environments_in_scope: '用户宿主；未访问生产环境',
+    actual_observation_time_or_not_observed: '未执行运行状态观测',
+    runtime_evidence_reference_or_explicit_unknown: '未知：只有仓库声明配置，没有运行证据',
+  })
+  await put(root, 'wiki/state.md', original)
+  await profile(root, { preset: 'project', documents: [{ path: 'wiki/state.md', type: 'environments' }] })
+  assert.equal(run(root).status, 'passed')
+  for (const field of ['适用环境', '观察时间', '证据来源']) {
+    await put(root, 'wiki/state.md', original.split('\n').filter(line => !line.startsWith(`| ${field} |`)).join('\n'))
+    const result = run(root)
+    assert.ok(result.findings.some(f => f.code === 'missing-document-field' && f.message.includes(field)))
+  }
+  await put(root, 'wiki/state.md', original)
+  assert.equal(run(root).status, 'passed')
+  assert.equal(await readFile(join(root, 'wiki/state.md'), 'utf8'), original)
+})
+
+test('project conventions coexist with an explicitly typed document outside the Wiki directory', async t => {
+  const root = await fixture(t)
+  const custom = '# Existing architecture\n\n## Components\n\nManual content stays.\n'
+  await put(root, 'wiki/architecture/README.md', custom)
+  await put(root, 'handbook/install.md', await template('deployment'))
+  await profile(root, { preset: 'project', documents: [
+    { path: 'wiki/architecture/README.md', requiredSections: ['Components'] },
+    { path: 'handbook/install.md', type: 'deployment', requiredSections: ['Local detail'] },
+  ] })
+  let result = run(root)
+  assert.equal(result.status, 'issues')
+  assert.deepEqual(result.findings.map(f => [f.code, f.path]), [['missing-section', 'handbook/install.md']])
+  await put(root, 'handbook/install.md', (await template('deployment')) + '\n## Local detail\n\nExplicit project rule.\n')
+  assert.equal(run(root).status, 'passed')
+  assert.equal(await readFile(join(root, 'wiki/architecture/README.md'), 'utf8'), custom)
+})
+
+test('new knowledge directories are not mandatory and document types reject typos', async t => {
+  const root = await fixture(t)
+  await put(root, 'wiki/README.md', await template('index-small'))
+  await profile(root, { preset: 'small' })
+  assert.equal(run(root).status, 'passed')
+  for (const type of ['environment', '', 42, null]) {
+    await profile(root, { preset: 'project', documents: [{ path: 'wiki/README.md', type }] })
+    assert.equal(run(root).status, 'error')
+  }
+  await profile(root, { preset: 'project', documents: [{ path: 'wiki/not-created.md', type: 'architecture' }] })
+  assert.ok(run(root).findings.some(f => f.code === 'missing-structure-document'))
+})
+
+test('default Wiki can require existing external architecture without imposing default metadata', async t => {
+  const root = await fixture(t)
+  await put(root, 'wiki/README.md', await template('index-small', { reading_navigation: '[Architecture](../docs/design.md)' }))
+  const existing = '# Design\n\n## Components\n\nExisting components.\n'
+  await put(root, 'docs/design.md', existing)
+  await profile(root, { preset: 'small', documents: [{ path: 'docs/design.md', requiredSections: ['Components'] }] })
+  assert.equal(run(root).status, 'passed')
+  await put(root, 'docs/design.md', '# Design\n')
+  assert.deepEqual(run(root).findings.map(f => f.code), ['missing-section'])
+  await put(root, 'docs/design.md', existing)
+  assert.equal(await readFile(join(root, 'docs/design.md'), 'utf8'), existing)
 })
