@@ -11,11 +11,11 @@
 
 ## 实现入口
 
-{{links_to_real_implementation_entrypoints}}
+{{business_or_capability_to_cross_directory_code_links_with_verified_baseline}}
 
 ## 职责映射
 
-{{concepts_to_code_responsibilities}}
+{{source_mapping_reasons_direct_and_shared_sources_coverage_gaps_and_overlap_rationale}}
 
 ## 依据与核验
 

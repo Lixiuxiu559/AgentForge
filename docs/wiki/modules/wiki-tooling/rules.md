@@ -6,16 +6,18 @@
 |---|---|
 | 适用范围 | 默认模板、项目约定、工具结果与 Git 范围 |
 | 事实状态 | 部分核验 |
-| 核验基线 | 功能基线 3e5341d；发布元数据与来源、文档内容按项目复核记录核验 |
-| 核验时间 | 2026-10-27 |
+| 核验基线 | 历史功能基线 3e5341d；本轮 ee58dfd 后开发工作区的来源与文档按复核指纹核验 |
+| 核验时间 | 2026-10-28 |
 
-## 已确认规则
+## 预期与约定
+
+以下为 Wiki 技能及其协议规定的工具契约，适用于本地工具，不代表宿主或生产部署已采用。2026-10-27 已静态对照协议、schema 和对应实现；运行证据单列在后。
 
 | 编号 | 规则 |
 |---|---|
 | W1 | 无 structure 配置时为 project，不强制默认目录或元数据；显式 documents 和 entry 才启用对应项目规则 |
 | W2 | small 必需 README；modular 另需 concepts 及至少一个 modules 下的模块 README，规则、映射、依赖可选拆分 |
-| W3 | 默认页面按 schema 检查共同字段与各类型 H2；必需段落不能为空，标题或元数据残余占位符不能冒充完成内容 |
+| W3 | 默认页面按 schema 检查共同字段与各类型 H2；新规则页分为预期与约定、实现观察、运行验证；旧双章节规则页保留兼容并由 legacyDocuments 报告。必需段落不能为空，标题或元数据残余占位符不能冒充完成内容 |
 | W4 | 事实状态为草稿、部分核验或已核验；只有草稿允许核验时间为未核验，其他情况需有效日历日期 |
 | W5 | 默认入口须经普通本地 Markdown 链接到达所有 Wiki 页面；图片资源不能充当导航 |
 | W6 | check 与 changes 均不自动加载配置；命令显式使用目标绝对根及项目相对配置路径 |
@@ -24,10 +26,12 @@
 | W9 | freshness 对来源、文档、文件集合、模式及配置指纹比较；缺记录 unknown，变化 stale，显式冲突 blocked |
 | W10 | review 只保存真实复核声明及证据；updated、no-change 不自动证明语义，不能批量刷新记录冒充复核 |
 | W11 | gate 对选定工作区、索引或提交树读取配置、记录和内容；全部模块 fresh 且变化已映射或有明确排除理由才通过 |
+| W13 | 显式 structure.documents.type 选择专用模板检查，可与项目 requiredSections 叠加；project 未选型页、默认 Wiki 引用的外部未选型手册保留既有章节规则，不自动补默认元数据 |
+| W12 | mapping 只评估 Git 可见工作区的路径覆盖，不读来源正文、不写项目；共享比例与未映射候选是人工判断材料，不按统一阈值判错 |
 
 规则依据为 [工具协议](../../../../skills/wiki/references/tools.md)、[模板规范](../../../../skills/wiki/references/templates.md) 与 [schema](../../../../skills/wiki/assets/schema.json)。
 
-## 实现观察与差异
+## 实现观察
 
 | Git 范围 | 当前实现含义 |
 |---|---|
@@ -41,9 +45,15 @@ freshness 的记录只在显式 review 时写入，且排除自身避免自指�
 
 规范、当前实现观察和上线状态分别维护。语义判断由 Agent 对照来源执行；结构通过不能证明文档内容真实，也不能证明生产已采用新行为。
 
+mapping 的 inspectMapping 读取 cached 与未忽略的 others 路径，去重并检查实际存在的普通文件；删除项不计当前来源，符号链接和非文件条目保留覆盖限制。来源按路径边界前缀匹配，文档精确匹配；记录文件排除自身。共享来源输出 sharedFiles、shareOfSources 和 identicalSourceSets，未映射候选保留在 unmappedPaths，即使报告 passed 也需要人工判断覆盖。
+
+## 运行验证
+
+2026-10-27 在隔离副本、Node v24.15.0 执行 npm test，66 项通过，包含 mapping 的跨层共享、相同来源集合、特殊路径、缺失来源、排除规则、符号链接和迁移场景。测试只证明其 fixture 断言；本仓库映射由人工对照来源修订，详见入口的模块说明与验证页。未运行远端服务。
+
 ## 依据与核验
 
-2026-10-27 静态核对 [CLI](../../../../skills/wiki/scripts/wiki.mjs)、[结构检查](../../../../skills/wiki/scripts/structure.mjs)、[Git 与链接测试](../../../../tests/wiki.test.mjs)、[模板回归](../../../../tests/wiki-templates.test.mjs)；对应测试已实际通过。
+2026-10-27 静态核对 [CLI](../../../../skills/wiki/scripts/wiki.mjs)、[结构检查](../../../../skills/wiki/scripts/structure.mjs)、[Git 与链接测试](../../../../tests/wiki.test.mjs)、[模板回归](../../../../tests/wiki-templates.test.mjs)；另核对 [映射实现](../../../../skills/wiki/scripts/mapping.mjs) 与 [映射回归](../../../../tests/wiki-mapping.test.mjs)，上述 66 项是 2026-10-27 的实际运行结果。2026-10-28 在主工作区执行 71 项全部通过，新增五类模板、环境证据字段、混用项目约定及外部既有手册兼容回归。
 
 ## 待确认项
 

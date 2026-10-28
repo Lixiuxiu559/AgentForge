@@ -6,7 +6,7 @@
 |---|---|
 | 适用范围 | 三端装配、版本同步和仓库中的验证发布入口 |
 | 事实状态 | 部分核验 |
-| 核验基线 | 功能基线 3e5341d；发布元数据与来源、文档内容按项目复核记录核验 |
+| 核验基线 | 历史功能基线 3e5341d；本轮 ee58dfd 后开发工作区的来源与文档按复核指纹核验 |
 | 核验时间 | 2026-10-27 |
 
 ## 用途与边界
@@ -17,12 +17,12 @@ README 与发布文档记录的宿主更新语义在本次只作仓库约定引�
 
 ## 主要流程
 
-1. 开发者维护技能、清单、测试与 Unreleased，运行 doctor 和 npm test。使用 Wiki 时先检查新鲜度，开发收尾保存真实复核声明，交付前运行 wiki:check 和 wiki:gate。
+1. 开发者维护技能、清单、测试与 Unreleased，运行 doctor 和 npm test。项目快捷命令 tools/wiki-project.mjs 也暴露 wiki:mapping，固定本仓库根与配置；范围解释见 Wiki 工具模块。使用 Wiki 时先检查新鲜度，开发收尾保存真实复核声明，交付前运行 wiki:check 和 wiki:gate。
 2. Codex/Claude Code 清单定位共用技能目录；DSH 通过包 main 与 bundle patch 装配 provider。
 3. package.json 的 files 包含 skills，使技能 references、脚本与 assets 随包分发；项目自身 docs 不是必需运行资产。
 4. release.mjs 要求干净工作区与 main 分支，运行 doctor，同步三处版本和 CHANGELOG，创建提交与标签；可显式选择推送。
 5. PR 的 Wiki 检查 job 明确检出 head，分别运行结构检查与以 base/head 为范围的同步检查门；Git 树中的记录不能被工作区补写替代。
-6. release.yml 在标签推送时负责 GitHub Release；publish.yml 是独立手动 npm 流程。本地候选已通过 release.mjs 完成版本准备；后续远端动作以对应 Release 和流水线实际结果为准。
+6. release.yml 在标签推送时负责 GitHub Release；publish.yml 是独立手动 npm 流程。旧验证页记载本地版本准备；本轮只核对清单与脚本，未重做发布或核查历史发布操作，后续远端动作以对应 Release 和流水线实际结果为准。
 
 ## 阅读导航
 

@@ -5,8 +5,8 @@ import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const [command, ...args] = process.argv.slice(2)
-if (!['check', 'freshness', 'review', 'gate'].includes(command)) {
-  console.error('Usage: node tools/wiki-project.mjs check|freshness|review|gate [options]')
+if (!['check', 'mapping', 'freshness', 'review', 'gate'].includes(command)) {
+  console.error('Usage: node tools/wiki-project.mjs check|mapping|freshness|review|gate [options]')
   process.exitCode = 2
 } else {
   const defaults = command === 'check' ? ['--wiki', 'docs/wiki'] : []

@@ -11,15 +11,15 @@
 
 ## 用途与边界
 
-{{purpose_and_boundaries}}
+{{purpose_boundaries_delivery_level_scope_and_architecture_deployment_operations_coverage_or_inapplicability}}
 
 ## 规则与实现
 
-{{confirmed_rules_and_implementation_observations}}
+{{expectations_implementation_runtime_observations_and_inferences_each_with_source_method_and_scope}}
 
 ## 代码与依赖
 
-{{code_entrypoints_and_dependencies}}
+{{capabilities_to_cross_directory_code_and_shared_dependencies_with_mapping_reasons}}
 
 ## 阅读导航
 
