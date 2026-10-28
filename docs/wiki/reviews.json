@@ -2,10 +2,10 @@
   "version": 1,
   "modules": {
     "skill-methods": {
-      "reviewedAt": "2026-10-28T03:15:49.633Z",
-      "reviewer": "Codex v0.10.1 提交复核",
+      "reviewedAt": "2026-10-28T04:07:45.783Z",
+      "reviewer": "Codex",
       "decision": "no-change",
-      "reason": "提交前核对技能入口的待确认项和正文取证约束，方法职责与交接知识仍成立；新规则不增加审批、部署或自动执行阶段。",
+      "reason": "审读暂存Wiki入口的追源、修正文和读回要求，五种意图及需求/实现/发布交接职责仍成立；未增加固定审批阶段。",
       "evidence": [
         "skills/wiki/SKILL.md",
         "docs/wiki/modules/skill-methods/README.md"
@@ -181,7 +181,7 @@
           "mode": "100644"
         },
         "skills/wiki/SKILL.md": {
-          "sha256": "a1b1ef2655273aa5ecbefae0e7c2069d0799f35b914c6261a874e9577d984216",
+          "sha256": "a7ee580a2da904f33411b292b3ceee2c09f42d37085d3583efaa6332870d0b34",
           "mode": "100644"
         },
         "docs/architecture.md": {
@@ -290,21 +290,22 @@
       }
     },
     "wiki-tooling": {
-      "reviewedAt": "2026-10-28T03:18:33.787Z",
+      "reviewedAt": "2026-10-28T04:07:46.267Z",
       "reviewer": "Codex",
       "decision": "updated",
-      "reason": "核对两轮修正提交64702f8及版本准备026157c，包清单为0.10.1；同步入口基线与验证页，既有71项测试和13类模板/正文证据方法验证记录保留实际范围。",
+      "reason": "逐项核对暂存方法、模板路由及自用规则，原断言追源和读回成为完成判据；复查Portunus隔离验收记录、首轮遗漏与主审修正，4项映射扰动有实际结果；71项回归通过，语义仍由执行者核实。",
       "evidence": [
-        "package.json",
         "skills/wiki/SKILL.md",
         "skills/wiki/references/content-verification.md",
-        "docs/wiki/README.md",
+        "skills/wiki/references/evaluation-cases.md",
+        "docs/wiki/modules/wiki-tooling/README.md",
+        "docs/wiki/modules/wiki-tooling/rules.md",
         "docs/wiki/verification.md"
       ],
       "configDigest": "a6b80069a1ee19d61452bc13b061f2c72b9d4e5fc74ea87a0c0976dc72526806",
       "sourceSnapshot": {
         "skills/wiki/SKILL.md": {
-          "sha256": "a1b1ef2655273aa5ecbefae0e7c2069d0799f35b914c6261a874e9577d984216",
+          "sha256": "a7ee580a2da904f33411b292b3ceee2c09f42d37085d3583efaa6332870d0b34",
           "mode": "100644"
         },
         "skills/wiki/assets/schema.json": {
@@ -364,15 +365,15 @@
           "mode": "100644"
         },
         "skills/wiki/references/change-review.md": {
-          "sha256": "876d030e083b458195ad697c84dca1001d9b3b8f1bfa646fc96f20cfe4ab20cb",
+          "sha256": "aae15ff782168f548d2f9cd6ad4514c7c97e91bee4c5d85929a6a34e5bfb2987",
           "mode": "100644"
         },
         "skills/wiki/references/content-verification.md": {
-          "sha256": "4c6af7531f8e1c3970d9f8c0738050eb7b9d15ccd1135a22b9d64c88587b4f8c",
+          "sha256": "a58801397614eae7d5ed4783228db5a420d79c3d801a8d22956294a140d6a47a",
           "mode": "100644"
         },
         "skills/wiki/references/evaluation-cases.md": {
-          "sha256": "60615e618517f349cbcfced28c991b5d7998c0bbbe889cdf9c98eb3f2311f461",
+          "sha256": "7bc90c8daac7572aaf594cdb9b9624f9a221e22bb01dca180f0e818907b0029c",
           "mode": "100644"
         },
         "skills/wiki/references/freshness.md": {
@@ -380,7 +381,7 @@
           "mode": "100644"
         },
         "skills/wiki/references/initialization.md": {
-          "sha256": "b1e44c636b8691c3364d57f9fe57bfd9367f920005481b8b95515e830ff81837",
+          "sha256": "f7be0ee4430b5674e20e65e39f502c70b5b616276fd5ae0c82b9ba2dfe4954ea",
           "mode": "100644"
         },
         "skills/wiki/references/knowledge-classification.md": {
@@ -388,7 +389,7 @@
           "mode": "100644"
         },
         "skills/wiki/references/knowledge-maintenance.md": {
-          "sha256": "fd4f896fa6a58ce21ecf86c0c6e0b38a54b1608004d3ee3920e7f093af79f516",
+          "sha256": "4d9daf87d5abae0b0a4d666ac0e0c7b095af906c81f446910ef178595d2ce277",
           "mode": "100644"
         },
         "skills/wiki/references/system-knowledge.md": {
@@ -396,7 +397,7 @@
           "mode": "100644"
         },
         "skills/wiki/references/templates.md": {
-          "sha256": "d28e6f5f134eecb87d3e0fb27495342191d585aba36da04e8d26188053c20880",
+          "sha256": "dae3a5ac3482cf8e51128d804fbd5b99834e888dd9aa8e63fdd0fe2e39f4d17d",
           "mode": "100644"
         },
         "skills/wiki/references/tools.md": {
@@ -470,11 +471,11 @@
           "mode": "100644"
         },
         "docs/wiki/modules/wiki-tooling/README.md": {
-          "sha256": "f02e4a0030eea18ee3020f9fec039024d2736533ebe5989904fdb18ee39bdf9a",
+          "sha256": "e9f311667feb06c435daace2a3b213f46f4f6da3bdd7fa8341492a1141e4d2c6",
           "mode": "100644"
         },
         "docs/wiki/modules/wiki-tooling/rules.md": {
-          "sha256": "2765a598a928b24f3b4e6acaac94d11eafc747dbb265e7879934797141d87df1",
+          "sha256": "8ade943a480e428780d53d04a32f8058779395888fbd8cf8c1a5b317c9ee8d89",
           "mode": "100644"
         },
         "docs/wiki/modules/wiki-tooling/code-map.md": {
@@ -482,7 +483,7 @@
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "4da68e2ee06626d9c467ea1e68ff0859189748980e87951c4c857102d939730e",
+          "sha256": "9a845daf36ec66cedb51665c27b2a99f164237c169e3624b0d181dc094bdfa4d",
           "mode": "100644"
         },
         "docs/wiki/freshness.md": {
@@ -492,19 +493,15 @@
       }
     },
     "distribution": {
-      "reviewedAt": "2026-10-28T03:18:34.224Z",
+      "reviewedAt": "2026-10-28T04:07:46.679Z",
       "reviewer": "Codex",
       "decision": "updated",
-      "reason": "逐项核对三个清单0.10.1、CHANGELOG修正项、README固定标签及分发和环境页面；发布脚本与工作流未变，本地候选证据未扩大为远端或实际安装状态。",
+      "reason": "核对暂存CHANGELOG与共享验证页，仅新增本轮方法和隔离证据，当前三份清单仍0.10.1；分发流程无变化，未提前声称0.10.2已发布。",
       "evidence": [
-        "package.json",
-        ".claude-plugin/plugin.json",
-        ".codex-plugin/plugin.json",
         "CHANGELOG.md",
-        "README.md",
-        "docs/wiki/environments.md",
-        "docs/wiki/modules/distribution/README.md",
-        "docs/wiki/verification.md"
+        "package.json",
+        "docs/wiki/verification.md",
+        "docs/wiki/modules/distribution/README.md"
       ],
       "configDigest": "a6b80069a1ee19d61452bc13b061f2c72b9d4e5fc74ea87a0c0976dc72526806",
       "sourceSnapshot": {
@@ -573,7 +570,7 @@
           "mode": "100644"
         },
         "CHANGELOG.md": {
-          "sha256": "ca8a52099368f5a9ed5f977c1ab87f9182f1f5652b57a5f09fbc2fbfc78703d9",
+          "sha256": "f9ce1cabfa117d8b6ee3f4ee900cadef3e0b223c468c268cd01fe89430ffb47a",
           "mode": "100644"
         },
         "LICENSE": {
@@ -635,7 +632,7 @@
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "4da68e2ee06626d9c467ea1e68ff0859189748980e87951c4c857102d939730e",
+          "sha256": "9a845daf36ec66cedb51665c27b2a99f164237c169e3624b0d181dc094bdfa4d",
           "mode": "100644"
         },
         "docs/wiki/environments.md": {
