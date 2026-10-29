@@ -7,7 +7,7 @@
 | 适用范围 | 初始化方法、模板来源和确定性检查的代码入口 |
 | 事实状态 | 部分核验 |
 | 核验基线 | 历史功能基线 3e5341d；本轮 ee58dfd 后开发工作区的来源与文档按复核指纹核验 |
-| 核验时间 | 2026-10-28 |
+| 核验时间 | 2026-10-29 |
 
 ## 实现入口
 
@@ -36,7 +36,7 @@
 | 模块来源覆盖 | mapping.mjs 的 inspectMapping 按 Git 可见工作区报告来源、文档、共享比例、缺失项及未映射候选；只测路径，不读取源码正文 |
 | 单页核对包 | mapping --document 调用 document-review.mjs，列正文段落/行号和字面路径候选及本页模块覆盖，不读源码正文，不自动判定语义 |
 | Git 变更 | git、revision、parseChanges、changes，分别处理索引、工作区及分支范围 |
-| 项目结构配置 | structure.mjs 的 structureConfig，校验 preset、entry、documents 与显式 type |
+| 项目结构配置 | structure.mjs 的 structureConfig校验preset、entry、documents与显式type；checkStructure按concepts类型声明选择modular概念页，未声明时使用concepts.md，不依据文件名猜语言 |
 | 默认内容契约 | assets/schema.json 的 common 和 types，供结构检查读取 |
 | 模板填充 | assets/templates 的十三份文件，由 Agent 按证据填充，不是脚本自动生成 |
 | 正文与证据 | references/content-verification.md 指导 Agent 核对结论范围、配置生效链、反向来源映射与跨页一致性；不是脚本语义检查 |

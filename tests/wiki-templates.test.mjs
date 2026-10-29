@@ -402,3 +402,46 @@ test('previous three-section rule pages stay compatible without rewriting existi
   assert.deepEqual(result.coverage.structure.legacyDocuments, ['wiki/modules/orders/rules.md'])
   assert.equal(await readFile(join(root, 'wiki/modules/orders/rules.md'), 'utf8'), original)
 })
+
+test('modular Wiki supports project-language names through explicit document types', async t => {
+  const root = await fixture(t)
+  const concepts = await template('concepts')
+  await put(root, 'wiki/README.md', await template('index-modular', {
+    links_to_concepts_and_modules: '[概念](核心概念.md)\n\n[订单](modules/订单/README.md)\n\n[架构](系统架构/README.md)',
+  }))
+  await put(root, 'wiki/核心概念.md', concepts)
+  await put(root, 'wiki/系统架构/README.md', await template('architecture'))
+  await put(root, 'wiki/modules/订单/README.md', await template('module', {
+    links_to_related_knowledge: '[规则](规则.md)\n\n[映射](实现映射.md)\n\n[依赖](依赖关系.md)',
+  }))
+  const documents = [
+    { path: 'wiki/核心概念.md', type: 'concepts' },
+    { path: 'wiki/系统架构/README.md', type: 'architecture' },
+    ...[['规则', 'rules'], ['实现映射', 'code-map'], ['依赖关系', 'dependencies']].map(([name, type]) => ({ path: `wiki/modules/订单/${name}.md`, type })),
+  ]
+  for (const doc of documents.slice(2)) await put(root, doc.path, await template(doc.type))
+  await profile(root, { preset: 'modular', documents })
+  assert.equal(run(root).status, 'passed')
+  assert.equal(await readFile(join(root, 'wiki/核心概念.md'), 'utf8'), concepts)
+  const rules = documents.find(doc => doc.type === 'rules')
+  await put(root, rules.path, replaceSection(await template('rules'), '条件与边界', ''))
+  assert.ok(run(root).findings.some(f => f.path === rules.path && f.code === 'empty-section'))
+})
+
+test('declared concepts naming preserves missing-file and content checks and English defaults', async t => {
+  const root = await fixture(t)
+  await put(root, 'wiki/README.md', await template('index-modular', {
+    links_to_concepts_and_modules: '[模块](modules/runtime/README.md)',
+  }))
+  await put(root, 'wiki/modules/runtime/README.md', await template('module'))
+  await profile(root, { preset: 'modular', documents: [{ path: 'wiki/Concepts.md', type: 'concepts' }] })
+  let result = run(root)
+  assert.ok(result.findings.some(f => f.code === 'missing-structure-document' && f.path === 'wiki/Concepts.md'))
+  assert.ok(!result.findings.some(f => f.path === 'wiki/concepts.md'))
+  await put(root, 'wiki/Concepts.md', replaceSection(await template('concepts'), '术语与概念', ''))
+  assert.ok(run(root).findings.some(f => f.code === 'empty-section' && f.path === 'wiki/Concepts.md'))
+  await rm(join(root, 'wiki/Concepts.md'))
+  await profile(root, { preset: 'modular' })
+  result = run(root)
+  assert.ok(result.findings.some(f => f.code === 'missing-structure-document' && f.path === 'wiki/concepts.md'))
+})

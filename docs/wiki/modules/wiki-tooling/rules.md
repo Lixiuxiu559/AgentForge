@@ -7,7 +7,7 @@
 | 适用范围 | 默认模板、项目约定、工具结果与 Git 范围 |
 | 事实状态 | 部分核验 |
 | 核验基线 | 历史功能基线 3e5341d；本轮 ee58dfd 后开发工作区的来源与文档按复核指纹核验 |
-| 核验时间 | 2026-10-28 |
+| 核验时间 | 2026-10-29 |
 
 ## 预期与约定
 
@@ -16,7 +16,7 @@
 | 编号 | 规则 |
 |---|---|
 | W1 | 无 structure 配置时为 project，不强制默认目录或元数据；显式 documents 和 entry 才启用对应项目规则 |
-| W2 | small 必需 README；modular 另需 concepts 及至少一个 modules 下的模块 README，规则、映射、依赖可选拆分 |
+| W2 | small 必需 README；modular另需概念页及至少一个modules下的模块README，concepts类型显式路径可沿项目语言命名，未声明时兼容concepts.md；modules、README.md、reviews.json、wiki.config.json保留固定名称，其余按项目文档惯例命名；规则、映射、依赖可选拆分 |
 | W3 | 默认页面按 schema 检查共同字段与各类型 H2；新规则页分为当前实现规则、条件与边界；旧三章节及旧双章节规则页保留兼容并由 legacyDocuments 报告。必需段落不能为空，标题或元数据残余占位符不能冒充完成内容 |
 | W4 | 事实状态为草稿、部分核验或已核验；只有草稿允许核验时间为未核验，其他情况需有效日历日期 |
 | W5 | 默认入口须经普通本地 Markdown 链接到达所有 Wiki 页面；图片资源不能充当导航 |

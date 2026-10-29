@@ -2,10 +2,10 @@
   "version": 1,
   "modules": {
     "skill-methods": {
-      "reviewedAt": "2026-10-28T08:45:51.972Z",
+      "reviewedAt": "2026-10-29T05:54:53.238Z",
       "reviewer": "Codex",
       "decision": "no-change",
-      "reason": "核对待提交Wiki入口与技能方法总览：职责和交接未变，新增合计3个运行子Agent的排队约定，无需改方法页；未作宿主负载实测。",
+      "reason": "已核对暂存Wiki入口和方法总览，新增命名语言与固定名称约定不改变技能职责、模块复审及授权边界；方法页仍准确，保留原其他技能核验范围。80回归通过，未作宿主命名判断实测。",
       "evidence": [
         "skills/wiki/SKILL.md",
         "docs/wiki/modules/skill-methods/README.md"
@@ -185,7 +185,7 @@
           "mode": "100644"
         },
         "skills/wiki/SKILL.md": {
-          "sha256": "231a12244287aa786ac01cb79daeadd8eef895c9b8baf2f8a00ffac4b1c5ef8a",
+          "sha256": "a1c4649ac05147d6ce6e69758c5c42de25931a691afc2e5fa99f3941f3eaf725",
           "mode": "100644"
         },
         "docs/architecture.md": {
@@ -293,20 +293,23 @@
       }
     },
     "wiki-tooling": {
-      "reviewedAt": "2026-10-28T08:49:25.160Z",
+      "reviewedAt": "2026-10-29T05:54:53.704Z",
       "reviewer": "Codex",
       "decision": "updated",
-      "reason": "核对0.12.1准备后的package版本和验证页：调度约定无新增运行时代码，78回归及doctor/结构检查通过，未将静态规则写成宿主硬限流或负载实测；只同步受版本影响的知识。",
+      "reason": "实际核对暂存命名指令、模板说明、checkStructure和回归：显式concepts路径取代强制英文默认，未声明时仍兼容concepts.md；缺文件、空内容、类型和导航检查未取消。中文路径新用例与80完整回归、doctor和结构检查通过，自用知识已同步，未自动重命名既有Wiki。",
       "evidence": [
-        "package.json",
         "skills/wiki/SKILL.md",
-        "skills/wiki/references/module-workflow.md",
+        "skills/wiki/references/templates.md",
+        "skills/wiki/scripts/structure.mjs",
+        "tests/wiki-templates.test.mjs",
+        "docs/wiki/modules/wiki-tooling/README.md",
+        "docs/wiki/modules/wiki-tooling/rules.md",
         "docs/wiki/verification.md"
       ],
       "configDigest": "d295dc1ecd4ced7c629256d1f52dc85e5520c5c28eb33afa9510bcb881b6e45a",
       "sourceSnapshot": {
         "skills/wiki/SKILL.md": {
-          "sha256": "231a12244287aa786ac01cb79daeadd8eef895c9b8baf2f8a00ffac4b1c5ef8a",
+          "sha256": "a1c4649ac05147d6ce6e69758c5c42de25931a691afc2e5fa99f3941f3eaf725",
           "mode": "100644"
         },
         "skills/wiki/assets/schema.json": {
@@ -370,7 +373,7 @@
           "mode": "100644"
         },
         "skills/wiki/references/evaluation-cases.md": {
-          "sha256": "fae9189df1223890969bd5cfdf8ac31fde51c75a3cc55dbe282de43bff34ad37",
+          "sha256": "21f29e3e676ea9d84e57dd4a3e37487863906200503f2af75a8c6e133968c707",
           "mode": "100644"
         },
         "skills/wiki/references/freshness.md": {
@@ -378,7 +381,7 @@
           "mode": "100644"
         },
         "skills/wiki/references/initialization.md": {
-          "sha256": "7f055102b82a4e1e48a3d626d48d3b7636bc9161482dd0cabf112e170ba9091b",
+          "sha256": "4f30e06e92ea29d279ce0880f5221d90a7d17af01ccf4117c8ae0223616fc2d2",
           "mode": "100644"
         },
         "skills/wiki/references/module-workflow.md": {
@@ -386,7 +389,7 @@
           "mode": "100644"
         },
         "skills/wiki/references/templates.md": {
-          "sha256": "abf3d4facdbdbeaba0fe2bcbd3b6b63345584b21928df107f384750ffde09fdb",
+          "sha256": "604ac15e75034dc8fbe7c552d754b5d288112cc825b58381cbccfb6e165d643b",
           "mode": "100644"
         },
         "skills/wiki/references/tools.md": {
@@ -410,7 +413,7 @@
           "mode": "100644"
         },
         "skills/wiki/scripts/structure.mjs": {
-          "sha256": "c70f887f2a78ba91df2db7262466442292ebbb195578bf0df37be2f8f26f1947",
+          "sha256": "1f40cdcc0f2ea600631fb3edff60882cfd7580e1fb544588a1282718dc417510",
           "mode": "100644"
         },
         "skills/wiki/scripts/wiki.mjs": {
@@ -422,7 +425,7 @@
           "mode": "100644"
         },
         "tests/wiki-templates.test.mjs": {
-          "sha256": "4c77abea3a136d900509015429e8616697899a143ce294eb6fe1de1cfca1bbb0",
+          "sha256": "30617e6930af4c449f1b99a5bdf43c9b7c1242f456b5700e3d799662ddc15cfa",
           "mode": "100644"
         },
         "docs/wiki/wiki.config.json": {
@@ -464,19 +467,19 @@
           "mode": "100644"
         },
         "docs/wiki/modules/wiki-tooling/README.md": {
-          "sha256": "56a7789ff973256ea2ee69b5f59b1f96eee2b471d87ce99db4ab3f00fe7d6b81",
+          "sha256": "d7661ac5556789c55a8b2c9c5803de475e04847fe1792bce54dcbcb6b156a6b1",
           "mode": "100644"
         },
         "docs/wiki/modules/wiki-tooling/rules.md": {
-          "sha256": "ade474c804de169df79cf42bdeb88709024dc079a04c3b70c0abf60130f0dc70",
+          "sha256": "246bd5ad3861e992d3793aa4c433f94aa071cab37ecf3748f277336a9cb1256d",
           "mode": "100644"
         },
         "docs/wiki/modules/wiki-tooling/code-map.md": {
-          "sha256": "a49dc966db50a2b3a7b501eeb8960e28a2378a588f3744f20c6e90a777ef8e7e",
+          "sha256": "a6cb23217e7014fb8d732c503a04dc312a583578071bd402f9680b534750de39",
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "73c061af3824ccea88646a9ccba8edafdb72cbbbc5465a06a0f85a31cbaa1e0c",
+          "sha256": "158e4aea7916ed6bf794280be25ed2b1d2d374e4fd280fae7edf84431630341b",
           "mode": "100644"
         },
         "docs/wiki/freshness.md": {
@@ -486,17 +489,14 @@
       }
     },
     "distribution": {
-      "reviewedAt": "2026-10-28T08:49:25.565Z",
+      "reviewedAt": "2026-10-29T05:54:54.121Z",
       "reviewer": "Codex",
       "decision": "updated",
-      "reason": "三处清单、CHANGELOG0.12.1、README固定tag和分发页对齐，79文件打包预览及doctor通过；发布脚本不变、未发npm，不把本地候选视为已发布或用户已更新。",
+      "reason": "已核对Unreleased、实际结构脚本与验证页：沿项目语言命名不改变包入口、CLI和发布流程，版本仍0.12.1；保留英文默认兼容及既有文件路径。80回归和doctor通过，不把待提交内容当成已发布。",
       "evidence": [
-        ".claude-plugin/plugin.json",
-        ".codex-plugin/plugin.json",
-        "package.json",
         "CHANGELOG.md",
-        "README.md",
-        "docs/wiki/modules/distribution/README.md",
+        "skills/wiki/scripts/structure.mjs",
+        "package.json",
         "docs/wiki/verification.md"
       ],
       "configDigest": "d295dc1ecd4ced7c629256d1f52dc85e5520c5c28eb33afa9510bcb881b6e45a",
@@ -566,7 +566,7 @@
           "mode": "100644"
         },
         "CHANGELOG.md": {
-          "sha256": "6695e17b343b7f492698c73d1c2acb90133a855ce5ad21854fd6336a886eecb0",
+          "sha256": "66d84e2992151be4da830d78c9a3e12052cbc4b1f77bb3be5a0433389fad2b92",
           "mode": "100644"
         },
         ".gitignore": {
@@ -614,7 +614,7 @@
           "mode": "100644"
         },
         "skills/wiki/scripts/structure.mjs": {
-          "sha256": "c70f887f2a78ba91df2db7262466442292ebbb195578bf0df37be2f8f26f1947",
+          "sha256": "1f40cdcc0f2ea600631fb3edff60882cfd7580e1fb544588a1282718dc417510",
           "mode": "100644"
         },
         "skills/wiki/scripts/wiki.mjs": {
@@ -636,7 +636,7 @@
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "73c061af3824ccea88646a9ccba8edafdb72cbbbc5465a06a0f85a31cbaa1e0c",
+          "sha256": "158e4aea7916ed6bf794280be25ed2b1d2d374e4fd280fae7edf84431630341b",
           "mode": "100644"
         },
         "docs/wiki/environments.md": {
