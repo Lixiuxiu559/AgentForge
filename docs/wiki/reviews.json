@@ -293,17 +293,14 @@
       }
     },
     "wiki-tooling": {
-      "reviewedAt": "2026-10-29T05:54:53.704Z",
+      "reviewedAt": "2026-10-29T05:55:48.039Z",
       "reviewer": "Codex",
       "decision": "updated",
-      "reason": "实际核对暂存命名指令、模板说明、checkStructure和回归：显式concepts路径取代强制英文默认，未声明时仍兼容concepts.md；缺文件、空内容、类型和导航检查未取消。中文路径新用例与80完整回归、doctor和结构检查通过，自用知识已同步，未自动重命名既有Wiki。",
+      "reason": "版本准备后package仅0.12.1变0.12.2，命名实现不再修改；验证页记录80回归、中文路径和英文兼容范围及未作宿主实测的限制。已读回本地候选说明，doctor和结构检查通过。",
       "evidence": [
+        "package.json",
         "skills/wiki/SKILL.md",
-        "skills/wiki/references/templates.md",
         "skills/wiki/scripts/structure.mjs",
-        "tests/wiki-templates.test.mjs",
-        "docs/wiki/modules/wiki-tooling/README.md",
-        "docs/wiki/modules/wiki-tooling/rules.md",
         "docs/wiki/verification.md"
       ],
       "configDigest": "d295dc1ecd4ced7c629256d1f52dc85e5520c5c28eb33afa9510bcb881b6e45a",
@@ -445,7 +442,7 @@
           "mode": "100644"
         },
         "package.json": {
-          "sha256": "b22f212b9d91872b45897ad2dd5a6215dce6326b9433c0c0f5ae32e769c942f2",
+          "sha256": "5dbb0230a1b4ad929085cca5e38ad62f52278169372e592d41a6303b3f8955cb",
           "mode": "100644"
         },
         "AGENTS.md": {
@@ -479,7 +476,7 @@
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "158e4aea7916ed6bf794280be25ed2b1d2d374e4fd280fae7edf84431630341b",
+          "sha256": "28ed41074513b668d155fb9dcb3908ec808b3b8c761d45a192d6aca9f87f2c26",
           "mode": "100644"
         },
         "docs/wiki/freshness.md": {
@@ -489,14 +486,17 @@
       }
     },
     "distribution": {
-      "reviewedAt": "2026-10-29T05:54:54.121Z",
+      "reviewedAt": "2026-10-29T05:55:48.580Z",
       "reviewer": "Codex",
       "decision": "updated",
-      "reason": "已核对Unreleased、实际结构脚本与验证页：沿项目语言命名不改变包入口、CLI和发布流程，版本仍0.12.1；保留英文默认兼容及既有文件路径。80回归和doctor通过，不把待提交内容当成已发布。",
+      "reason": "核对三处0.12.2版本、CHANGELOG段落、README固定tag和分发页，打包资源及发布流程保持一致，doctor通过；只记录本地候选，不推导已发布或用户已更新，未发npm。",
       "evidence": [
-        "CHANGELOG.md",
-        "skills/wiki/scripts/structure.mjs",
+        ".claude-plugin/plugin.json",
+        ".codex-plugin/plugin.json",
         "package.json",
+        "CHANGELOG.md",
+        "README.md",
+        "docs/wiki/modules/distribution/README.md",
         "docs/wiki/verification.md"
       ],
       "configDigest": "d295dc1ecd4ced7c629256d1f52dc85e5520c5c28eb33afa9510bcb881b6e45a",
@@ -510,11 +510,11 @@
           "mode": "100644"
         },
         ".claude-plugin/plugin.json": {
-          "sha256": "6e2a03654f74769521e3ffee187dcf8ee05ed5e43a5c21f59e8e81c68ff36933",
+          "sha256": "29ebab36709cd9a08b70528753692aa04bc308e9b0b772d013f04ec6b93a6f97",
           "mode": "100644"
         },
         ".codex-plugin/plugin.json": {
-          "sha256": "f3e828d9d2d62778a388f1d2913c0e9a102ba884f0b3fb8e81a9bfe94ea2120b",
+          "sha256": "e743d377508daf7d625422d246134f754bb8bf2023660f221b2627736cd34b3d",
           "mode": "100644"
         },
         ".github/dependabot.yml": {
@@ -550,11 +550,11 @@
           "mode": "100644"
         },
         "package.json": {
-          "sha256": "b22f212b9d91872b45897ad2dd5a6215dce6326b9433c0c0f5ae32e769c942f2",
+          "sha256": "5dbb0230a1b4ad929085cca5e38ad62f52278169372e592d41a6303b3f8955cb",
           "mode": "100644"
         },
         "README.md": {
-          "sha256": "3a11979e9d8c241c93ae5a820991485a91ad42b478639a2d2f2387ff3ed738c3",
+          "sha256": "1a8f5ab80387b1f610611b524a252dd698aed2c8307fbbdcba8ca1748acc5dfa",
           "mode": "100644"
         },
         "awesome-dsh-plugin-entry.yml": {
@@ -566,7 +566,7 @@
           "mode": "100644"
         },
         "CHANGELOG.md": {
-          "sha256": "66d84e2992151be4da830d78c9a3e12052cbc4b1f77bb3be5a0433389fad2b92",
+          "sha256": "e88214658f3e48494e94f4bc7e77e19f8b5530d4a14bf680facbf5742a19f440",
           "mode": "100644"
         },
         ".gitignore": {
@@ -628,7 +628,7 @@
       },
       "docSnapshot": {
         "docs/wiki/modules/distribution/README.md": {
-          "sha256": "014ad62ae666187c84075679be02654c59b54b96e26eed625c7571a96d6d9e0b",
+          "sha256": "8276cb732bf9c133ed7d5178911234c6f3aee8cad1b1aee1a41eea0ed8544f2e",
           "mode": "100644"
         },
         "docs/wiki/modules/distribution/dependencies.md": {
@@ -636,7 +636,7 @@
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "158e4aea7916ed6bf794280be25ed2b1d2d374e4fd280fae7edf84431630341b",
+          "sha256": "28ed41074513b668d155fb9dcb3908ec808b3b8c761d45a192d6aca9f87f2c26",
           "mode": "100644"
         },
         "docs/wiki/environments.md": {
