@@ -11,7 +11,7 @@
 
 ## 用途与边界
 
-Claude Code、Codex、Qoder 和 DSH 使用同一份 skills 真源。三份插件清单与 package.json 的发布候选版本均为 0.12.2，Qoder 适配仍记录在 CHANGELOG 的 Unreleased，尚未执行新版本发布。本地版本准备、远端 Release 和用户已安装版本是不同状态，应分别核实。
+Claude Code、Codex、Qoder 和 DSH 使用同一份 skills 真源。三份插件清单与 package.json 的发布候选版本均为 0.13.0，Qoder 适配与 worktree 目录调整已归入 CHANGELOG 的 0.13.0 段落；本地版本准备完成，远端发布状态另行核实。本地版本准备、远端 Release 和用户已安装版本是不同状态，应分别核实。
 
 README 与发布文档记录的宿主更新语义在本次只作仓库约定引用，没有用真实安装副本复测。npm 工作流在当前文件中仅支持手动触发，不能从存在 publish.yml 推断 registry 已发布。
 
@@ -22,7 +22,7 @@ README 与发布文档记录的宿主更新语义在本次只作仓库约定引�
 3. package.json 的 files 包含 skills，使技能 references、脚本与 assets 随包分发；项目自身 docs 不是必需运行资产。
 4. release.mjs 要求干净工作区与 main 分支，运行 doctor，同步四处版本和 CHANGELOG，创建提交与标签；可显式选择推送。
 5. PR 的 Wiki 检查 job 明确检出 head，分别运行结构检查与以 base/head 为范围的同步检查门；Git 树中的记录不能被工作区补写替代。
-6. release.yml 在标签推送时校验标签版本并构建 Qoder ZIP，创建 GitHub Release 并上传附件；重跑可补传或覆盖同名 ZIP；publish.yml 是独立手动 npm 流程。旧验证页记载本地版本准备；本轮只核对清单与脚本，未重做发布或核查历史发布操作，后续远端动作以对应 Release 和流水线实际结果为准。
+6. release.yml 在标签推送时校验标签版本并构建 Qoder ZIP，创建 GitHub Release 并上传附件；重跑可补传或覆盖同名 ZIP；publish.yml 是独立手动 npm 流程。旧验证页记载本地版本准备；本轮已准备 0.13.0 本地发布候选，未据此推导远端发布成功，后续远端动作以对应 Release 和流水线实际结果为准。
 
 ### Qoder 打包边界
 

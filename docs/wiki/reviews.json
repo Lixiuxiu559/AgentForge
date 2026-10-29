@@ -298,17 +298,14 @@
       }
     },
     "wiki-tooling": {
-      "reviewedAt": "2026-10-29T09:49:06.186Z",
+      "reviewedAt": "2026-10-29T09:51:30.773Z",
       "reviewer": "Codex",
       "decision": "updated",
-      "reason": "核对package新增Qoder命令/清单文件和wiki.config新增分发来源，未改变Wiki引擎或模板；入口、术语和验证页同步四端/当前0.12.2候选及独立回归证据。实际包内Wiki脚本运行、87项测试及13页142链接结构检查通过；独立复审通过，不将离线校验当模型验证。 提交前已核对暂存内容与该复核范围一致。",
+      "reason": "实际核对0.13.0包清单及Wiki入口和验证页：仅新增发布版本与候选证据，Wiki引擎/模板/配置未变。新版本87项回归、doctor、打包与官方离线校验通过，未将本地候选当远端成功。",
       "evidence": [
         "package.json",
-        "docs/wiki/wiki.config.json",
         "docs/wiki/README.md",
-        "docs/wiki/concepts.md",
-        "docs/wiki/verification.md",
-        "skills/wiki/scripts/wiki.mjs"
+        "docs/wiki/verification.md"
       ],
       "configDigest": "6a1c6543293a8ffa69a9bf268df5240201834a5d9ec3a243dfe014a15ef7f9dd",
       "sourceSnapshot": {
@@ -449,7 +446,7 @@
           "mode": "100644"
         },
         "package.json": {
-          "sha256": "e937c6709b743fdca2b922227486b6919ddd49c0e26d602296558e091aa94f3d",
+          "sha256": "338452c0bf59da8197cfd1d787a384b10441438209c87833cc81e1dbe594800c",
           "mode": "100644"
         },
         "AGENTS.md": {
@@ -463,7 +460,7 @@
       },
       "docSnapshot": {
         "docs/wiki/README.md": {
-          "sha256": "34a147a950a9b674a38ce570990d8dab68130b751ad926d4c6c204f67f25c090",
+          "sha256": "90222834027e71f22f73c480927b93a563deee4550c61ce8bbd1331b77bd2fc4",
           "mode": "100644"
         },
         "docs/wiki/concepts.md": {
@@ -483,7 +480,7 @@
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "5c0dc1f0f92b66e39c08d631e64109e5a52c1b544888ee68d9a010bdfea627ce",
+          "sha256": "4ab544f801933da74bb7491392f7ddef8c1c144adefcfb244c921002b4296d84",
           "mode": "100644"
         },
         "docs/wiki/freshness.md": {
@@ -493,26 +490,19 @@
       }
     },
     "distribution": {
-      "reviewedAt": "2026-10-29T09:49:06.620Z",
+      "reviewedAt": "2026-10-29T09:51:31.222Z",
       "reviewer": "Codex",
       "decision": "updated",
-      "reason": "逐项对照Qoder清单、临时转换打包、最小CommonJS模块边界、四处版本与CI/Release附件流程，更新分发/依赖/环境/运维文档并独立复审。87项测试、doctor、ZIP构建及本机Qoder官方离线校验通过，三轴均0发现；真实客户端/UI/升级和远端发布未执行，保留旧worktree改动，未推送或发布。 提交前已核对暂存内容与该复核范围一致。",
+      "reason": "实际对照三份插件清单与package.json均0.13.0、CHANGELOG版本段、README固定tag、环境/分发/验证页：release脚本已完成本地版本准备，尚未推送的标签待最终检查后指向知识同步候选。新版本87项测试、doctor、ZIP构建及官方离线校验通过；远端CI/Release和客户端运行不由本地结果推导。",
       "evidence": [
+        ".claude-plugin/plugin.json",
+        ".codex-plugin/plugin.json",
         ".qoder-plugin/plugin.json",
-        "tools/package-qoder.mjs",
-        "tools/doctor.mjs",
-        "tools/release.mjs",
-        "tests/qoder-package.test.mjs",
-        "tests/release.test.mjs",
-        ".github/workflows/validate.yml",
-        ".github/workflows/release.yml",
-        "docs/qoder.md",
-        "docs/architecture.md",
-        "docs/releasing.md",
-        "docs/wiki/modules/distribution/README.md",
-        "docs/wiki/modules/distribution/dependencies.md",
+        "package.json",
+        "CHANGELOG.md",
+        "README.md",
         "docs/wiki/environments.md",
-        "docs/wiki/operations.md",
+        "docs/wiki/modules/distribution/README.md",
         "docs/wiki/verification.md"
       ],
       "configDigest": "6a1c6543293a8ffa69a9bf268df5240201834a5d9ec3a243dfe014a15ef7f9dd",
@@ -526,11 +516,11 @@
           "mode": "100644"
         },
         ".claude-plugin/plugin.json": {
-          "sha256": "29ebab36709cd9a08b70528753692aa04bc308e9b0b772d013f04ec6b93a6f97",
+          "sha256": "98ac59e2c8d0ab6012217b55bdefe95a5e570fcef0227f2c24bbcafdf082443a",
           "mode": "100644"
         },
         ".codex-plugin/plugin.json": {
-          "sha256": "e743d377508daf7d625422d246134f754bb8bf2023660f221b2627736cd34b3d",
+          "sha256": "1e43ed21a5e45e16a791ff33d0064326f92914af410acf313feefb6abe83678f",
           "mode": "100644"
         },
         ".github/dependabot.yml": {
@@ -570,11 +560,11 @@
           "mode": "100644"
         },
         "package.json": {
-          "sha256": "e937c6709b743fdca2b922227486b6919ddd49c0e26d602296558e091aa94f3d",
+          "sha256": "338452c0bf59da8197cfd1d787a384b10441438209c87833cc81e1dbe594800c",
           "mode": "100644"
         },
         "README.md": {
-          "sha256": "dca35a28856532fbc06e0d2ccceb37ddf589fbdf572d383022250fb751e3df32",
+          "sha256": "2d16f53f027894b061320b50040949ed41e50ea1caa400393a0112cb046ba7bd",
           "mode": "100644"
         },
         "awesome-dsh-plugin-entry.yml": {
@@ -586,7 +576,7 @@
           "mode": "100644"
         },
         "CHANGELOG.md": {
-          "sha256": "21247ab65a3d1f5208d3d71804fe2e30199ce4beccbcdd5e14ccfe24405cb1e3",
+          "sha256": "786256189462cb6ab625995c79acf01c04e12157b2cf435a701e8246c50f780b",
           "mode": "100644"
         },
         ".gitignore": {
@@ -646,7 +636,7 @@
           "mode": "100644"
         },
         ".qoder-plugin/plugin.json": {
-          "sha256": "40e278219fa86f20ef00a640d20192a8c0e77ef151debdcffed889962dd009e4",
+          "sha256": "0d4a5c4a85560cf3e4e9d4da44f3cb2f04bc8c8237ff0e6481941b7b9599c8f5",
           "mode": "100644"
         },
         "docs/qoder.md": {
@@ -664,7 +654,7 @@
       },
       "docSnapshot": {
         "docs/wiki/modules/distribution/README.md": {
-          "sha256": "9886a4c7fab18c8b63a6ce62e380dbafd956883a5dfe66ccf6798b6795442bc9",
+          "sha256": "2ceb2d13d447e71d389048b48d5027fb3ea6fd0fb55b10ca29a3ef5753fb33ca",
           "mode": "100644"
         },
         "docs/wiki/modules/distribution/dependencies.md": {
@@ -672,11 +662,11 @@
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "5c0dc1f0f92b66e39c08d631e64109e5a52c1b544888ee68d9a010bdfea627ce",
+          "sha256": "4ab544f801933da74bb7491392f7ddef8c1c144adefcfb244c921002b4296d84",
           "mode": "100644"
         },
         "docs/wiki/environments.md": {
-          "sha256": "cd035c8392766368c14189f7927327d04e725c10ca90f48c0723588215c80073",
+          "sha256": "f848d8c72e0b8a6f53c00352632da58e32ed235b74bbbcd5dc4dd65d025482ac",
           "mode": "100644"
         },
         "docs/wiki/operations.md": {
