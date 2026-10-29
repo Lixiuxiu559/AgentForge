@@ -2,12 +2,18 @@
 
 已有项目的目录、标题、元数据和人工内容优先，不为采用模板迁移全库。无约定时推荐docs/wiki；只创建需要的页面，模板由Agent按代码填充，脚本不生成知识。
 
+## 文件和目录命名
+
+先读项目明确的命名约定及现有文档路径，沿用其惯例语言、大小写和分隔风格，不把对话语言或正文语言直接当作文件命名语言。`modules`、`README.md`、`reviews.json`、`wiki.config.json` 保留固定名称；模块子目录及概念、规则、架构、部署、运维等文件/目录按项目惯例命名。已有Wiki路径及项目自定义入口/记录位置不自动迁移；没有稳定惯例时沿用现有名称，确需新增则与项目主要文档命名风格一致。
+
+例如中文命名项目可用`核心概念.md`、`modules/订单/规则.md`、`系统架构/README.md`；英文命名项目沿用相应英文风格。下表的英文模板名属于技能内部资源，不是目标文件名约束，配置中的type标识仍使用英文。
+
 ## 默认布局
 
 | preset | 最小布局 | 适用方式 |
 |---|---|---|
 | small | README.md、wiki.config.json | 少量概念合并在入口，需要时再拆主题 |
-| modular | README.md、concepts.md、wiki.config.json、modules/<模块>/README.md | 按开发问题划模块；规则/代码映射/依赖较多时再拆 |
+| modular | README.md、概念页、wiki.config.json、modules/<模块>/README.md | 按开发问题划模块；概念页按项目命名，规则/代码映射/依赖较多时再拆 |
 | project | 保持现有结构 | 默认模式，只检查显式配置的约定 |
 
 架构、部署和运维可独立成页、合并章节或链接已有手册；不是必须创建的目录。默认small/modular入口须经普通Markdown链接到达知识目录各页，纯文本路径和图片不算导航。
@@ -41,6 +47,8 @@
 ## 检查配置
 
 路径相对于项目根；命令须显式传--config，工具不会自动发现。最小配置可用 `{"version":1,"modules":[],"structure":{"preset":"small"}}`，多模块改为modular。默认额外页按guide检查，modules下规则/映射/依赖按文件名选型；专用系统页须在documents显式声明type。
+
+文件名不采用内置英文名称时，用documents的type声明用途，例如`{"path":"docs/wiki/核心概念.md","type":"concepts"}`、`{"path":"docs/wiki/modules/订单/规则.md","type":"rules"}`。modular已声明concepts类型时，以声明路径作为必需概念页；未声明则保留concepts.md兼容默认值。改用本地语言名称不会取消类型的内容、元数据和导航检查；相应链接和modules.sources/docs也应使用实际路径。脚本不自动猜语言或翻译文件名。
 
 已有项目可声明自己的章节，也可对选定页启用模板类型：
 

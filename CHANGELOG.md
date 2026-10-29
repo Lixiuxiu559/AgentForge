@@ -16,7 +16,7 @@
 
 ### Added
 
-- 
+- Wiki文件和目录按项目现有命名语言与风格生成，保留modules、README.md、reviews.json和wiki.config.json；modular概念页可通过显式type选择实际路径，兼容原concepts.md并保留内容检查。
 
 ---
 

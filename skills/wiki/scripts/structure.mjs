@@ -116,7 +116,7 @@ export async function checkStructure({ root, wiki, files, profile, texts, graph,
   if (defaults) {
     required(wikiPath('README.md'), `index-${structure.preset}`)
     if (structure.preset === 'modular') {
-      required(wikiPath('concepts.md'), 'concepts')
+      if (!structure.documents?.some(document => document.type === 'concepts')) required(wikiPath('concepts.md'), 'concepts')
       let modules = []
       try { modules = (await readdir(await safe(root, wikiPath('modules')), { withFileTypes: true })).filter(entry => entry.isDirectory()) }
       catch (error) { if (error.code !== 'ENOENT') throw error }
