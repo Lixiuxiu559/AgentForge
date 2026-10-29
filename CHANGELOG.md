@@ -7,7 +7,7 @@
 
 > **注意**：只有 bump `.claude-plugin/plugin.json` 的 `version` 并打标签才算发版。
 > 日常 push 不改变用户看到的版本。发版时 `release.mjs` 会**同步 bump
-> `.codex-plugin/plugin.json` 与 `package.json`**，三处漂移会被 `doctor` 判为 error。
+> `.codex-plugin/plugin.json`、`.qoder-plugin/plugin.json` 与 `package.json`**，四处漂移会被 `doctor` 判为 error。
 > 详见 [`docs/releasing.md`](docs/releasing.md)。
 
 ---
@@ -16,7 +16,8 @@
 
 ### Added
 
-- 
+- 新增 Qoder 插件适配：共用 11 个技能，生成独立 ZIP 并转换架构侦察的主动调用策略；补充四处版本同步、清单与打包检查、Release 附件及安装说明。真实宿主调用与升级另行验证。
+- worktree技能的固定目录由项目主工作树根下的`.worktree/`改为`worktree/`，保留分支层级；已有旧工作树不自动迁移或删除，旧忽略规则保留兼容。
 
 ---
 

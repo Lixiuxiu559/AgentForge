@@ -83,7 +83,11 @@
         "src/index.js",
         "cordis.patch.yml",
         "skills/wiki/scripts",
-        "skills/wiki/references/freshness.md"
+        "skills/wiki/references/freshness.md",
+        ".qoder-plugin",
+        "docs/qoder.md",
+        "tests/qoder-package.test.mjs",
+        "tests/release.test.mjs"
       ],
       "docs": [
         "docs/wiki/modules/distribution/README.md",
