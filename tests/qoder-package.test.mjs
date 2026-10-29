@@ -33,11 +33,11 @@ function unpack(archive, destination) {
   execFileSync('unzip', ['-q', archive, '-d', destination])
 }
 
-test('Qoder archive keeps all eleven skills and runnable resources without changing shared source', async t => {
+test('Qoder archive keeps all thirteen skills and runnable resources without changing shared source', async t => {
   const root = await fixture(t)
   const before = await readFile(join(root, 'skills/architecture-scout/SKILL.md'), 'utf8')
   const result = await packageQoder({ root, outDir: join(root, 'output with spaces') })
-  assert.equal(result.skills, 11)
+  assert.equal(result.skills, 13)
   const entries = execFileSync('unzip', ['-Z1', result.output], { encoding: 'utf8' }).trim().split('\n')
   const expected = (await resources(join(root, 'skills')))
     .filter(file => !file.endsWith('/agents/openai.yaml')).map(file => `skills/${file}`)
@@ -99,7 +99,7 @@ test('Qoder packaging rejects version drift, missing skills and missing package 
   const skill = join(root, 'skills/research/SKILL.md')
   const body = await readFile(skill, 'utf8')
   await rm(skill)
-  await assert.rejects(packageQoder({ root }), /Expected eleven skills/)
+  await assert.rejects(packageQoder({ root }), /Expected thirteen skills/)
   await writeFile(skill, 'metadata missing\n')
   await assert.rejects(packageQoder({ root }), /Missing skill metadata/)
   await writeFile(skill, body)

@@ -5,5 +5,5 @@ url: https://github.com/Lixiuxiu559/AgentForge
 name: Lixiuxiu559/AgentForge
 category: workflow
 description:
-  en: 'Eleven engineering skills for Codex, Claude Code and DSH: worktree creation and removal, project wiki maintenance, requirement clarification and PRD writing, research, business test design, bug debugging, architecture scouting, implementation orchestration, three-axis diff review, complexity audit and mutation testing. Skills delegate through the host’s generic subagent tools when available.'
-  zh: '可安装到 Codex、Claude Code 与 DSH 的十一个工程技能：Worktree 创建与删除、项目 Wiki 维护、需求澄清与 PRD 撰写、调研、业务测试设计、Bug 调试、架构侦察、实施编排、三轴评审、复杂度审计和突变测试。按需通过宿主通用子 agent 能力委派，无需注册自定义 agent。'
+  en: 'Thirteen engineering skills for Codex, Claude Code and DSH: worktree creation and removal, project wiki maintenance, requirement clarification and PRD writing, page prototyping, architecture design, research, business test design, bug debugging, architecture scouting, implementation orchestration, three-axis diff review, complexity audit and mutation testing. Skills delegate through the host’s generic subagent tools when available.'
+  zh: '可安装到 Codex、Claude Code 与 DSH 的十三个工程技能：Worktree 创建与删除、项目 Wiki 维护、需求澄清与 PRD 撰写、页面原型与架构设计、调研、业务测试设计、Bug 调试、架构侦察、实施编排、三轴评审、复杂度审计和突变测试。按需通过宿主通用子 agent 能力委派，无需注册自定义 agent。'
