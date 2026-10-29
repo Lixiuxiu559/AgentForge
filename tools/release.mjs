@@ -2,10 +2,11 @@
 /**
  * AgentForge 发版脚本。
  *
- * 一次发版同步更新 Claude Code、Codex 和 npm 清单的版本号：
+ * 一次发版同步更新 Claude Code、Codex、Qoder 和 npm 清单的版本号：
  *
  *   .claude-plugin/plugin.json   Claude Code 的发版开关 —— 不 bump 它，CC 用户收不到更新
  *   .codex-plugin/plugin.json    Codex 插件版本；安装来源的更新还取决于 marketplace 刷新
+ *   .qoder-plugin/plugin.json    Qoder ZIP 分发版本
  *   package.json                 npm 侧版本 —— registry 安装按 semver 解析，这才是开关。
  *                                link 安装直接读磁盘；**git 安装钉的是 commit，与版本号无关**
  *                                （`pnpm update` 会重解析到分支最新 commit）。见 docs/releasing.md
@@ -31,6 +32,7 @@ import path from 'node:path'
 const ROOT = path.resolve(import.meta.dirname, '..')
 const PLUGIN_JSON = path.join(ROOT, '.claude-plugin', 'plugin.json')
 const CODEX_PLUGIN_JSON = path.join(ROOT, '.codex-plugin', 'plugin.json')
+const QODER_PLUGIN_JSON = path.join(ROOT, '.qoder-plugin', 'plugin.json')
 const PACKAGE_JSON = path.join(ROOT, 'package.json')
 const CHANGELOG = path.join(ROOT, 'CHANGELOG.md')
 
@@ -100,6 +102,7 @@ try {
 // 4. 计算新版本
 const plugin = JSON.parse(fs.readFileSync(PLUGIN_JSON, 'utf8'))
 const codexPlugin = JSON.parse(fs.readFileSync(CODEX_PLUGIN_JSON, 'utf8'))
+const qoderPlugin = JSON.parse(fs.readFileSync(QODER_PLUGIN_JSON, 'utf8'))
 const pkg = JSON.parse(fs.readFileSync(PACKAGE_JSON, 'utf8'))
 const current = plugin.version
 if (typeof current !== 'string' || !SEMVER.test(current)) {
@@ -115,7 +118,7 @@ else if (SEMVER.test(bump)) next = bump
 else die(`无法识别的版本参数 "${bump}"`, '用 patch / minor / major，或显式 x.y.z')
 
 if (next === current) die(`新版本与当前版本相同（${current}）`)
-console.log(`✅ 版本：${current} → ${next}（三处同步）`)
+console.log(`✅ 版本：${current} → ${next}（四处同步）`)
 
 // 5. tag 不存在
 const tag = `v${next}`
@@ -142,7 +145,7 @@ console.log('✅ CHANGELOG 有 Unreleased 内容')
 if (DRY) {
   console.log('\n' + '─'.repeat(64))
   console.log('--dry-run：未做任何修改。')
-  console.log(`将要执行：bump 两份 plugin.json 与 package.json ${current} → ${next}，`)
+  console.log(`将要执行：bump 三份 plugin.json 与 package.json ${current} → ${next}，`)
   console.log(`          提交 chore(release): ${tag}，打标签 ${tag}`)
   console.log()
   process.exit(0)
@@ -152,7 +155,7 @@ if (DRY) {
 
 const today = new Date().toISOString().slice(0, 10)
 
-// 7. 同步更新三处清单版本
+// 7. 同步更新四处清单版本
 plugin.version = next
 fs.writeFileSync(PLUGIN_JSON, `${JSON.stringify(plugin, null, 2)}\n`)
 console.log(`✅ 已更新 .claude-plugin/plugin.json`)
@@ -160,6 +163,10 @@ console.log(`✅ 已更新 .claude-plugin/plugin.json`)
 codexPlugin.version = next
 fs.writeFileSync(CODEX_PLUGIN_JSON, `${JSON.stringify(codexPlugin, null, 2)}\n`)
 console.log('✅ 已更新 .codex-plugin/plugin.json')
+
+qoderPlugin.version = next
+fs.writeFileSync(QODER_PLUGIN_JSON, `${JSON.stringify(qoderPlugin, null, 2)}\n`)
+console.log('✅ 已更新 .qoder-plugin/plugin.json')
 
 pkg.version = next
 fs.writeFileSync(PACKAGE_JSON, `${JSON.stringify(pkg, null, 2)}\n`)
@@ -176,7 +183,7 @@ fs.writeFileSync(CHANGELOG, updated)
 console.log('✅ 已更新 CHANGELOG.md')
 
 // 9. 提交 + 打标签
-git(['add', '.claude-plugin/plugin.json', '.codex-plugin/plugin.json', 'package.json', 'CHANGELOG.md'])
+git(['add', '.claude-plugin/plugin.json', '.codex-plugin/plugin.json', '.qoder-plugin/plugin.json', 'package.json', 'CHANGELOG.md'])
 git(['commit', '-m', `chore(release): ${tag}`])
 console.log(`✅ 已提交 chore(release): ${tag}`)
 
@@ -191,6 +198,7 @@ if (PUSH) {
   console.log(`\n🚀 已推送 ${tag} 到远程。`)
   console.log(`   Claude Code 用户执行 /plugin update 即可拿到 ${next}。`)
   console.log('   Codex 用户刷新 agentforge marketplace 并更新已安装插件。')
+  console.log('   Qoder 用户下载 GitHub Release 的 ZIP 并重新导入；以宿主显示版本为准。')
   console.log(`   DSH 用户（github: 安装）跑 dsh plugin --profile <p> update 即可拿到。`)
 } else {
   console.log(`\n下一步：git push --follow-tags\n`)

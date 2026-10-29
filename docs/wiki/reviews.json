@@ -2,15 +2,18 @@
   "version": 1,
   "modules": {
     "skill-methods": {
-      "reviewedAt": "2026-10-29T05:54:53.238Z",
+      "reviewedAt": "2026-10-29T09:49:05.557Z",
       "reviewer": "Codex",
-      "decision": "no-change",
-      "reason": "已核对暂存Wiki入口和方法总览，新增命名语言与固定名称约定不改变技能职责、模块复审及授权边界；方法页仍准确，保留原其他技能核验范围。80回归通过，未作宿主命名判断实测。",
+      "decision": "updated",
+      "reason": "对照共享技能与架构差异核对方法页：本轮只新增Qoder打包副本的architecture-scout调用策略，技能源未改；原worktree可见目录约定保留。方法页补充分发边界，87项回归与独立Wiki复审通过，未声称跨宿主模型行为实测。 提交前已核对暂存内容与该复核范围一致。",
       "evidence": [
-        "skills/wiki/SKILL.md",
+        "docs/architecture.md",
+        "skills/architecture-scout/SKILL.md",
+        "skills/architecture-scout/agents/openai.yaml",
+        "skills/worktree/SKILL.md",
         "docs/wiki/modules/skill-methods/README.md"
       ],
-      "configDigest": "d295dc1ecd4ced7c629256d1f52dc85e5520c5c28eb33afa9510bcb881b6e45a",
+      "configDigest": "6a1c6543293a8ffa69a9bf268df5240201834a5d9ec3a243dfe014a15ef7f9dd",
       "sourceSnapshot": {
         "skills/architecture-scout/SKILL.md": {
           "sha256": "03bad07f48b866ed3a5d098b41c3797425105d26d645262236e28c44bc5b38bd",
@@ -181,7 +184,7 @@
           "mode": "100644"
         },
         "skills/worktree/SKILL.md": {
-          "sha256": "1e1b43688c4efbd08e82b1d4af4e70d0398c6e09d4a9f351a766b514bd682f36",
+          "sha256": "c722b7e9377b1b60464598d923b75e821115bb7e5eec61d797aed62656544557",
           "mode": "100644"
         },
         "skills/wiki/SKILL.md": {
@@ -189,7 +192,7 @@
           "mode": "100644"
         },
         "docs/architecture.md": {
-          "sha256": "d2c4740682bc33c244930f45adc8cc9cbcf581c745ff0c9a5398cbfa912cab4e",
+          "sha256": "1043735d32daa87d3b54d2edb4b5feda809ef7918957a3e519358e9e4b07b72d",
           "mode": "100644"
         },
         "docs/design/2026-10-16-lifecycle-walkthroughs.md": {
@@ -243,22 +246,24 @@
       },
       "docSnapshot": {
         "docs/wiki/modules/skill-methods/README.md": {
-          "sha256": "b22573dab239933aa505092d966ef09e5adc9d8871c180ca3f2efae736a23014",
+          "sha256": "26b7b92d895674c4c8a134d758bddfb0b33e7e34c9cc352ac36f43675d77cf43",
           "mode": "100644"
         }
       }
     },
     "skill-provider": {
-      "reviewedAt": "2026-10-28T07:45:32.532Z",
+      "reviewedAt": "2026-10-29T09:49:05.756Z",
       "reviewer": "Codex",
-      "decision": "updated",
-      "reason": "待提交provider知识页仅将宿主未实测限制归回核验章节；provider源码/发现契约与已提交worktree技能对应测试未变，78回归已通过，不把该限制变成待确认任务。",
+      "decision": "no-change",
+      "reason": "实际核对架构新增Qoder装配与src/index.js、cordis.patch.yml及发现测试：Qoder只在打包副本转换，不进入DSH provider，发现/读取与调用策略接口未变。原provider知识仍准确，2项provider回归包含在87项通过中，无需改写该模块页。 提交前已核对暂存内容与该复核范围一致。",
       "evidence": [
+        "docs/architecture.md",
         "src/index.js",
+        "cordis.patch.yml",
         "tests/skill-provider.test.mjs",
         "docs/wiki/modules/skill-provider/README.md"
       ],
-      "configDigest": "d295dc1ecd4ced7c629256d1f52dc85e5520c5c28eb33afa9510bcb881b6e45a",
+      "configDigest": "6a1c6543293a8ffa69a9bf268df5240201834a5d9ec3a243dfe014a15ef7f9dd",
       "sourceSnapshot": {
         "src/index.js": {
           "sha256": "cbeb5a237c842edea34f64ce2d66c126d880bd18be1eaff2afedbe56d80204b4",
@@ -273,7 +278,7 @@
           "mode": "100644"
         },
         "docs/architecture.md": {
-          "sha256": "d2c4740682bc33c244930f45adc8cc9cbcf581c745ff0c9a5398cbfa912cab4e",
+          "sha256": "1043735d32daa87d3b54d2edb4b5feda809ef7918957a3e519358e9e4b07b72d",
           "mode": "100644"
         },
         "skills/architecture-scout/SKILL.md": {
@@ -293,17 +298,19 @@
       }
     },
     "wiki-tooling": {
-      "reviewedAt": "2026-10-29T05:55:48.039Z",
+      "reviewedAt": "2026-10-29T09:49:06.186Z",
       "reviewer": "Codex",
       "decision": "updated",
-      "reason": "版本准备后package仅0.12.1变0.12.2，命名实现不再修改；验证页记录80回归、中文路径和英文兼容范围及未作宿主实测的限制。已读回本地候选说明，doctor和结构检查通过。",
+      "reason": "核对package新增Qoder命令/清单文件和wiki.config新增分发来源，未改变Wiki引擎或模板；入口、术语和验证页同步四端/当前0.12.2候选及独立回归证据。实际包内Wiki脚本运行、87项测试及13页142链接结构检查通过；独立复审通过，不将离线校验当模型验证。 提交前已核对暂存内容与该复核范围一致。",
       "evidence": [
         "package.json",
-        "skills/wiki/SKILL.md",
-        "skills/wiki/scripts/structure.mjs",
-        "docs/wiki/verification.md"
+        "docs/wiki/wiki.config.json",
+        "docs/wiki/README.md",
+        "docs/wiki/concepts.md",
+        "docs/wiki/verification.md",
+        "skills/wiki/scripts/wiki.mjs"
       ],
-      "configDigest": "d295dc1ecd4ced7c629256d1f52dc85e5520c5c28eb33afa9510bcb881b6e45a",
+      "configDigest": "6a1c6543293a8ffa69a9bf268df5240201834a5d9ec3a243dfe014a15ef7f9dd",
       "sourceSnapshot": {
         "skills/wiki/SKILL.md": {
           "sha256": "a1c4649ac05147d6ce6e69758c5c42de25931a691afc2e5fa99f3941f3eaf725",
@@ -426,7 +433,7 @@
           "mode": "100644"
         },
         "docs/wiki/wiki.config.json": {
-          "sha256": "07b39775f305ab9275a8f9605756b2992c9a9c560b370c8e8f79b038a2eec020",
+          "sha256": "7df6681e9a9b900e64ecabf1d668216932b4d00e30d81ed0300e51637327be19",
           "mode": "100644"
         },
         "tests/wiki-freshness.test.mjs": {
@@ -442,7 +449,7 @@
           "mode": "100644"
         },
         "package.json": {
-          "sha256": "5dbb0230a1b4ad929085cca5e38ad62f52278169372e592d41a6303b3f8955cb",
+          "sha256": "e937c6709b743fdca2b922227486b6919ddd49c0e26d602296558e091aa94f3d",
           "mode": "100644"
         },
         "AGENTS.md": {
@@ -456,11 +463,11 @@
       },
       "docSnapshot": {
         "docs/wiki/README.md": {
-          "sha256": "bf584e4843f06299cf3f2f598848bedfda78380efefbc939c2dec7146a562aaf",
+          "sha256": "34a147a950a9b674a38ce570990d8dab68130b751ad926d4c6c204f67f25c090",
           "mode": "100644"
         },
         "docs/wiki/concepts.md": {
-          "sha256": "c26bb72386089c353e8930a758caf268895fd1e689e90958b1faf796e8f733da",
+          "sha256": "ad7597665176aef1a90380d741f62b37c9ae0d7971a79c8208a324bbca871e06",
           "mode": "100644"
         },
         "docs/wiki/modules/wiki-tooling/README.md": {
@@ -476,7 +483,7 @@
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "28ed41074513b668d155fb9dcb3908ec808b3b8c761d45a192d6aca9f87f2c26",
+          "sha256": "5c0dc1f0f92b66e39c08d631e64109e5a52c1b544888ee68d9a010bdfea627ce",
           "mode": "100644"
         },
         "docs/wiki/freshness.md": {
@@ -486,20 +493,29 @@
       }
     },
     "distribution": {
-      "reviewedAt": "2026-10-29T05:55:48.580Z",
+      "reviewedAt": "2026-10-29T09:49:06.620Z",
       "reviewer": "Codex",
       "decision": "updated",
-      "reason": "核对三处0.12.2版本、CHANGELOG段落、README固定tag和分发页，打包资源及发布流程保持一致，doctor通过；只记录本地候选，不推导已发布或用户已更新，未发npm。",
+      "reason": "逐项对照Qoder清单、临时转换打包、最小CommonJS模块边界、四处版本与CI/Release附件流程，更新分发/依赖/环境/运维文档并独立复审。87项测试、doctor、ZIP构建及本机Qoder官方离线校验通过，三轴均0发现；真实客户端/UI/升级和远端发布未执行，保留旧worktree改动，未推送或发布。 提交前已核对暂存内容与该复核范围一致。",
       "evidence": [
-        ".claude-plugin/plugin.json",
-        ".codex-plugin/plugin.json",
-        "package.json",
-        "CHANGELOG.md",
-        "README.md",
+        ".qoder-plugin/plugin.json",
+        "tools/package-qoder.mjs",
+        "tools/doctor.mjs",
+        "tools/release.mjs",
+        "tests/qoder-package.test.mjs",
+        "tests/release.test.mjs",
+        ".github/workflows/validate.yml",
+        ".github/workflows/release.yml",
+        "docs/qoder.md",
+        "docs/architecture.md",
+        "docs/releasing.md",
         "docs/wiki/modules/distribution/README.md",
+        "docs/wiki/modules/distribution/dependencies.md",
+        "docs/wiki/environments.md",
+        "docs/wiki/operations.md",
         "docs/wiki/verification.md"
       ],
-      "configDigest": "d295dc1ecd4ced7c629256d1f52dc85e5520c5c28eb33afa9510bcb881b6e45a",
+      "configDigest": "6a1c6543293a8ffa69a9bf268df5240201834a5d9ec3a243dfe014a15ef7f9dd",
       "sourceSnapshot": {
         ".agents/plugins/marketplace.json": {
           "sha256": "16c2a3ed2aea0cc4a24c858df3b05f9e77785ab92181848c31a62bece4cd4dab",
@@ -526,11 +542,11 @@
           "mode": "100644"
         },
         ".github/workflows/release.yml": {
-          "sha256": "7258b5664bce82bd3cbe672b31298960f62ebfe67df544fa09dada2b395d2186",
+          "sha256": "014f328434387fabbd0475165dcd2f97a455fbfa267368a263a0945266c44942",
           "mode": "100644"
         },
         ".github/workflows/validate.yml": {
-          "sha256": "8cee4f5ccc379e5a54e207424e3d404df0762101726855263fce3971d2e74493",
+          "sha256": "605afa4cc430beb6382b748aac8530aadab5a8e8530a5427c28b3f5700da972e",
           "mode": "100644"
         },
         "tools/changelog-section.mjs": {
@@ -538,11 +554,15 @@
           "mode": "100644"
         },
         "tools/doctor.mjs": {
-          "sha256": "2a52133c614813b95b1e70ccb0e48aed3893bdc2876d2ed590bcc784bc3cfb26",
+          "sha256": "7b5ed98e1ceaba15f1312651ed9606b246e5b09553afa607d1d670dd1615f848",
+          "mode": "100644"
+        },
+        "tools/package-qoder.mjs": {
+          "sha256": "30741e962e458225d50c715a00f794e30a9afcea0d9f68ff2475de0f669db1c6",
           "mode": "100644"
         },
         "tools/release.mjs": {
-          "sha256": "14b9c3649fc534c396e1ac6de8b54db323d8c6c988025bbc53dac946ec8e724d",
+          "sha256": "9cf82db685adc82e6ec51194cb6b93849f6c77d1bbf72f7bbcca364597fc4a54",
           "mode": "100644"
         },
         "tools/wiki-project.mjs": {
@@ -550,11 +570,11 @@
           "mode": "100644"
         },
         "package.json": {
-          "sha256": "5dbb0230a1b4ad929085cca5e38ad62f52278169372e592d41a6303b3f8955cb",
+          "sha256": "e937c6709b743fdca2b922227486b6919ddd49c0e26d602296558e091aa94f3d",
           "mode": "100644"
         },
         "README.md": {
-          "sha256": "1a8f5ab80387b1f610611b524a252dd698aed2c8307fbbdcba8ca1748acc5dfa",
+          "sha256": "dca35a28856532fbc06e0d2ccceb37ddf589fbdf572d383022250fb751e3df32",
           "mode": "100644"
         },
         "awesome-dsh-plugin-entry.yml": {
@@ -566,11 +586,11 @@
           "mode": "100644"
         },
         "CHANGELOG.md": {
-          "sha256": "e88214658f3e48494e94f4bc7e77e19f8b5530d4a14bf680facbf5742a19f440",
+          "sha256": "21247ab65a3d1f5208d3d71804fe2e30199ce4beccbcdd5e14ccfe24405cb1e3",
           "mode": "100644"
         },
         ".gitignore": {
-          "sha256": "f9ff894cb932cc40ccbfcf51c0e91976c8a96e2b52af60514d74b6523d81f411",
+          "sha256": "338dd9b2cd7d6a076d2dc0f94944b5796234a413b774f44cef3882d11b983422",
           "mode": "100644"
         },
         "LICENSE": {
@@ -578,11 +598,11 @@
           "mode": "100644"
         },
         "docs/architecture.md": {
-          "sha256": "d2c4740682bc33c244930f45adc8cc9cbcf581c745ff0c9a5398cbfa912cab4e",
+          "sha256": "1043735d32daa87d3b54d2edb4b5feda809ef7918957a3e519358e9e4b07b72d",
           "mode": "100644"
         },
         "docs/releasing.md": {
-          "sha256": "61e2cc939fefcc58e93e866ee4ba14d9319f1cdb40b63589a3e4d08f128effeb",
+          "sha256": "ac952608b57b35b84818f3eaa94fa77970c4c0c26220a5c76df49c9ed620e25e",
           "mode": "100644"
         },
         "docs/npm-publishing.md": {
@@ -624,27 +644,43 @@
         "skills/wiki/references/freshness.md": {
           "sha256": "73807b03883274f1741b1295a4611466b55a9c48193e1981cbaf07d2dc294c5a",
           "mode": "100644"
+        },
+        ".qoder-plugin/plugin.json": {
+          "sha256": "40e278219fa86f20ef00a640d20192a8c0e77ef151debdcffed889962dd009e4",
+          "mode": "100644"
+        },
+        "docs/qoder.md": {
+          "sha256": "7ea3deffce95428d198b56971a8544de850fdc0c51ae2ba800d8ce3e5b7cfcf7",
+          "mode": "100644"
+        },
+        "tests/qoder-package.test.mjs": {
+          "sha256": "e775368c9be6a6c2d6cd39ab5cc4b046a8a94943093da6c6bc730511309abcb9",
+          "mode": "100644"
+        },
+        "tests/release.test.mjs": {
+          "sha256": "3cf6c39ab01fc16a1a6f84ca0f9a6207b97cb517027233b546e0860421a2ee35",
+          "mode": "100644"
         }
       },
       "docSnapshot": {
         "docs/wiki/modules/distribution/README.md": {
-          "sha256": "8276cb732bf9c133ed7d5178911234c6f3aee8cad1b1aee1a41eea0ed8544f2e",
+          "sha256": "9886a4c7fab18c8b63a6ce62e380dbafd956883a5dfe66ccf6798b6795442bc9",
           "mode": "100644"
         },
         "docs/wiki/modules/distribution/dependencies.md": {
-          "sha256": "20acb7737edaac6b3b036de5c9159fc6e45d6235b39d0835fcc1b8cc6b0af315",
+          "sha256": "6674f64d94810b74593f0e87bb6c9979a25962568c882eef5e455ab2ebf18f53",
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "28ed41074513b668d155fb9dcb3908ec808b3b8c761d45a192d6aca9f87f2c26",
+          "sha256": "5c0dc1f0f92b66e39c08d631e64109e5a52c1b544888ee68d9a010bdfea627ce",
           "mode": "100644"
         },
         "docs/wiki/environments.md": {
-          "sha256": "f236e6dc8b7cfb3477bb4b5de0479fc32fdab0002d86bc443be7ac0d121e2320",
+          "sha256": "cd035c8392766368c14189f7927327d04e725c10ca90f48c0723588215c80073",
           "mode": "100644"
         },
         "docs/wiki/operations.md": {
-          "sha256": "c7fa18726271986e863360050d1d27591d044a41b00eb8ab0f60f56de64540c5",
+          "sha256": "5f6532c062192bbb7960cc6b1afe336dd565df68079118ee53be005e900c9f58",
           "mode": "100644"
         }
       }

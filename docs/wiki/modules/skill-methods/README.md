@@ -24,7 +24,7 @@
 | [diff-review](../../../../skills/diff-review/SKILL.md) | Correctness、Standards、Spec 三轴独立评审 |
 | [complexity-audit](../../../../skills/complexity-audit/SKILL.md) | 复杂度与覆盖率风险报告；工具不足如实降级 |
 | [mutation-testing](../../../../skills/mutation-testing/SKILL.md) | 用已有突变工具审计测试漏洞；不提交业务或测试修复 |
-| [worktree](../../../../skills/worktree/SKILL.md) | add 接受两个分支参数，在主工作树 `.worktree/<分支>/` 创建；remove 检查身份与未提交/忽略内容后移除工作树，保留分支；不恢复或推送 |
+| [worktree](../../../../skills/worktree/SKILL.md) | add 接受两个分支参数，在主工作树 `worktree/<分支>/` 创建；remove 检查身份与未提交/忽略内容后移除工作树，保留分支；不恢复或推送 |
 | [wiki](../../../../skills/wiki/SKILL.md) | 依据当前代码面向开发人员编写架构、业务实现、部署与运维知识，辅助检查与同步 |
 
 ## 主要流程
@@ -37,6 +37,8 @@
 6. 主 Agent 核对返回产物、实际执行证据及缺口后交付；技能交付不自动触发下个阶段。
 
 `worktree add` 正常路径只询问 from 使用本地还是远端；未配置 origin 且有多个远端时补问远端。目标分支在本地或所选远端已存在即停止，远端查询失败不能当作不存在。linked worktree 内调用仍定位主工作树，父路径不能穿过其他工作树或符号链接。`worktree remove <分支>` 不查询远端，删除前核对目录与分支一致，未提交、未跟踪或忽略内容非空时停止；删除后验证分支提交未变。具体执行与失败边界见技能正文。
+
+Qoder 沿用同一套方法与授权边界；构建副本为 architecture-scout 写入仅用户主动调用策略，主源仍保留 Codex/DSH 元数据。具体转换和验证边界见[分发模块](../distribution/README.md)，不能由元数据推导真实模型行为。
 
 ## 阅读导航
 

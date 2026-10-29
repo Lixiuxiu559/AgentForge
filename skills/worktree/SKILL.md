@@ -1,6 +1,6 @@
 ---
 name: worktree
-description: 创建和删除 Git worktree，目录固定在目标项目根的 .worktree/ 下并保留分支层级。add 从本地或远端基线创建新分支；remove 移除工作树并保留分支。用户要求创建、删除 worktree 时使用，不负责恢复已有分支或推送。
+description: 创建和删除 Git worktree，目录固定在目标项目根的 worktree/ 下并保留分支层级。add 从本地或远端基线创建新分支；remove 移除工作树并保留分支。用户要求创建、删除 worktree 时使用，不负责恢复已有分支或推送。
 user-invocable: true
 argument-hint: "add <from分支> <新分支> | remove <分支>"
 ---
@@ -12,13 +12,14 @@ argument-hint: "add <from分支> <新分支> | remove <分支>"
 /agentforge:worktree remove feature/login
 ```
 
-add 接受 from、新分支两个参数；remove 接受一个分支参数，动作不可省略。不接受目录参数，目标固定为 `<项目主工作树根>/.worktree/<分支>/`，如 `.worktree/feature/login/`。
+add 接受 from、新分支两个参数；remove 接受一个分支参数，动作不可省略。不接受目录参数，目标固定为 `<项目主工作树根>/worktree/<分支>/`，如 `worktree/feature/login/`。
 
 ## 公共规则
 
 - 从目标项目的 `git worktree list --porcelain` 确定主工作树根；在 linked worktree 中调用也使用该根，不使用技能安装目录。裸仓库不支持。
 - 校验动作、参数数量及分支名：用 `git check-ref-format "refs/heads/$branch"`，拒绝以 `-` 开头的名称，不展开 checkout 简写。命令参数安全传递，shell 变量始终引用。
-- 目标必须在根 `.worktree/` 内，目标和父路径不能经过符号链接、嵌入另一工作树或独立仓库。
+- 目标必须在根 `worktree/` 内，目标和父路径不能经过符号链接、嵌入另一工作树或独立仓库。
+- 旧 `.worktree/` 中的工作树不自动迁移或删除；remove仅核对新约定路径，旧路径另有登记时报告实际位置，不把同名目录当作目标。
 - 使用原生 Git，不要求当前分支为 dev。不切换分支、不自动暂存、提交、stash、推送、删除分支或安装依赖。
 - 检查失败就停止并报告实际状态；不把查询失败当作不存在，不自动覆盖、解锁、prune 或清理残留。强制删除必须先说明具体数据风险并获得用户对本次丢弃的明确同意。
 
@@ -35,7 +36,7 @@ add 接受 from、新分支两个参数；remove 接受一个分支参数，动�
    git ls-remote --exit-code --heads "$remote" "refs/heads/$new"
    ```
    核对返回 ref；退出码 0 为存在，停止；2 为无匹配；其他为查询失败，停止。此检查不预留远端分支名。
-4. **准备目录**：确认 `.worktree/` 下没有已跟踪文件，并被忽略；必要时在根 `.gitignore` 追加 `/.worktree/`，保留原内容。通过路径检查后创建缺失父目录。
+4. **准备目录**：确认 `worktree/` 下没有已跟踪文件，并被忽略；必要时在根 `.gitignore` 追加 `/worktree/`，保留原内容。通过路径检查后创建缺失父目录。
 5. **创建并验证**：
    ```bash
    git -C "$root" worktree add -b "$new" -- "$target" "$base_oid"

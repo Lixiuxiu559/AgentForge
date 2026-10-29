@@ -14,8 +14,8 @@
 | 术语 | 本仓库含义 |
 |---|---|
 | Skill | SKILL.md 中的方法和边界，以及按需读取的 references、脚本和模板 |
-| 技能真源 | skills 下维护的一份技能内容，供三端装配使用 |
-| 宿主 | Codex、Claude Code 或 DSH；提供实际工具、权限及运行环境 |
+| 技能真源 | skills 下维护的一份技能内容，供四端装配使用，Qoder 调用策略在打包副本转换 |
+| 宿主 | Codex、Claude Code、Qoder 或 DSH；提供实际工具、权限及运行环境 |
 | 通用子 Agent | 宿主创建的独立上下文；仍可能共享文件系统，不自带文件隔离 |
 | Provider | DSH 的技能目录与正文读取适配，入口是 src/index.js |
 | Candidate | list 返回的名称、描述、调用策略与文件定位信息，不包含技能正文 |

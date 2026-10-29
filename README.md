@@ -1,12 +1,12 @@
 # AgentForge
 
-> 通用 agent 工作流与工程技能集，可安装到 Codex、Claude Code 与 DeepSeek Harness。
+> 通用 agent 工作流与工程技能集，可安装到 Codex、Claude Code、Qoder 与 DeepSeek Harness。
 > 包内 JavaScript 零 dependencies，无必需 MCP 服务；审计复用项目已有工具，独立上下文和并行依赖宿主的通用子 agent 能力。
 
 [![validate](https://github.com/Lixiuxiu559/AgentForge/actions/workflows/validate.yml/badge.svg)](https://github.com/Lixiuxiu559/AgentForge/actions/workflows/validate.yml)
 
-**一份真源，三端共用**：十一个技能统一维护在 `skills/`。
-Codex 与 Claude Code 加载技能目录，DSH 使用包内桥接插件（`src/index.js`）。
+**一份真源，四端适配**：十一个技能统一维护在 `skills/`。
+Codex 与 Claude Code 加载技能目录，Qoder 使用构建生成的插件包，DSH 使用包内桥接插件（`src/index.js`）。
 
 ---
 
@@ -62,6 +62,29 @@ claude plugin update agentforge@agentforge    # 更新到新版本
 claude plugin disable agentforge              # 临时停用
 claude plugin uninstall agentforge            # 卸载
 ```
+
+### Qoder
+
+从仓库构建 Qoder 插件包（需要 Node.js 22/24 和系统 `zip` 命令）：
+
+```bash
+npm run package:qoder
+```
+
+产物为 `dist/qoder/agentforge-<version>.zip`。新版 Qoder 可在 **Extensions → Plugins → Add Plugins → Upload Plugin** 导入 ZIP；提供本地文件夹导入的 IDE 版本，先解压到 `agentforge/`，再从 **Settings → Plugins → Marketplace** 的创建插件入口导入该目录。
+
+使用 Qoder CLI 时，先解压，再验证和安装：
+
+```bash
+QODER_VERSION=$(node -p "require('./package.json').version")
+unzip "dist/qoder/agentforge-${QODER_VERSION}.zip" -d /path/to/agentforge
+qoder plugins validate /path/to/agentforge
+qoder plugins install /path/to/agentforge
+```
+
+安装后重启会话；CLI 也可执行 `/plugins reload`。在 `/` 列表检查 AgentForge 技能，主动选择 `architecture-scout` 进行架构调查。更新时重新获取新版本 ZIP，并按当前客户端的管理入口替换插件；CLI 本地目录安装可卸载后重新安装，保留解压目录供宿主读取。
+
+**使用生成的 ZIP 或其解压目录安装，不直接把仓库根作为 Qoder 插件源。** 打包时在副本中转换架构侦察的主动调用策略，并排除其他宿主元数据；共用的技能源文件保持原样。运行 Wiki 等脚本需 Node.js，涉及 Git 的检查和 worktree 操作还需 Git；不会自动安装这些工具。完整说明和验证边界见 [Qoder 安装与兼容说明](docs/qoder.md)。
 
 ### DeepSeek Harness
 
@@ -163,7 +186,7 @@ Skill 规定任务怎样拆分、每个子任务怎样执行、结果怎样汇�
 
 宿主没有通用派发能力时，技能仍可在主上下文中执行，但会明确说明没有独立上下文或多 agent 并行。Skill 中写“委派”本身不会为宿主增加派发工具。
 
-Codex 与 Claude Code 通过插件发现技能；DSH 的桥接入口仅注册 skill provider，依赖 `skills` 服务。审计的“只报告，不改码”是工作约定，不是工具层权限限制。
+Codex、Claude Code 与 Qoder 通过插件发现技能；DSH 的桥接入口仅注册 skill provider，依赖 `skills` 服务。审计的“只报告，不改码”是工作约定，不是工具层权限限制。
 
 ### 使用示例
 
@@ -181,13 +204,13 @@ Codex 与 Claude Code 通过插件发现技能；DSH 的桥接入口仅注册 sk
 /agentforge:worktree remove feature/login
 ```
 
-Claude Code 可显式使用 `/agentforge:research` 等技能命令。`architecture-scout` 的触发说明要求用户主动提出架构调查；Codex 与 DSH 另有平台策略约束。
+Claude Code 可显式使用 `/agentforge:research` 等技能命令。`architecture-scout` 的触发说明要求用户主动提出架构调查；Codex、DSH 与生成的 Qoder 包另有平台策略配置。
 
 `bug-debugging` 可根据具体错误或修复请求自动选用。它在诊断后等待用户确认具体方案，批准后继续修复；初始“帮我修好”不代表批准尚未展示的方案。复杂调查可复用 `research`，只抽查影响结论的关键证据；复杂实施交给 `implementation-workflow`，沿用同一批准范围。
 
 `test-design` 可独立调用，输出“业务规则 → 用例 → 验证入口 → 已有断言”的对应关系、缺口及验证办法。它不编写或执行测试；需要实施时由 `implementation-workflow` 使用设计产物组织测试编写和运行。测试方式沿用项目现有设施，缺少设施的场景明确记为验证缺口。`mutation-testing` 专门运行已有突变工具，业务场景设计与充分性检查由 `test-design` 负责。
 
-`worktree add <from分支> <新分支>` 创建工作树，例如 `add dev feature/login`，目录为 `<项目主工作树根>/.worktree/feature/login/`。add 询问 from 使用本地还是远端，默认检查 origin（无 origin 时使用唯一远端）；目标分支在本地或该远端已存在就停止。`worktree remove <分支>` 核对路径和实际分支，检查未提交、未跟踪及忽略内容后移除工作树，保留分支和提交；存在数据风险时先停止等待处理。remove 不查询远端，两种操作都不自动推送或删除分支。
+`worktree add <from分支> <新分支>` 创建工作树，例如 `add dev feature/login`，目录为 `<项目主工作树根>/worktree/feature/login/`。add 询问 from 使用本地还是远端，默认检查 origin（无 origin 时使用唯一远端）；目标分支在本地或该远端已存在就停止。`worktree remove <分支>` 核对路径和实际分支，检查未提交、未跟踪及忽略内容后移除工作树，保留分支和提交；存在数据风险时先停止等待处理。remove 不查询远端，两种操作都不自动推送或删除分支。
 
 ### 项目 Wiki
 
@@ -210,6 +233,7 @@ Wiki 面向开发人员与编码 Agent，以当前代码、配置和工程脚本
 ```text
 .claude-plugin/       Claude Code 插件与市场清单
 .codex-plugin/        Codex 插件清单
+.qoder-plugin/        Qoder 插件清单；安装前通过打包转换调用策略
 .agents/plugins/      Codex 仓库 marketplace
 skills/              十一个技能及各自 references / scripts
 src/index.js         DSH 技能提供者
@@ -224,9 +248,10 @@ docs/               架构、发布说明与历史调查
 ```bash
 node tools/doctor.mjs
 npm test
+npm run package:qoder
 ```
 
-结构检查覆盖三端清单、版本、技能引用与 DSH 发布资产；运行时测试覆盖技能发现、按需读取、资源路径、调用策略和动态重扫。真实宿主的派发工具及其并发策略由宿主负责。
+结构检查覆盖四端清单、版本、技能引用与 DSH 发布资产；运行时测试覆盖技能发现、按需读取、资源路径、调用策略和动态重扫；Qoder 打包测试检查 ZIP 布局、运行资源及策略转换。真实宿主的派发工具及其并发策略由宿主负责。
 
 调试行为需另行在隔离副本中评估，场景与判据见 [调试技能验收](skills/bug-debugging/references/evaluation-cases.md)；`npm test` 不执行模型行为评估。
 
