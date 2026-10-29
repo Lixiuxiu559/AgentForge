@@ -350,13 +350,13 @@
       }
     },
     "wiki-tooling": {
-      "reviewedAt": "2026-10-29T12:54:45.596Z",
+      "reviewedAt": "2026-10-29T12:56:43.540Z",
       "reviewer": "Codex",
       "decision": "updated",
-      "reason": "暂存实施技能只精简独立输入表述，Wiki读取前freshness与收尾review/check/gate机制未改；配置新增两技能方法来源，验证页记载本次复核/精简与87项回归。Wiki引擎未改，结构检查通过，未声称模型或视觉复验通过。",
+      "reason": "0.14.0版本准备后核对package脚本未变，Wiki入口与验证页仅同步本地版本和发布候选证据。结构检查通过13页147链接；工具引擎与同步协议未改，未将本地版本当远端发布成功。",
       "evidence": [
-        "skills/implementation-workflow/SKILL.md",
-        "docs/wiki/wiki.config.json",
+        "package.json",
+        "docs/wiki/README.md",
         "docs/wiki/verification.md",
         "docs/wiki/modules/wiki-tooling/README.md"
       ],
@@ -499,7 +499,7 @@
           "mode": "100644"
         },
         "package.json": {
-          "sha256": "338452c0bf59da8197cfd1d787a384b10441438209c87833cc81e1dbe594800c",
+          "sha256": "8d0ca586484f2e410d8a947c5b0581073021f16d5b4fe7332b7f90a9eddca9e9",
           "mode": "100644"
         },
         "AGENTS.md": {
@@ -513,7 +513,7 @@
       },
       "docSnapshot": {
         "docs/wiki/README.md": {
-          "sha256": "0a44327e521d04fed387bcdf750a5eba65804419fdf5b64f886a49518ef3d45d",
+          "sha256": "5fe4032a564ccbde7746479e2dba18032bc9c19f2c8197cc4052c290e75e8c66",
           "mode": "100644"
         },
         "docs/wiki/concepts.md": {
@@ -533,7 +533,7 @@
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "c1e5cb12f9ee6a3ae5a82ddea8ee35c0a00d9c14562935228a5d4567d75a90a8",
+          "sha256": "758853629a65c5e4037f00abcc53ecee383a671b552255e99bd16f8b09033f78",
           "mode": "100644"
         },
         "docs/wiki/freshness.md": {
@@ -543,17 +543,19 @@
       }
     },
     "distribution": {
-      "reviewedAt": "2026-10-29T12:54:46.051Z",
+      "reviewedAt": "2026-10-29T12:56:44.017Z",
       "reviewer": "Codex",
       "decision": "updated",
-      "reason": "对照暂存四端说明、Qoder十三技能校验/回归和资源清单，87项回归、doctor与ZIP构建通过，试包13技能87文件。发布说明改核对全部技能，区分旧官方校验和本轮未复验；当前仍0.13.0，未推送新版本或更新安装副本。",
+      "reason": "核对三份plugin清单及package均0.14.0、CHANGELOG正式段、README固定tag及分发/环境/验证页。release脚本已完成本地版本提交，0.14.0 ZIP实际构建13技能87文件，核心技能沿用87项回归和三轴复核通过的内容。标签尚未推送，待最终候选检查后再指向该知识同步提交；不推导远端成功。",
       "evidence": [
-        "README.md",
+        "package.json",
+        ".claude-plugin/plugin.json",
+        ".codex-plugin/plugin.json",
+        ".qoder-plugin/plugin.json",
         "CHANGELOG.md",
-        "docs/releasing.md",
-        "tools/package-qoder.mjs",
-        "tests/qoder-package.test.mjs",
+        "README.md",
         "docs/wiki/modules/distribution/README.md",
+        "docs/wiki/environments.md",
         "docs/wiki/verification.md"
       ],
       "configDigest": "14d8001a772a27fd6e2aceb1da63c53ff1770d912b5228a461b38eeefaafa56c",
@@ -567,11 +569,11 @@
           "mode": "100644"
         },
         ".claude-plugin/plugin.json": {
-          "sha256": "78989d21b586b5eece0eb21a0f89f81448b399150166ee405a5e593e0f1cae15",
+          "sha256": "39423035acbd42249f30dde71dd668ea87c5f49be92808f65d4df09df2088018",
           "mode": "100644"
         },
         ".codex-plugin/plugin.json": {
-          "sha256": "8d14520bcc98fedc86a0a30ca917de4a8ff8f62eefadae93d8b8bf5a817c5a98",
+          "sha256": "0ba8b9080d95bb83c88f96a225127eee69a078b1b413beefddc20bfba1428e81",
           "mode": "100644"
         },
         ".github/dependabot.yml": {
@@ -611,11 +613,11 @@
           "mode": "100644"
         },
         "package.json": {
-          "sha256": "338452c0bf59da8197cfd1d787a384b10441438209c87833cc81e1dbe594800c",
+          "sha256": "8d0ca586484f2e410d8a947c5b0581073021f16d5b4fe7332b7f90a9eddca9e9",
           "mode": "100644"
         },
         "README.md": {
-          "sha256": "25c4f07e073e04ff937ebe4f1f873d231a39870e13d165e824f3412a4535e77d",
+          "sha256": "584871e2d7b24a08200eea454e8b4005ec5142e016bc0e04ffc8dd8dc204c3b6",
           "mode": "100644"
         },
         "awesome-dsh-plugin-entry.yml": {
@@ -627,7 +629,7 @@
           "mode": "100644"
         },
         "CHANGELOG.md": {
-          "sha256": "612787723564babfb81a3d590a5b10947453b10c36cef36d8a47aabf73582906",
+          "sha256": "22769086c6e526c93c0b7acd015c4c218c0b700c6167e552dafa840c43435c45",
           "mode": "100644"
         },
         ".gitignore": {
@@ -687,7 +689,7 @@
           "mode": "100644"
         },
         ".qoder-plugin/plugin.json": {
-          "sha256": "43265b15d4d313cd327c508c305bb47422015cd90e2e6af4c347f0a3a201eac1",
+          "sha256": "c2cca2844b7c6ca5db30cd6441c257d62b35a85c731ea4cd111cdee12b75bd6e",
           "mode": "100644"
         },
         "docs/qoder.md": {
@@ -705,7 +707,7 @@
       },
       "docSnapshot": {
         "docs/wiki/modules/distribution/README.md": {
-          "sha256": "3e18b57253a1af6251da7574c4787fee69b4ed28d9b6deb868d748d4a305394a",
+          "sha256": "8a0a56d0df1b0231e1e95bed96a9de2b0d73b68b42a8cc08318664fec8b449b8",
           "mode": "100644"
         },
         "docs/wiki/modules/distribution/dependencies.md": {
@@ -713,11 +715,11 @@
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "c1e5cb12f9ee6a3ae5a82ddea8ee35c0a00d9c14562935228a5d4567d75a90a8",
+          "sha256": "758853629a65c5e4037f00abcc53ecee383a671b552255e99bd16f8b09033f78",
           "mode": "100644"
         },
         "docs/wiki/environments.md": {
-          "sha256": "f848d8c72e0b8a6f53c00352632da58e32ed235b74bbbcd5dc4dd65d025482ac",
+          "sha256": "c96f648f9d438b186c8452a31a4785724bd8feb4e91f18e0b2ab5ace89e45fa8",
           "mode": "100644"
         },
         "docs/wiki/operations.md": {
