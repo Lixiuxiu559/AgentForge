@@ -7,7 +7,7 @@
 | 适用范围 | 四端装配、版本同步和仓库中的验证发布入口 |
 | 事实状态 | 部分核验 |
 | 核验基线 | 历史功能基线 3e5341d；本轮 ee58dfd 后开发工作区的来源与文档按复核指纹核验 |
-| 核验时间 | 2026-10-27 |
+| 核验时间 | 2026-10-29 |
 
 ## 用途与边界
 
@@ -24,11 +24,13 @@ README 与发布文档记录的宿主更新语义在本次只作仓库约定引�
 5. PR 的 Wiki 检查 job 明确检出 head，分别运行结构检查与以 base/head 为范围的同步检查门；Git 树中的记录不能被工作区补写替代。
 6. release.yml 在标签推送时校验标签版本并构建 Qoder ZIP，创建 GitHub Release 并上传附件；重跑可补传或覆盖同名 ZIP；publish.yml 是独立手动 npm 流程。旧验证页记载本地版本准备；本轮已准备 0.13.0 本地发布候选，未据此推导远端发布成功，后续远端动作以对应 Release 和流水线实际结果为准。
 
+当前工作区新增 prototype 与 architecture-design，共十三技能，记录在 Unreleased；发布版本仍为 0.13.0。发现与打包回归按十三技能核对，新增技能不要求桥接层增加专用注册项；不能据此推断已安装副本或远端发布已经更新。
+
 ### Qoder 打包边界
 
-[打包脚本](../../../../tools/package-qoder.mjs) 在临时副本为 architecture-scout 添加 disable-model-invocation: true、user-invocable: true，移除 DSH 字段及 Codex openai.yaml，不改技能源。ZIP 根包含 Qoder 清单、11 个技能及全部非隐藏运行资源、独立 README、LICENSE 和最小 CommonJS package.json；该模块边界防止 crap.js 继承目标项目的 type: module。包内不带其他宿主清单、DSH 桥接或用户配置。构建需要 Node 和系统 zip；回归另用 unzip。
+[打包脚本](../../../../tools/package-qoder.mjs) 在临时副本为 architecture-scout 添加 disable-model-invocation: true、user-invocable: true，移除 DSH 字段及 Codex openai.yaml，不改技能源。ZIP 根包含 Qoder 清单、13 个技能及全部非隐藏运行资源、独立 README、LICENSE 和最小 CommonJS package.json；该模块边界防止 crap.js 继承目标项目的 type: module。包内不带其他宿主清单、DSH 桥接或用户配置。构建需要 Node 和系统 zip；回归另用 unzip。
 
-2026-10-29 实际通过 87 项 Node 回归、doctor、ZIP 构建及本机 Qoder IDE 自带官方离线校验；解压后 Wiki 与复杂度脚本均实际运行。Qoder UI 导入、模型执行、子 Agent 和升级缓存未实测，详情见[验证记录](../../verification.md)与[安装说明](../../../qoder.md)。
+此前 0.13.0 Qoder 适配阶段通过 87 项 Node 回归、doctor、ZIP 构建及本机 Qoder 官方离线校验；解压后 Wiki 与复杂度脚本实际运行。本轮十三技能候选通过 87 项回归、doctor 与 ZIP 构建，未重复官方客户端校验。Qoder UI 导入、模型执行、子 Agent 和升级缓存未实测，详情见[验证记录](../../verification.md)与[安装说明](../../../qoder.md)。
 
 ## 阅读导航
 

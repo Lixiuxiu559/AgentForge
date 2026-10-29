@@ -4,6 +4,7 @@
     {
       "id": "skill-methods",
       "sources": [
+        "skills/architecture-design",
         "skills/architecture-scout",
         "skills/bug-debugging",
         "skills/complexity-audit",
@@ -11,6 +12,7 @@
         "skills/implementation-workflow",
         "skills/mutation-testing",
         "skills/pm",
+        "skills/prototype",
         "skills/research",
         "skills/test-design",
         "skills/worktree",

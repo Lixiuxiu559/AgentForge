@@ -42,7 +42,7 @@ Claude Code 用 `.claude-plugin/plugin.json` 的 `version` 字段判断用户是
 
 Qoder ZIP 是独立分发产物；仓库内容变化或版本号变化不会自动刷新用户已导入的插件。更新时下载新版本并在客户端替换/重新导入；CLI 本地安装按解压目录重新安装后重启或 `/plugins reload`，再核对技能列表、版本与资源路径。当前未配置 Qoder marketplace，不承诺市场自动更新。
 
-标签触发的 `release.yml` 构建并上传 Qoder ZIP。工作流重跑时保留已有 Release，并补传或覆盖同名附件；Release 正文继续取对应 CHANGELOG 版本段。发布前应验证新版本 ZIP 的根布局、11 个技能、主动调用策略和包内脚本；构建通过不等于真实客户端调用或升级已经验证。
+标签触发的 `release.yml` 构建并上传 Qoder ZIP。工作流重跑时保留已有 Release，并补传或覆盖同名附件；Release 正文继续取对应 CHANGELOG 版本段。发布前应验证新版本 ZIP 的根布局、全部技能、主动调用策略和包内脚本；构建通过不等于真实客户端调用或升级已经验证。
 
 ## DSH 侧的机制：版本开关取决于装法
 

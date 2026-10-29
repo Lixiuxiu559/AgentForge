@@ -14,13 +14,13 @@ function register(entry) {
   return providers[0]
 }
 
-test('skills-only host discovers all eleven skills and preserves invocation policy and resources', async () => {
+test('skills-only host discovers all thirteen skills and preserves invocation policy and resources', async () => {
   assert.deepEqual(inject, ['skills'])
   const provider = register(apply)
   const candidates = await provider.list()
   assert.deepEqual(candidates.map(c => c.name).sort(), [
-    'architecture-scout', 'bug-debugging', 'complexity-audit', 'diff-review',
-    'implementation-workflow', 'mutation-testing', 'pm', 'research', 'test-design', 'wiki', 'worktree',
+    'architecture-design', 'architecture-scout', 'bug-debugging', 'complexity-audit', 'diff-review',
+    'implementation-workflow', 'mutation-testing', 'pm', 'prototype', 'research', 'test-design', 'wiki', 'worktree',
   ])
   for (const candidate of candidates) {
     assert.deepEqual(candidate.invocation, {

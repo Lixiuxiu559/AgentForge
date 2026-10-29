@@ -75,8 +75,8 @@ export async function packageQoder({ root = ROOT, outDir = path.join(root, 'dist
     await fs.writeFile(path.join(stage, '.qoder-plugin/plugin.json'), `${JSON.stringify(manifest, null, 2)}\n`)
     const files = await copyResources(path.join(root, 'skills'), path.join(stage, 'skills'))
     const skills = files.filter(file => /^skills\/[^/]+\/SKILL\.md$/.test(file))
-    if (skills.length !== 11 || !skills.includes('skills/architecture-scout/SKILL.md')) {
-      throw new Error(`Expected eleven skills including architecture-scout, found ${skills.length}`)
+    if (skills.length !== 13 || !skills.includes('skills/architecture-scout/SKILL.md')) {
+      throw new Error(`Expected thirteen skills including architecture-scout, found ${skills.length}`)
     }
     await fs.copyFile(path.join(root, 'LICENSE'), path.join(stage, 'LICENSE'))
     await fs.copyFile(path.join(root, 'docs/qoder.md'), path.join(stage, 'README.md'))

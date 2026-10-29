@@ -1,6 +1,6 @@
 # AgentForge for Qoder
 
-AgentForge 提供 11 个工程技能：worktree、wiki、pm、research、test-design、bug-debugging、architecture-scout、implementation-workflow、diff-review、complexity-audit 和 mutation-testing。技能覆盖需求、调查、开发、评审与项目知识维护；不依赖必需 MCP 服务或自定义 Agent。
+AgentForge 提供 13 个工程技能：worktree、wiki、pm、prototype、architecture-design、research、test-design、bug-debugging、architecture-scout、implementation-workflow、diff-review、complexity-audit 和 mutation-testing。技能覆盖需求、原型与架构设计、调查、开发、评审与项目知识维护；不依赖必需 MCP 服务或自定义 Agent。
 
 ## 获取插件包
 

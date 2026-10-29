@@ -2,19 +2,57 @@
   "version": 1,
   "modules": {
     "skill-methods": {
-      "reviewedAt": "2026-10-29T09:49:05.557Z",
+      "reviewedAt": "2026-10-29T12:55:04.703Z",
       "reviewer": "Codex",
       "decision": "updated",
-      "reason": "对照共享技能与架构差异核对方法页：本轮只新增Qoder打包副本的architecture-scout调用策略，技能源未改；原worktree可见目录约定保留。方法页补充分发边界，87项回归与独立Wiki复审通过，未声称跨宿主模型行为实测。 提交前已核对暂存内容与该复核范围一致。",
+      "reason": "对暂存技能及references完成三轴复核和精简；关键用户决策、独立组合、HTML与证据边界保留，87项回归通过。最终仅移除handoff末尾多余空行，重新核对内容无语义变化。",
       "evidence": [
-        "docs/architecture.md",
-        "skills/architecture-scout/SKILL.md",
-        "skills/architecture-scout/agents/openai.yaml",
-        "skills/worktree/SKILL.md",
+        "skills/architecture-design/SKILL.md",
+        "skills/architecture-design/references/handoff.md",
+        "skills/prototype/SKILL.md",
+        "skills/pm/SKILL.md",
+        "skills/test-design/SKILL.md",
+        "skills/implementation-workflow/SKILL.md",
         "docs/wiki/modules/skill-methods/README.md"
       ],
-      "configDigest": "6a1c6543293a8ffa69a9bf268df5240201834a5d9ec3a243dfe014a15ef7f9dd",
+      "configDigest": "14d8001a772a27fd6e2aceb1da63c53ff1770d912b5228a461b38eeefaafa56c",
       "sourceSnapshot": {
+        "skills/architecture-design/SKILL.md": {
+          "sha256": "633505e7ab5a9a4168123b9abada76fc1130c72b337fa1678bf9be8546a77b76",
+          "mode": "100644"
+        },
+        "skills/architecture-design/references/decisions.md": {
+          "sha256": "bd803e3b680d9a700244d21faf49645add154dbe70bca62c3c47e00b3618b2ef",
+          "mode": "100644"
+        },
+        "skills/architecture-design/references/delegation.md": {
+          "sha256": "d5ea2f873fba4e10dc59eac461e213211d2972dbc926c9969f37beb878754740",
+          "mode": "100644"
+        },
+        "skills/architecture-design/references/diagrams.md": {
+          "sha256": "30664869e13474d2d039c38d7e7a31a59e42c2af599dbe6e92c2e24066e00dd7",
+          "mode": "100644"
+        },
+        "skills/architecture-design/references/handoff.md": {
+          "sha256": "bb67b1b83fc7db9f9e7e71a135548ebec4e2bf727af7f0582a8bff4d234e753d",
+          "mode": "100644"
+        },
+        "skills/architecture-design/references/html-delivery.md": {
+          "sha256": "baa7a9cf2bb324129889595e8373f21e133180e4a22dcf3ff262a2b26279396b",
+          "mode": "100644"
+        },
+        "skills/architecture-design/references/overall-design.md": {
+          "sha256": "97a8fac9dd034c72fd42e4492ad334b24cdd3f293037bc6327c75b19f8e9bc4a",
+          "mode": "100644"
+        },
+        "skills/architecture-design/references/quality-validation.md": {
+          "sha256": "e0d145db7601f1c82b4229ac608059ac6c80a9cad08231dd547110b4b457c80c",
+          "mode": "100644"
+        },
+        "skills/architecture-design/references/specialist-design.md": {
+          "sha256": "9301b551f00032b294f9f061ade59a438a6c0c00194bace2b83618d6301513a8",
+          "mode": "100644"
+        },
         "skills/architecture-scout/SKILL.md": {
           "sha256": "03bad07f48b866ed3a5d098b41c3797425105d26d645262236e28c44bc5b38bd",
           "mode": "100644"
@@ -116,7 +154,7 @@
           "mode": "100644"
         },
         "skills/implementation-workflow/SKILL.md": {
-          "sha256": "0112653d7c25c2d389ddee3243c56abbdc8eb72b8592b6d5bb9164b2afb265d2",
+          "sha256": "1fe6511877ddc59b37aac017ccc6096f020c9e7894f2609db7828940be38362a",
           "mode": "100644"
         },
         "skills/implementation-workflow/references/parallel-execution.md": {
@@ -128,7 +166,7 @@
           "mode": "100644"
         },
         "skills/implementation-workflow/references/task-card-template.md": {
-          "sha256": "24e1f33e775061e596884b19f611d18f678d778c07dd0589797c015a415e12e3",
+          "sha256": "edd57ee99fb2490536f0f4e849f3a8e2a9ea5353a66b345d0da865682205e9f0",
           "mode": "100644"
         },
         "skills/implementation-workflow/references/task-decomposition.md": {
@@ -160,11 +198,23 @@
           "mode": "100644"
         },
         "skills/pm/SKILL.md": {
-          "sha256": "2447464e0441dc854524b735a5d6138a0f588ac435c72dfd4ef552a842b2c1c5",
+          "sha256": "095e35211064eb9162f208fb539be8236282b2b6d6697e6392d465887d5256a3",
+          "mode": "100644"
+        },
+        "skills/pm/references/html-delivery.md": {
+          "sha256": "31bc0a520ed99ed1344f769780892448d0fc63873bb546e238c8e06f8fa55567",
           "mode": "100644"
         },
         "skills/pm/references/prd-template.md": {
           "sha256": "a66c173ef80b29ce1f322bd478fa8dd594eea1337b3dcbfaa7855043fd6cd57b",
+          "mode": "100644"
+        },
+        "skills/prototype/SKILL.md": {
+          "sha256": "0a12f4fe3597a0af03ac6ec07355dafec88d4231c1e5487bceceea82dd35d3e2",
+          "mode": "100644"
+        },
+        "skills/prototype/references/prototype-spec.md": {
+          "sha256": "50b7297e0e73fda74b7c2399b598ee0d3b726458bdb0e7f163bb4e73a2190424",
           "mode": "100644"
         },
         "skills/research/SKILL.md": {
@@ -172,11 +222,15 @@
           "mode": "100644"
         },
         "skills/test-design/SKILL.md": {
-          "sha256": "87571888b478fe26569a552716d4392b92b028511639a54be75542a931967ae9",
+          "sha256": "0db92b661cc0342644955d69cb0f333608b750211b62e47641d397f61ba24f51",
           "mode": "100644"
         },
         "skills/test-design/references/deliverable-template.md": {
-          "sha256": "cd59f2653b00087a58f044b8db395f9be033ee005a6353f8dd47e5351ee771d3",
+          "sha256": "1b83ab06406ef802b0dfb10e96a564b66676eb6ab5912d4a46fd5482874b68bb",
+          "mode": "100644"
+        },
+        "skills/test-design/references/html-delivery.md": {
+          "sha256": "bf60041c0576a2711036eeca25cf079b5bb9f2485e49cf3318134b7cda76b67f",
           "mode": "100644"
         },
         "skills/test-design/references/scenario-design.md": {
@@ -192,7 +246,7 @@
           "mode": "100644"
         },
         "docs/architecture.md": {
-          "sha256": "1043735d32daa87d3b54d2edb4b5feda809ef7918957a3e519358e9e4b07b72d",
+          "sha256": "6ac63211d191be919e95a18b4d605c257c03c562b1dab70c7c0c9130cdf3a4b8",
           "mode": "100644"
         },
         "docs/design/2026-10-16-lifecycle-walkthroughs.md": {
@@ -246,24 +300,22 @@
       },
       "docSnapshot": {
         "docs/wiki/modules/skill-methods/README.md": {
-          "sha256": "26b7b92d895674c4c8a134d758bddfb0b33e7e34c9cc352ac36f43675d77cf43",
+          "sha256": "9a7131d13bf6dbb5945e40de0c6a22a8c8f13595a34da239306717f5987c0993",
           "mode": "100644"
         }
       }
     },
     "skill-provider": {
-      "reviewedAt": "2026-10-29T09:49:05.756Z",
+      "reviewedAt": "2026-10-29T12:54:45.118Z",
       "reviewer": "Codex",
       "decision": "no-change",
-      "reason": "实际核对架构新增Qoder装配与src/index.js、cordis.patch.yml及发现测试：Qoder只在打包副本转换，不进入DSH provider，发现/读取与调用策略接口未变。原provider知识仍准确，2项provider回归包含在87项通过中，无需改写该模块页。 提交前已核对暂存内容与该复核范围一致。",
+      "reason": "核对暂存候选发现测试的十三技能及动态资源读取，与src/bundle未变的实现一致；架构说明只增加方法职责及格式。87项回归含provider发现/按需加载通过，现有模块正文仍准确，无需改写。",
       "evidence": [
-        "docs/architecture.md",
-        "src/index.js",
-        "cordis.patch.yml",
         "tests/skill-provider.test.mjs",
+        "docs/architecture.md",
         "docs/wiki/modules/skill-provider/README.md"
       ],
-      "configDigest": "6a1c6543293a8ffa69a9bf268df5240201834a5d9ec3a243dfe014a15ef7f9dd",
+      "configDigest": "14d8001a772a27fd6e2aceb1da63c53ff1770d912b5228a461b38eeefaafa56c",
       "sourceSnapshot": {
         "src/index.js": {
           "sha256": "cbeb5a237c842edea34f64ce2d66c126d880bd18be1eaff2afedbe56d80204b4",
@@ -274,11 +326,11 @@
           "mode": "100644"
         },
         "tests/skill-provider.test.mjs": {
-          "sha256": "bc5c45285b5806361d1bbffef2e707fa3fd0796fd52ddb1c6702dc945fbeb562",
+          "sha256": "68c138eac8027d5507dbb026e448677e5fdebaa5d116222963d9d541e799373b",
           "mode": "100644"
         },
         "docs/architecture.md": {
-          "sha256": "1043735d32daa87d3b54d2edb4b5feda809ef7918957a3e519358e9e4b07b72d",
+          "sha256": "6ac63211d191be919e95a18b4d605c257c03c562b1dab70c7c0c9130cdf3a4b8",
           "mode": "100644"
         },
         "skills/architecture-scout/SKILL.md": {
@@ -298,16 +350,17 @@
       }
     },
     "wiki-tooling": {
-      "reviewedAt": "2026-10-29T09:51:30.773Z",
+      "reviewedAt": "2026-10-29T12:54:45.596Z",
       "reviewer": "Codex",
       "decision": "updated",
-      "reason": "实际核对0.13.0包清单及Wiki入口和验证页：仅新增发布版本与候选证据，Wiki引擎/模板/配置未变。新版本87项回归、doctor、打包与官方离线校验通过，未将本地候选当远端成功。",
+      "reason": "暂存实施技能只精简独立输入表述，Wiki读取前freshness与收尾review/check/gate机制未改；配置新增两技能方法来源，验证页记载本次复核/精简与87项回归。Wiki引擎未改，结构检查通过，未声称模型或视觉复验通过。",
       "evidence": [
-        "package.json",
-        "docs/wiki/README.md",
-        "docs/wiki/verification.md"
+        "skills/implementation-workflow/SKILL.md",
+        "docs/wiki/wiki.config.json",
+        "docs/wiki/verification.md",
+        "docs/wiki/modules/wiki-tooling/README.md"
       ],
-      "configDigest": "6a1c6543293a8ffa69a9bf268df5240201834a5d9ec3a243dfe014a15ef7f9dd",
+      "configDigest": "14d8001a772a27fd6e2aceb1da63c53ff1770d912b5228a461b38eeefaafa56c",
       "sourceSnapshot": {
         "skills/wiki/SKILL.md": {
           "sha256": "a1c4649ac05147d6ce6e69758c5c42de25931a691afc2e5fa99f3941f3eaf725",
@@ -430,7 +483,7 @@
           "mode": "100644"
         },
         "docs/wiki/wiki.config.json": {
-          "sha256": "7df6681e9a9b900e64ecabf1d668216932b4d00e30d81ed0300e51637327be19",
+          "sha256": "a10b0b3096744197a125ab2f751229b34eac0d44a1f0eaea4f91cda98bac7eec",
           "mode": "100644"
         },
         "tests/wiki-freshness.test.mjs": {
@@ -454,13 +507,13 @@
           "mode": "100644"
         },
         "skills/implementation-workflow/SKILL.md": {
-          "sha256": "0112653d7c25c2d389ddee3243c56abbdc8eb72b8592b6d5bb9164b2afb265d2",
+          "sha256": "1fe6511877ddc59b37aac017ccc6096f020c9e7894f2609db7828940be38362a",
           "mode": "100644"
         }
       },
       "docSnapshot": {
         "docs/wiki/README.md": {
-          "sha256": "90222834027e71f22f73c480927b93a563deee4550c61ce8bbd1331b77bd2fc4",
+          "sha256": "0a44327e521d04fed387bcdf750a5eba65804419fdf5b64f886a49518ef3d45d",
           "mode": "100644"
         },
         "docs/wiki/concepts.md": {
@@ -480,7 +533,7 @@
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "4ab544f801933da74bb7491392f7ddef8c1c144adefcfb244c921002b4296d84",
+          "sha256": "c1e5cb12f9ee6a3ae5a82ddea8ee35c0a00d9c14562935228a5d4567d75a90a8",
           "mode": "100644"
         },
         "docs/wiki/freshness.md": {
@@ -490,37 +543,35 @@
       }
     },
     "distribution": {
-      "reviewedAt": "2026-10-29T09:51:31.222Z",
+      "reviewedAt": "2026-10-29T12:54:46.051Z",
       "reviewer": "Codex",
       "decision": "updated",
-      "reason": "实际对照三份插件清单与package.json均0.13.0、CHANGELOG版本段、README固定tag、环境/分发/验证页：release脚本已完成本地版本准备，尚未推送的标签待最终检查后指向知识同步候选。新版本87项测试、doctor、ZIP构建及官方离线校验通过；远端CI/Release和客户端运行不由本地结果推导。",
+      "reason": "对照暂存四端说明、Qoder十三技能校验/回归和资源清单，87项回归、doctor与ZIP构建通过，试包13技能87文件。发布说明改核对全部技能，区分旧官方校验和本轮未复验；当前仍0.13.0，未推送新版本或更新安装副本。",
       "evidence": [
-        ".claude-plugin/plugin.json",
-        ".codex-plugin/plugin.json",
-        ".qoder-plugin/plugin.json",
-        "package.json",
-        "CHANGELOG.md",
         "README.md",
-        "docs/wiki/environments.md",
+        "CHANGELOG.md",
+        "docs/releasing.md",
+        "tools/package-qoder.mjs",
+        "tests/qoder-package.test.mjs",
         "docs/wiki/modules/distribution/README.md",
         "docs/wiki/verification.md"
       ],
-      "configDigest": "6a1c6543293a8ffa69a9bf268df5240201834a5d9ec3a243dfe014a15ef7f9dd",
+      "configDigest": "14d8001a772a27fd6e2aceb1da63c53ff1770d912b5228a461b38eeefaafa56c",
       "sourceSnapshot": {
         ".agents/plugins/marketplace.json": {
           "sha256": "16c2a3ed2aea0cc4a24c858df3b05f9e77785ab92181848c31a62bece4cd4dab",
           "mode": "100644"
         },
         ".claude-plugin/marketplace.json": {
-          "sha256": "64cc524a42742131a0d1d087cb7048568a84bfaef9582e355c545c1e9fcf0e5e",
+          "sha256": "758ee2a5318409a381da39c198d23979e2f6c744e01f7ea5f06e17a13ad6d915",
           "mode": "100644"
         },
         ".claude-plugin/plugin.json": {
-          "sha256": "98ac59e2c8d0ab6012217b55bdefe95a5e570fcef0227f2c24bbcafdf082443a",
+          "sha256": "78989d21b586b5eece0eb21a0f89f81448b399150166ee405a5e593e0f1cae15",
           "mode": "100644"
         },
         ".codex-plugin/plugin.json": {
-          "sha256": "1e43ed21a5e45e16a791ff33d0064326f92914af410acf313feefb6abe83678f",
+          "sha256": "8d14520bcc98fedc86a0a30ca917de4a8ff8f62eefadae93d8b8bf5a817c5a98",
           "mode": "100644"
         },
         ".github/dependabot.yml": {
@@ -548,7 +599,7 @@
           "mode": "100644"
         },
         "tools/package-qoder.mjs": {
-          "sha256": "30741e962e458225d50c715a00f794e30a9afcea0d9f68ff2475de0f669db1c6",
+          "sha256": "15dfbc8dce3309bf3e0d5dfcdc6f5e122a46fcbc75fe2f90d71bdfbc5def3b60",
           "mode": "100644"
         },
         "tools/release.mjs": {
@@ -564,11 +615,11 @@
           "mode": "100644"
         },
         "README.md": {
-          "sha256": "2d16f53f027894b061320b50040949ed41e50ea1caa400393a0112cb046ba7bd",
+          "sha256": "25c4f07e073e04ff937ebe4f1f873d231a39870e13d165e824f3412a4535e77d",
           "mode": "100644"
         },
         "awesome-dsh-plugin-entry.yml": {
-          "sha256": "59ef973087b93e9d2c2cfbf59fc930e5036c4cdcea7dfc525aeb59f347bc05d3",
+          "sha256": "e5ad27db69989f31b760e64437775ff6afe2e2a6ebdd873d65428b167d48fe84",
           "mode": "100644"
         },
         "AGENTS.md": {
@@ -576,7 +627,7 @@
           "mode": "100644"
         },
         "CHANGELOG.md": {
-          "sha256": "786256189462cb6ab625995c79acf01c04e12157b2cf435a701e8246c50f780b",
+          "sha256": "612787723564babfb81a3d590a5b10947453b10c36cef36d8a47aabf73582906",
           "mode": "100644"
         },
         ".gitignore": {
@@ -588,11 +639,11 @@
           "mode": "100644"
         },
         "docs/architecture.md": {
-          "sha256": "1043735d32daa87d3b54d2edb4b5feda809ef7918957a3e519358e9e4b07b72d",
+          "sha256": "6ac63211d191be919e95a18b4d605c257c03c562b1dab70c7c0c9130cdf3a4b8",
           "mode": "100644"
         },
         "docs/releasing.md": {
-          "sha256": "ac952608b57b35b84818f3eaa94fa77970c4c0c26220a5c76df49c9ed620e25e",
+          "sha256": "c09a66930475ddf12396e847e262ba5bc315c10b47fc87c0c2daff4840d10f38",
           "mode": "100644"
         },
         "docs/npm-publishing.md": {
@@ -636,15 +687,15 @@
           "mode": "100644"
         },
         ".qoder-plugin/plugin.json": {
-          "sha256": "0d4a5c4a85560cf3e4e9d4da44f3cb2f04bc8c8237ff0e6481941b7b9599c8f5",
+          "sha256": "43265b15d4d313cd327c508c305bb47422015cd90e2e6af4c347f0a3a201eac1",
           "mode": "100644"
         },
         "docs/qoder.md": {
-          "sha256": "7ea3deffce95428d198b56971a8544de850fdc0c51ae2ba800d8ce3e5b7cfcf7",
+          "sha256": "47632a0cd4448e96a0ae6a6b32f4fb78fa0c60a795a947732821ea9af6182122",
           "mode": "100644"
         },
         "tests/qoder-package.test.mjs": {
-          "sha256": "e775368c9be6a6c2d6cd39ab5cc4b046a8a94943093da6c6bc730511309abcb9",
+          "sha256": "1c318e86ca6ffb4da8c974eb5d8ef863294070975d3762fac2a04e565e97b553",
           "mode": "100644"
         },
         "tests/release.test.mjs": {
@@ -654,7 +705,7 @@
       },
       "docSnapshot": {
         "docs/wiki/modules/distribution/README.md": {
-          "sha256": "2ceb2d13d447e71d389048b48d5027fb3ea6fd0fb55b10ca29a3ef5753fb33ca",
+          "sha256": "3e18b57253a1af6251da7574c4787fee69b4ed28d9b6deb868d748d4a305394a",
           "mode": "100644"
         },
         "docs/wiki/modules/distribution/dependencies.md": {
@@ -662,7 +713,7 @@
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "4ab544f801933da74bb7491392f7ddef8c1c144adefcfb244c921002b4296d84",
+          "sha256": "c1e5cb12f9ee6a3ae5a82ddea8ee35c0a00d9c14562935228a5d4567d75a90a8",
           "mode": "100644"
         },
         "docs/wiki/environments.md": {
@@ -670,7 +721,7 @@
           "mode": "100644"
         },
         "docs/wiki/operations.md": {
-          "sha256": "5f6532c062192bbb7960cc6b1afe336dd565df68079118ee53be005e900c9f58",
+          "sha256": "fa960b857e1d246c143df18304c466dc594ab5a7f50035caf52d82ad7ac562ab",
           "mode": "100644"
         }
       }
