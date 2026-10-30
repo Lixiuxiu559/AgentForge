@@ -165,7 +165,7 @@ dsh --profile web --dump-config | grep -A2 agentforge
 | 技能 | 作用 |
 |---|---|
 | `worktree` | add 从本地或远端基线创建分支与分层目录；remove 检查未提交和忽略内容后移除工作树，保留分支 |
-| `wiki` | 面向开发人员，按当前代码讲清架构、业务实现、部署与运维；维护来源、新鲜度及跨模块一致性 |
+| `wiki` | 独立面向开发人员，按当前代码讲清架构、业务实现、部署与运维；维护来源、新鲜度及跨模块一致性 |
 | `pm` | 按需澄清需求并产出 PRD：问题与目标、范围、业务规则、用户故事、验收标准与开放问题；默认交付可阅读的 HTML 文件 |
 | `prototype` | 将 PRD 或明确页面需求转为可离线走查的 HTML 原型与页面、字段、交互状态清单 |
 | `architecture-design` | 比较方案并由用户决定关键取舍，完成整体与专项设计、适用图示和风险验证；复杂专项按需委派，独立交付含可见图示的 HTML 设计文档 |
@@ -219,6 +219,8 @@ Claude Code 可显式使用 `/agentforge:research` 等技能命令。`architectu
 `worktree add <from分支> <新分支>` 创建工作树，例如 `add dev feature/login`，目录为 `<项目主工作树根>/worktree/feature/login/`。add 询问 from 使用本地还是远端，默认检查 origin（无 origin 时使用唯一远端）；目标分支在本地或该远端已存在就停止。`worktree remove <分支>` 核对路径和实际分支，检查未提交、未跟踪及忽略内容后移除工作树，保留分支和提交；存在数据风险时先停止等待处理。remove 不查询远端，两种操作都不自动推送或删除分支。
 
 ### 项目 Wiki
+
+Wiki 可由用户或 agent 独立调用，支持阅读、检查、创建、维护与同步；其他技能可以参考已有文档，但不调度 Wiki，不在执行或收尾时夹带检查、更新正文或保存复核记录。下面的新鲜度与同步命令是 AgentForge 仓库自身已启用的项目约定，不是其他技能对用户项目的隐式步骤。
 
 AgentForge 自身的知识入口见 [项目 Wiki](docs/wiki/README.md)，覆盖技能职责、发现适配、Wiki 工具和分发验证。
 

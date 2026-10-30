@@ -39,10 +39,10 @@ AgentForge 是一份技能真源、多宿主使用的工程方法集合。当前
 |---|---|
 | skill-methods | 十二个非 Wiki 技能目录、Wiki 技能入口、架构、设计/研究材料和调试演练 fixture；理解技能职责与交接。Wiki 模板及检查引擎属于 wiki-tooling，不再随整个 skills 目录重复纳入 |
 | skill-provider | src、装配 patch、provider 测试，以及架构和 architecture-scout 的调用策略；不承担宿主执行 |
-| wiki-tooling | Wiki 技能、资源及四份 Wiki 测试，另映射项目快捷命令、包脚本、AGENTS 与实施技能中的同步触发约定 |
+| wiki-tooling | Wiki 技能、资源及四份 Wiki 测试，另映射项目快捷命令、包脚本、AGENTS 与实施技能的职责边界 |
 | distribution | 插件/市场清单、CI、发布工具、包配置及发布说明；保留整份 tools 目录以覆盖发布与校验入口 |
 
-共享映射是有意的：Wiki 的 SKILL.md 同时定义总览边界和维护方法；架构同时约束方法、provider 和分发；architecture-scout 的声明同时影响方法选择和候选策略；实施技能同时说明协作和 Wiki 收尾。package.json、AGENTS.md、tools/wiki-project.mjs 同时关联 Wiki 接入和分发。分发模块新增 Qoder 清单、独立安装说明与两份分发回归的来源映射，另映射 provider、bundle 与 Wiki 工具来源，以支撑环境和运维页的加载/检查故障说明。verification.md 同时承载 Wiki 和分发验证。目录映射仍是能力范围而非逐段语义依赖，新目录和共享文件改动需人工判断。
+共享映射是有意的：Wiki 的 SKILL.md 同时定义总览边界和维护方法；架构同时约束方法、provider 和分发；architecture-scout 的声明同时影响方法选择和候选策略；实施技能说明实施协作，不再携带 Wiki 收尾步骤。package.json、AGENTS.md、tools/wiki-project.mjs 同时关联 Wiki 接入和分发。分发模块新增 Qoder 清单、独立安装说明与两份分发回归的来源映射，另映射 provider、bundle 与 Wiki 工具来源，以支撑环境和运维页的加载/检查故障说明。verification.md 同时承载 Wiki 和分发验证。目录映射仍是能力范围而非逐段语义依赖，新目录和共享文件改动需人工判断。
 
 运行 npm run wiki:mapping 查看 Git 可见路径、共享来源、缺失映射和未映射候选；该报告只评估路径覆盖，不能证明模块语义合理。本轮补齐映射测试与调试 fixture；没有用全仓来源或 ignore 清空报告。新增文件先判断归属，再改配置、核查受影响模块并保存新记录。
 

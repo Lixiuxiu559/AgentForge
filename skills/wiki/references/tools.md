@@ -15,6 +15,8 @@ node /absolute/skill-directory/scripts/wiki.mjs changes --root /absolute/project
 
 check核对指定知识目录中的文档、可支持的本地Markdown链接和显式structure规则，模板配置见 `references/templates.md`。支持普通行内/引用式链接、图片、相对路径、URI编码和常见GitHub标题锚点；忽略代码和注释。复杂嵌套、部分列表缩进、HTML、站点根路径、非Markdown锚点和符号链接等产生覆盖限制，外链不联网检查。不读项目根外文件。
 
+check不是完整的 Markdown 格式检查器，也不自动排版或重组正文；标题层级、表格和代码块格式、追加内容的归位、重复与过时说明按 `references/content-verification.md` 由执行者检查。项目已有格式检查命令时沿用其约定。
+
 ## 来源映射
 
 配置示例：`{"version":1,"modules":[{"id":"orders","sources":["src/orders","tests/orders.test.mjs"],"docs":["docs/wiki/orders.md"]}]}`。
