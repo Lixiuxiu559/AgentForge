@@ -1,7 +1,7 @@
 {
   "name": "agentforge",
   "displayName": "AgentForge",
-  "version": "0.14.0",
+  "version": "0.14.1",
   "description": "Thirteen engineering skills for requirements, prototyping, architecture design, research, implementation, review, audits, worktrees and project knowledge.",
   "descriptionZh": "十三个工程技能，覆盖需求、原型与架构设计、调研、实施、评审、审计、工作树与项目知识维护。",
   "author": {
