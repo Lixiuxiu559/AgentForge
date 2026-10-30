@@ -11,7 +11,7 @@
 
 ## 用途与边界
 
-Claude Code、Codex、Qoder 和 DSH 使用同一份 skills 真源。三份插件清单与 package.json 的发布候选版本均为 0.14.1，Wiki 独立调用与整页维护修订已归入 CHANGELOG 的 0.14.1 段落；本地版本准备完成，远端发布状态另行核实。本地版本准备、远端 Release 和用户已安装版本是不同状态，应分别核实。
+Claude Code、Codex、Qoder 和 DSH 使用同一份 skills 真源。三份插件清单与 package.json 的发布候选版本均为 0.15.0，Wiki 生成主线、worktree 远端名校验、crap.cjs 改名与 gate divergent 已归入 CHANGELOG 的 0.15.0 段落；本地版本准备完成，远端发布状态另行核实。本地版本准备、远端 Release 和用户已安装版本是不同状态，应分别核实。
 
 README 与发布文档记录的宿主更新语义在本次只作仓库约定引用，没有用真实安装副本复测。npm 工作流在当前文件中仅支持手动触发，不能从存在 publish.yml 推断 registry 已发布。
 
@@ -22,15 +22,15 @@ README 与发布文档记录的宿主更新语义在本次只作仓库约定引�
 3. package.json 的 files 包含 skills，使技能 references、脚本与 assets 随包分发；项目自身 docs 不是必需运行资产。
 4. release.mjs 要求干净工作区与 main 分支，运行 doctor，同步四处版本和 CHANGELOG，创建提交与标签；可显式选择推送。
 5. PR 的 Wiki 检查 job 明确检出 head，分别运行结构检查与以 base/head 为范围的同步检查门；Git 树中的记录不能被工作区补写替代。
-6. release.yml 在标签推送时校验标签版本并构建 Qoder ZIP，创建 GitHub Release 并上传附件；重跑可补传或覆盖同名 ZIP；publish.yml 是独立手动 npm 流程。旧验证页记载本地版本准备；本轮已准备 0.14.1 本地发布候选，未据此推导远端发布成功，后续远端动作以对应 Release 和流水线实际结果为准。
+6. release.yml 在标签推送时校验标签版本并构建 Qoder ZIP，创建 GitHub Release 并上传附件；重跑可补传或覆盖同名 ZIP；publish.yml 是独立手动 npm 流程。旧验证页记载本地版本准备；本轮已准备 0.15.0 本地发布候选，未据此推导远端发布成功，后续远端动作以对应 Release 和流水线实际结果为准。
 
-prototype 与 architecture-design 在 0.14.0 加入，共十三技能；本轮 0.14.1 修订 Wiki 与其他技能的职责边界和维护规则，技能数量不变。发现与打包回归按十三技能核对，新增技能不要求桥接层增加专用注册项；不能据此推断已安装副本或远端发布已经更新。
+prototype 与 architecture-design 在 0.14.0 加入，共十三技能；0.14.1 修订 Wiki 与其他技能的职责边界，0.15.0 将 Wiki 改为生成主线，技能数量均不变。发现与打包回归按十三技能核对，新增技能不要求桥接层增加专用注册项；不能据此推断已安装副本或远端发布已经更新。
 
 ### Qoder 打包边界
 
 [打包脚本](../../../../tools/package-qoder.mjs) 在临时副本为 architecture-scout 添加 disable-model-invocation: true、user-invocable: true，移除 DSH 字段及 Codex openai.yaml，不改技能源。ZIP 根包含 Qoder 清单、13 个技能及全部非隐藏运行资源、独立 README 和 LICENSE；复杂度计算器以 crap.cjs 扩展名固定为 CommonJS，不受仓库根或目标项目的 type: module 影响，包内无需额外 package.json。包内不带其他宿主清单、DSH 桥接或用户配置。构建需要 Node 和系统 zip；回归另用 unzip。
 
-此前 0.13.0 Qoder 适配阶段通过 87 项 Node 回归、doctor、ZIP 构建及本机 Qoder 官方离线校验；解压后 Wiki 与复杂度脚本实际运行。本轮十三技能候选通过 87 项回归、doctor 与 ZIP 构建，未重复官方客户端校验。Qoder UI 导入、模型执行、子 Agent 和升级缓存未实测，详情见[验证记录](../../verification.md)与[安装说明](../../../qoder.md)。
+此前 0.13.0 Qoder 适配阶段通过 87 项 Node 回归、doctor、ZIP 构建及本机 Qoder 官方离线校验；解压后 Wiki 与复杂度脚本实际运行。0.15.0 候选通过 98 项回归、doctor 与 ZIP 构建（十三技能、94 文件），未重复官方客户端校验。Qoder UI 导入、模型执行、子 Agent 和升级缓存未实测，详情见[验证记录](../../verification.md)与[安装说明](../../../qoder.md)。
 
 ## 阅读导航
 

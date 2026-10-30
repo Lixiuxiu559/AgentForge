@@ -354,21 +354,13 @@
       }
     },
     "wiki-tooling": {
-      "reviewedAt": "2026-10-30T10:20:34.151Z",
+      "reviewedAt": "2026-10-30T10:22:20.222Z",
       "reviewer": "claude-code",
-      "decision": "updated",
-      "reason": "新增 scan.mjs、catalog.mjs、assets/pages 与 generate/writing 规范，wiki.mjs 增加 scan 与 catalog 分支并修复源码行号锚点降级；模块页拆为新旧两套结构说明，代码映射补 scan/catalog/oversized/nonMarkdownAnchors，规则页新增 W19；新回归 wiki-scan、wiki-catalog 纳入模块来源，npm test 98/98",
+      "decision": "no-change",
+      "reason": "release.mjs 只把 package.json 版本从 0.14.1 改为 0.15.0，wiki 工具代码、规则与 npm 脚本未变，模块页无版本表述",
       "evidence": [
-        "skills/wiki/scripts/scan.mjs",
-        "skills/wiki/scripts/catalog.mjs",
-        "skills/wiki/scripts/wiki.mjs",
-        "skills/wiki/references/generate.md",
-        "skills/wiki/references/writing.md",
-        "tests/wiki-catalog.test.mjs",
-        "tests/wiki-scan.test.mjs",
-        "docs/wiki/modules/wiki-tooling/README.md",
-        "docs/wiki/modules/wiki-tooling/code-map.md",
-        "docs/wiki/modules/wiki-tooling/rules.md"
+        "package.json",
+        "docs/wiki/modules/wiki-tooling/README.md"
       ],
       "configDigest": "b696c8646e1200e434809fa2c44afba3c1485ba65ef5b059bb887c34d1314181",
       "sourceSnapshot": {
@@ -549,7 +541,7 @@
           "mode": "100644"
         },
         "package.json": {
-          "sha256": "06dc6ef4af5a8f7bca40e9d6a6a983b83e29608a478722f35c218ee98a7c4b52",
+          "sha256": "135c01ac5e4136f3dabf58a1438782042ab163bdc67c5ff5963fd1e809dbe736",
           "mode": "100644"
         },
         "AGENTS.md": {
@@ -563,7 +555,7 @@
       },
       "docSnapshot": {
         "docs/wiki/README.md": {
-          "sha256": "1f7a335b00b433a50f64f10ffdbfe663be43e165dad8ebbe140ab10f98256a11",
+          "sha256": "a4542b013cf0656354997c74cec1106572b59f23d3b4d87a199a779a665ce9ed",
           "mode": "100644"
         },
         "docs/wiki/concepts.md": {
@@ -583,7 +575,7 @@
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "8a20d3cb7537f00ad263308cbc88d7067ae4874a71a8b5886b32d5c7ac1e7ec3",
+          "sha256": "8c13b6f2dd84217df6166cb6529d9d09bd69dc1fe371e81a628a387b66945d56",
           "mode": "100644"
         },
         "docs/wiki/freshness.md": {
@@ -593,16 +585,18 @@
       }
     },
     "distribution": {
-      "reviewedAt": "2026-10-30T10:20:34.603Z",
+      "reviewedAt": "2026-10-30T10:22:20.784Z",
       "reviewer": "claude-code",
       "decision": "updated",
-      "reason": "wiki 脚本新增 scan/catalog 不引入依赖、不改打包与版本流程；CHANGELOG Unreleased 补 Wiki 生成主线与锚点修复；验证页新增第一期记录；依赖页零依赖与 Git 依赖描述仍成立；配置变化仅为 wiki-tooling 新增测试来源",
+      "reason": "release.mjs minor 将四处清单同步到 0.15.0 并把 Unreleased 转为 0.15.0 段；分发页、环境页、入口页的当前版本与段落归属，README 钉 tag 示例改为 v0.15.0；验证页记录 98/98 与 ZIP 十三技能 94 文件；远端 Release 未推送、未核实",
       "evidence": [
-        "skills/wiki/scripts/scan.mjs",
-        "skills/wiki/scripts/catalog.mjs",
         "CHANGELOG.md",
-        "docs/wiki/verification.md",
-        "docs/wiki/modules/distribution/dependencies.md"
+        "package.json",
+        ".claude-plugin/plugin.json",
+        "README.md",
+        "docs/wiki/modules/distribution/README.md",
+        "docs/wiki/environments.md",
+        "docs/wiki/verification.md"
       ],
       "configDigest": "b696c8646e1200e434809fa2c44afba3c1485ba65ef5b059bb887c34d1314181",
       "sourceSnapshot": {
@@ -615,11 +609,11 @@
           "mode": "100644"
         },
         ".claude-plugin/plugin.json": {
-          "sha256": "6dbc3fe0622ed5ec5a1c345408f58d7a5f01e59c2fc6df204a849d4dfd3df9ca",
+          "sha256": "d6cb820a78bb00906bdefc8cb4defe118146af48f82bef675aa2ea3af5d0b11a",
           "mode": "100644"
         },
         ".codex-plugin/plugin.json": {
-          "sha256": "15904933ab18463866d295d0526398578e6b0543a898670f2d03b91d01d36c4d",
+          "sha256": "adfcf0a9608c945daa52d54bb3c801eb515dc9778d5fd7c9adff4efe0e108e9e",
           "mode": "100644"
         },
         ".github/dependabot.yml": {
@@ -659,11 +653,11 @@
           "mode": "100644"
         },
         "package.json": {
-          "sha256": "06dc6ef4af5a8f7bca40e9d6a6a983b83e29608a478722f35c218ee98a7c4b52",
+          "sha256": "135c01ac5e4136f3dabf58a1438782042ab163bdc67c5ff5963fd1e809dbe736",
           "mode": "100644"
         },
         "README.md": {
-          "sha256": "5663bd967ddd0fdb5b49c9a04fe0631930daafd7ef517a7f9a979f8d683845a8",
+          "sha256": "d23c46825a6eb0724b7259891f0e0a3409096d7c2302872c8e3e352d8fcddd90",
           "mode": "100644"
         },
         "awesome-dsh-plugin-entry.yml": {
@@ -675,7 +669,7 @@
           "mode": "100644"
         },
         "CHANGELOG.md": {
-          "sha256": "1c73f0097b08386fcf547b701c7a75294e92d9ee00fc00ecf8e3be5b4929504e",
+          "sha256": "3cf900de1052e65b0def9a2b55e94af6c5ab40a870ae8d90f0b316b237fd1544",
           "mode": "100644"
         },
         ".gitignore": {
@@ -743,7 +737,7 @@
           "mode": "100644"
         },
         ".qoder-plugin/plugin.json": {
-          "sha256": "d2e481f2800e0ff87c0220bea64630d021b1727a27e5b9cdf6c84b83c56c784b",
+          "sha256": "87b900b3768a226011ca592c3300f3179fe269260566863d6db73b2823873363",
           "mode": "100644"
         },
         "docs/qoder.md": {
@@ -761,7 +755,7 @@
       },
       "docSnapshot": {
         "docs/wiki/modules/distribution/README.md": {
-          "sha256": "34046dce10cc02b04c856234707d3af1107d70bf10136102dde70931dd7a2aac",
+          "sha256": "b0ca7a79e437e0ec2ae9943a02829d3dc1c66bca4919c127985dc620520ad88e",
           "mode": "100644"
         },
         "docs/wiki/modules/distribution/dependencies.md": {
@@ -769,11 +763,11 @@
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "8a20d3cb7537f00ad263308cbc88d7067ae4874a71a8b5886b32d5c7ac1e7ec3",
+          "sha256": "8c13b6f2dd84217df6166cb6529d9d09bd69dc1fe371e81a628a387b66945d56",
           "mode": "100644"
         },
         "docs/wiki/environments.md": {
-          "sha256": "3353cf014ab9e69f290399a6a83e338276b939757f78cbc3656d6f8abbef0735",
+          "sha256": "65046d4d8c174d09cecf1eaae72aa5ec4da2a1b921b5ec0bec9ddcebe4911983",
           "mode": "100644"
         },
         "docs/wiki/operations.md": {
