@@ -80,11 +80,7 @@ export async function packageQoder({ root = ROOT, outDir = path.join(root, 'dist
     }
     await fs.copyFile(path.join(root, 'LICENSE'), path.join(stage, 'LICENSE'))
     await fs.copyFile(path.join(root, 'docs/qoder.md'), path.join(stage, 'README.md'))
-    // crap.js uses CommonJS; do not inherit a target project's type: module.
-    await fs.writeFile(path.join(stage, 'package.json'), `${JSON.stringify({
-      name: manifest.name, version: manifest.version, private: true, type: 'commonjs',
-    }, null, 2)}\n`)
-    files.push('.qoder-plugin/plugin.json', 'LICENSE', 'README.md', 'package.json')
+    files.push('.qoder-plugin/plugin.json', 'LICENSE', 'README.md')
     const archive = path.join(work, `agentforge-${manifest.version}.zip`)
     // zip -@ reads a sorted file list; a fresh archive prevents stale entries.
     execFileSync('zip', ['-q', '-X', archive, '-@'], { cwd: stage, input: `${files.sort().join('\n')}\n`, encoding: 'utf8' })

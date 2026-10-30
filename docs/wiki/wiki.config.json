@@ -20,7 +20,8 @@
         "docs/architecture.md",
         "docs/design",
         "docs/research",
-        "tests/fixtures/bug-debugging"
+        "tests/fixtures/bug-debugging",
+        "tests/complexity-audit.test.mjs"
       ],
       "docs": [
         "docs/wiki/modules/skill-methods/README.md"
@@ -49,6 +50,8 @@
         "docs/wiki/wiki.config.json",
         "tests/wiki-freshness.test.mjs",
         "tests/wiki-mapping.test.mjs",
+        "tests/wiki-scan.test.mjs",
+        "tests/wiki-catalog.test.mjs",
         "tools/wiki-project.mjs",
         "package.json",
         "AGENTS.md",

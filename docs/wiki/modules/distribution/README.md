@@ -28,7 +28,7 @@ prototype 与 architecture-design 在 0.14.0 加入，共十三技能；本轮 0
 
 ### Qoder 打包边界
 
-[打包脚本](../../../../tools/package-qoder.mjs) 在临时副本为 architecture-scout 添加 disable-model-invocation: true、user-invocable: true，移除 DSH 字段及 Codex openai.yaml，不改技能源。ZIP 根包含 Qoder 清单、13 个技能及全部非隐藏运行资源、独立 README、LICENSE 和最小 CommonJS package.json；该模块边界防止 crap.js 继承目标项目的 type: module。包内不带其他宿主清单、DSH 桥接或用户配置。构建需要 Node 和系统 zip；回归另用 unzip。
+[打包脚本](../../../../tools/package-qoder.mjs) 在临时副本为 architecture-scout 添加 disable-model-invocation: true、user-invocable: true，移除 DSH 字段及 Codex openai.yaml，不改技能源。ZIP 根包含 Qoder 清单、13 个技能及全部非隐藏运行资源、独立 README 和 LICENSE；复杂度计算器以 crap.cjs 扩展名固定为 CommonJS，不受仓库根或目标项目的 type: module 影响，包内无需额外 package.json。包内不带其他宿主清单、DSH 桥接或用户配置。构建需要 Node 和系统 zip；回归另用 unzip。
 
 此前 0.13.0 Qoder 适配阶段通过 87 项 Node 回归、doctor、ZIP 构建及本机 Qoder 官方离线校验；解压后 Wiki 与复杂度脚本实际运行。本轮十三技能候选通过 87 项回归、doctor 与 ZIP 构建，未重复官方客户端校验。Qoder UI 导入、模型执行、子 Agent 和升级缓存未实测，详情见[验证记录](../../verification.md)与[安装说明](../../../qoder.md)。
 

@@ -74,11 +74,11 @@ Codex 安装后加载插件副本；修改仓库文件不会自动更新已安�
 
 ## Qoder 装配
 
-`.qoder-plugin/plugin.json` 声明插件元数据与 `./skills/`。仓库清单是构建输入；安装使用 `npm run package:qoder` 生成的 `dist/qoder/agentforge-<version>.zip` 或其解压目录，不直接安装仓库根。ZIP 根直接包含 `.qoder-plugin/plugin.json`、`skills/`、LICENSE、独立 README 与最小 `package.json`，不附加外层目录，也不包含其他宿主的插件清单或 DSH 桥接层。
+`.qoder-plugin/plugin.json` 声明插件元数据与 `./skills/`。仓库清单是构建输入；安装使用 `npm run package:qoder` 生成的 `dist/qoder/agentforge-<version>.zip` 或其解压目录，不直接安装仓库根。ZIP 根直接包含 `.qoder-plugin/plugin.json`、`skills/`、LICENSE与独立 README，不附加外层目录，也不包含其他宿主的插件清单或 DSH 桥接层。
 
 `tools/package-qoder.mjs` 在临时副本中处理宿主差异：为 `architecture-scout` 写入 `disable-model-invocation: true` 和 `user-invocable: true`，移除 DSH 调用策略字段与 Codex 的 `agents/openai.yaml`。共用技能源文件不变，技能正文、references、assets 和执行脚本随包保留。该策略配置用于保留仅用户主动发起架构调查的约定；真实客户端的自动触发与手动调用行为仍须在宿主中验证。
 
-包内 `package.json` 只声明插件名称、版本、`private: true` 和 `type: commonjs`，为 `crap.js` 建立模块边界，避免解压到 `type: module` 项目时继承上层配置而导致 `require` 报错；`.mjs` 工具仍按 ES module 执行。这是生成的运行元数据，不是仓库的 DSH 包配置，不带 `src/` 或 npm 依赖。
+技能脚本用扩展名固定模块类型：`crap.cjs` 为 CommonJS，Wiki 工具为 `.mjs`。因此仓库根 `package.json` 的 `type: module`、npm/DSH 安装目录或解压到的目标项目都不会改变脚本的加载方式，Qoder 包也无需额外的 `package.json`。
 
 Qoder 负责技能发现、模型执行、缓存、权限及通用子 Agent 委派；本项目不新增 MCP 或自定义 Agent。缺少委派能力时沿用技能的串行执行约定。脚本运行依赖可用 Node.js，Git 操作还依赖 Git；构建另外需要系统 `zip`。安装方式与验收范围见 [Qoder 说明](qoder.md)。
 

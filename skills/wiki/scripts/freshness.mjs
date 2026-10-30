@@ -206,5 +206,14 @@ export async function runFreshness({ root, options, parseConfig, local, git, rev
     if (exclusions.length) ignored.push({ ...change, reasons: exclusions.map(entry => entry.reason) })
   }
   if (unmapped.length) limited('Changed paths without a module mapping or explicit ignore remain unresolved')
-  return { records, modules: results, changes, unmapped, ignored, ...(head ? { head, baseline } : { baseline: scope === 'staged' ? 'HEAD or empty tree' : 'index' }) }
+  // A worktree snapshot never sees staged content that the worktree has since overwritten or deleted,
+  // yet a commit would include it. Such paths mean the worktree is not the commit candidate.
+  let divergent = []
+  if (scope === 'worktree') {
+    const names = args => new Set(git(root, ['diff', '--name-only', '-z', '--no-renames', ...args, '--']).split('\0').filter(Boolean))
+    const unstaged = names([])
+    divergent = [...names(['--cached'])].filter(path => unstaged.has(path)).sort()
+    if (divergent.length) limited('Staged content differs from the worktree; run the gate with --scope staged for the commit candidate')
+  }
+  return { records, modules: results, changes, unmapped, ignored, ...(scope === 'worktree' ? { divergent } : {}), ...(head ? { head, baseline } : { baseline: scope === 'staged' ? 'HEAD or empty tree' : 'index' }) }
 }

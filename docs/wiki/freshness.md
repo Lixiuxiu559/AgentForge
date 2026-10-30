@@ -53,7 +53,7 @@ npm run wiki:gate -- --scope staged
 npm run wiki:gate -- --scope range --base origin/main --head HEAD
 ```
 
-check 验证结构、模板和链接；gate 验证复核状态与变更覆盖，两者都必须核对。项目快捷命令默认 gate 检查 worktree：工作区相对索引及未跟踪文件。staged 读索引里的配置、记录与源码，range 读 head 的 Git 树并比较 merge-base 到 head，不能借工作区的新记录让旧候选通过。
+check 验证结构、模板和链接；gate 验证复核状态与变更覆盖，两者都必须核对。项目快捷命令默认 gate 检查 worktree：工作区相对索引及未跟踪文件；同一路径同时有暂存与未暂存改动时报告 divergent 并降为 partial，此时改用 staged 检查提交候选。staged 读索引里的配置、记录与源码，range 读 head 的 Git 树并比较 merge-base 到 head，不能借工作区的新记录让旧候选通过。
 
 暂存区复核顺序是：先暂存来源、Wiki 与配置，再用 review 加 scope staged 生成记录，最后暂存记录并运行 staged gate。只在工作区写出记录还不等于该记录进入候选提交。
 

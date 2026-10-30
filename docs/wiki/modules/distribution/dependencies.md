@@ -30,7 +30,7 @@
 
 [发布约定](../../../releasing.md) 与 [npm 发布说明](../../../npm-publishing.md) 是流程来源；这里不复制安装命令或凭据设置，外部服务当前状态仍待核实。
 
-Qoder 包使用独立最小 CommonJS 模块配置，隔离目标项目的模块类型；Wiki 的 .mjs 脚本仍以 ES module 执行。此配置不包含 DSH main/bundle 或 npm 依赖。Qoder 构建依赖系统 zip，包测试依赖 unzip；用户运行脚本仍需 Node/Git，宿主是否内置这些工具以实际环境为准。
+技能脚本用扩展名固定模块类型（crap.cjs 为 CommonJS，Wiki 的 .mjs 为 ES module），源码、npm/DSH 安装与 Qoder 包都不依赖额外模块配置，也不包含 DSH main/bundle 或 npm 依赖。Qoder 构建依赖系统 zip，包测试依赖 unzip；用户运行脚本仍需 Node/Git，宿主是否内置这些工具以实际环境为准。
 
 ## 依据与核验
 

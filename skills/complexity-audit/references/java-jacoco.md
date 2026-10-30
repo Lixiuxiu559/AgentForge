@@ -19,10 +19,10 @@ find . -path '*/target/site/jacoco/jacoco.xml' \
 
 ## 执行
 
-脚本位于**本技能目录**的 `scripts/crap.js`。从已加载技能的目录（DSH 中为 resourceBase）解析出绝对路径，再在目标项目工作目录运行。派发子任务时传入解析后的路径，不假定环境变量或目标仓库包含插件。
+脚本位于**本技能目录**的 `scripts/crap.cjs`。从已加载技能的目录（DSH 中为 resourceBase）解析出绝对路径，再在目标项目工作目录运行。派发子任务时传入解析后的路径，不假定环境变量或目标仓库包含插件。
 
 ```bash
-node "<技能绝对目录>/scripts/crap.js" \
+node "<技能绝对目录>/scripts/crap.cjs" \
   target/site/jacoco/jacoco.xml \
   --lang java \
   --threshold 30 \

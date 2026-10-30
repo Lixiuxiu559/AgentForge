@@ -30,7 +30,7 @@
 
 以上是基于 CLI 和发布检查实现的排查路径，不是已重现过全部宿主故障。复杂问题保留完整非敏感输出和可复现条件，交由对应调试流程；不采集 Token 或私钥。
 
-Qoder 本地构建入口为 npm run package:qoder；产物位于 dist/qoder（忽略构建目录）。使用生成包内最小模块配置，避免 CommonJS 脚本受目标项目 ESM 配置影响；不编辑共享技能以适配单个宿主。安装与更新方式见[Qoder 说明](../qoder.md)。
+Qoder 本地构建入口为 npm run package:qoder；产物位于 dist/qoder（忽略构建目录）。CommonJS 脚本以 .cjs 扩展名避免受仓库或目标项目 ESM 配置影响；不编辑共享技能以适配单个宿主。安装与更新方式见[Qoder 说明](../qoder.md)。
 
 ## 备份与恢复
 
