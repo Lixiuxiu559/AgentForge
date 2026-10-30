@@ -1,5 +1,7 @@
 # AgentForge Wiki 新鲜度与同步闭环
 
+本文描述本仓库 AGENTS/CI 显式接入的维护约定。分发的架构、实施等技能不主动检查或更新 Wiki；Wiki 可由用户或 agent 独立调用，其他技能不调度或夹带 Wiki 操作；阅读／检查不产生维护写入。
+
 ## 文档信息
 
 | 字段 | 内容 |
@@ -63,7 +65,7 @@ PR 的 [Wiki 合并前检查](../../.github/workflows/validate.yml) job 明确�
 
 ## 依据与核验
 
-2026-10-27 核对 [技能协议](../../skills/wiki/references/freshness.md)、[新鲜度引擎](../../skills/wiki/scripts/freshness.mjs)、[Git 快照](../../skills/wiki/scripts/snapshot.mjs)、[本仓库命令入口](../../tools/wiki-project.mjs)、[自动回归](../../tests/wiki-freshness.test.mjs)、[开发收尾约定](../../skills/implementation-workflow/SKILL.md) 与 [项目指令](../../AGENTS.md)。实际验证结果按验证页记录，不把机械状态写成自动语义审查。
+2026-10-27 核对 [技能协议](../../skills/wiki/references/freshness.md)、[新鲜度引擎](../../skills/wiki/scripts/freshness.mjs)、[Git 快照](../../skills/wiki/scripts/snapshot.mjs)、[本仓库命令入口](../../tools/wiki-project.mjs)、[自动回归](../../tests/wiki-freshness.test.mjs)、[实施职责边界](../../skills/implementation-workflow/SKILL.md) 与 [项目指令](../../AGENTS.md)。实际验证结果按验证页记录，不把机械状态写成自动语义审查。
 
 ## 待确认项
 
