@@ -2,17 +2,16 @@
   "version": 1,
   "modules": {
     "skill-methods": {
-      "reviewedAt": "2026-10-30T05:49:56.491Z",
-      "reviewer": "Codex",
+      "reviewedAt": "2026-10-30T10:20:33.433Z",
+      "reviewer": "claude-code",
       "decision": "updated",
-      "reason": "已复核暂存技能边界：移除架构与实施的 Wiki 自动步骤，Wiki 独立调用并在维护时要求整页整合；方法页与源码一致。",
+      "reason": "wiki 改为生成主线：方法页的 wiki 职责与流程第 5 条改写为 scan→确认 catalog→逐页生成→check 与语言决策顺序；worktree 注入修复与 crap.cjs 改名沿用此前已同步内容；设计稿示例围栏修正。配置仅为 wiki-tooling 新增两个测试来源，本模块覆盖不变",
       "evidence": [
         "skills/wiki/SKILL.md",
-        "skills/architecture-design/SKILL.md",
-        "skills/implementation-workflow/SKILL.md",
+        "docs/design/2026-10-30-wiki-refactor.md",
         "docs/wiki/modules/skill-methods/README.md"
       ],
-      "configDigest": "14d8001a772a27fd6e2aceb1da63c53ff1770d912b5228a461b38eeefaafa56c",
+      "configDigest": "b696c8646e1200e434809fa2c44afba3c1485ba65ef5b059bb887c34d1314181",
       "sourceSnapshot": {
         "skills/architecture-design/SKILL.md": {
           "sha256": "7cee1319469b63ac3b9d05e12a572563b8b1657586090f8624b1c6faca1e4a75",
@@ -103,7 +102,7 @@
           "mode": "100644"
         },
         "skills/complexity-audit/references/java-jacoco.md": {
-          "sha256": "4cf14f4bfcaa4fbe85e11945753d245dd04803f2731a3554e5b731ba6d1df236",
+          "sha256": "8dab4f92756ae32108abd48d73e74abb980e528ad85c601adf2a95527afdfcb1",
           "mode": "100644"
         },
         "skills/complexity-audit/references/javascript-eslint-istanbul.md": {
@@ -118,8 +117,8 @@
           "sha256": "64b4a276393e4c9b37f5c61fc7e4c48f47bb37c8ef0d0bf624fff8d01d64106b",
           "mode": "100644"
         },
-        "skills/complexity-audit/scripts/crap.js": {
-          "sha256": "54ff87be5b6a4bbf74f5145fe92b5221c82de28d2fa350cfbdf5ad5899c2d51b",
+        "skills/complexity-audit/scripts/crap.cjs": {
+          "sha256": "3f46b79ce1d49139a927794777aca59bdd25540c151cbe8871e00b34cd4c2310",
           "mode": "100755"
         },
         "skills/diff-review/SKILL.md": {
@@ -235,15 +234,15 @@
           "mode": "100644"
         },
         "skills/worktree/SKILL.md": {
-          "sha256": "c722b7e9377b1b60464598d923b75e821115bb7e5eec61d797aed62656544557",
+          "sha256": "41c00aa6009df6e1c5239569bfbbb9f1c1a684830429e48dcdf99533766e0961",
           "mode": "100644"
         },
         "skills/wiki/SKILL.md": {
-          "sha256": "f96a9fcf8e48b6a5e9f0269fffb1fdb3693425084763a49b7efc88ae312a5c0a",
+          "sha256": "b7f466d73f54c79d56c11a7de588ba6dbc0f78197318f67e27b4e45c00735d10",
           "mode": "100644"
         },
         "docs/architecture.md": {
-          "sha256": "d99eaf31d93f39fa966f0701c7754ece616ca90e91ff725f699c8c3c5a04f163",
+          "sha256": "c3fa1e0ac8eb6957675679b9ad2a6d5f4efc6619294a0ede086ddd30d853ceae",
           "mode": "100644"
         },
         "docs/design/2026-10-16-lifecycle-walkthroughs.md": {
@@ -252,6 +251,10 @@
         },
         "docs/design/2026-10-16-lifecycle-workflow.md": {
           "sha256": "cb1e873cd7328f59daa52468452009a5bbb445c275f1d7835c8ebfbf4a168acb",
+          "mode": "100644"
+        },
+        "docs/design/2026-10-30-wiki-refactor.md": {
+          "sha256": "b6e35579b61b6f60092b68aca1be95a47e21fae93251c3ef2c0eb7ef9cc3d3d6",
           "mode": "100644"
         },
         "docs/research/2026-09-23-mattpocock-code-review.md": {
@@ -293,27 +296,30 @@
         "tests/fixtures/bug-debugging/request-timeout/request.txt": {
           "sha256": "195ad621b30bc4aba06c753d01ce534ca1a4cb879b59e0b7faa8ffa3d1588579",
           "mode": "100644"
+        },
+        "tests/complexity-audit.test.mjs": {
+          "sha256": "07c89dc43deee599ccc36100b6f316ddf8a974373a5e54d8d077efcd331fae34",
+          "mode": "100644"
         }
       },
       "docSnapshot": {
         "docs/wiki/modules/skill-methods/README.md": {
-          "sha256": "f626b9b58cbfdf9fc03fd4336e6e4c8db85fde473be14a6ba87a883b44cf80a3",
+          "sha256": "d85d618831eb1a74200eb29e47c57f09f3d9533cc5c8fa8485743bea0e66a0c7",
           "mode": "100644"
         }
       }
     },
     "skill-provider": {
-      "reviewedAt": "2026-10-30T05:43:30.744Z",
-      "reviewer": "Codex",
+      "reviewedAt": "2026-10-30T10:20:33.631Z",
+      "reviewer": "claude-code",
       "decision": "no-change",
-      "reason": "架构说明仅修正Wiki独立调用的文字边界；src、候选解析与调用策略字段未变，7项发现和打包回归通过，provider模块正文保持准确。",
+      "reason": "provider 来源只有 docs/architecture.md 的 Qoder 模块类型说明两行变化，不涉及发现、调用策略或资源路径；src、cordis.patch.yml 与 provider 测试未变；配置变化仅为 wiki-tooling 新增测试来源",
       "evidence": [
         "docs/architecture.md",
         "src/index.js",
-        "tests/skill-provider.test.mjs",
         "docs/wiki/modules/skill-provider/README.md"
       ],
-      "configDigest": "14d8001a772a27fd6e2aceb1da63c53ff1770d912b5228a461b38eeefaafa56c",
+      "configDigest": "b696c8646e1200e434809fa2c44afba3c1485ba65ef5b059bb887c34d1314181",
       "sourceSnapshot": {
         "src/index.js": {
           "sha256": "cbeb5a237c842edea34f64ce2d66c126d880bd18be1eaff2afedbe56d80204b4",
@@ -328,7 +334,7 @@
           "mode": "100644"
         },
         "docs/architecture.md": {
-          "sha256": "d99eaf31d93f39fa966f0701c7754ece616ca90e91ff725f699c8c3c5a04f163",
+          "sha256": "c3fa1e0ac8eb6957675679b9ad2a6d5f4efc6619294a0ede086ddd30d853ceae",
           "mode": "100644"
         },
         "skills/architecture-scout/SKILL.md": {
@@ -348,20 +354,42 @@
       }
     },
     "wiki-tooling": {
-      "reviewedAt": "2026-10-30T05:50:41.861Z",
-      "reviewer": "Codex",
+      "reviewedAt": "2026-10-30T10:20:34.151Z",
+      "reviewer": "claude-code",
       "decision": "updated",
-      "reason": "核对 package.json 仅同步版本到0.14.1，工具命令与引擎未变；入口及验证页已按当前候选同步。87项回归和结构检查通过，模型整理与真实客户端升级未新增实测。",
+      "reason": "新增 scan.mjs、catalog.mjs、assets/pages 与 generate/writing 规范，wiki.mjs 增加 scan 与 catalog 分支并修复源码行号锚点降级；模块页拆为新旧两套结构说明，代码映射补 scan/catalog/oversized/nonMarkdownAnchors，规则页新增 W19；新回归 wiki-scan、wiki-catalog 纳入模块来源，npm test 98/98",
       "evidence": [
-        "package.json",
-        "docs/wiki/README.md",
-        "docs/wiki/verification.md",
-        "skills/wiki/SKILL.md"
+        "skills/wiki/scripts/scan.mjs",
+        "skills/wiki/scripts/catalog.mjs",
+        "skills/wiki/scripts/wiki.mjs",
+        "skills/wiki/references/generate.md",
+        "skills/wiki/references/writing.md",
+        "tests/wiki-catalog.test.mjs",
+        "tests/wiki-scan.test.mjs",
+        "docs/wiki/modules/wiki-tooling/README.md",
+        "docs/wiki/modules/wiki-tooling/code-map.md",
+        "docs/wiki/modules/wiki-tooling/rules.md"
       ],
-      "configDigest": "14d8001a772a27fd6e2aceb1da63c53ff1770d912b5228a461b38eeefaafa56c",
+      "configDigest": "b696c8646e1200e434809fa2c44afba3c1485ba65ef5b059bb887c34d1314181",
       "sourceSnapshot": {
         "skills/wiki/SKILL.md": {
-          "sha256": "f96a9fcf8e48b6a5e9f0269fffb1fdb3693425084763a49b7efc88ae312a5c0a",
+          "sha256": "b7f466d73f54c79d56c11a7de588ba6dbc0f78197318f67e27b4e45c00735d10",
+          "mode": "100644"
+        },
+        "skills/wiki/assets/pages/architecture.md": {
+          "sha256": "82ed2b105a2e361d21a2ea052fab43f43b4e84e99f40acb0d57651cf5cb6d0d4",
+          "mode": "100644"
+        },
+        "skills/wiki/assets/pages/guide.md": {
+          "sha256": "136c847d6f957c47658edc92a7f3f7f59c266753fe9ca910f972dd0746442e95",
+          "mode": "100644"
+        },
+        "skills/wiki/assets/pages/module.md": {
+          "sha256": "0a7e77ec05c64c51a30ce5bda87ea9453c975e37ea918d30c28af8fc1b08074e",
+          "mode": "100644"
+        },
+        "skills/wiki/assets/pages/overview.md": {
+          "sha256": "239047b11664cf66ecfcb621748c5252ebe105f1f0142ca00d090e856bb91822",
           "mode": "100644"
         },
         "skills/wiki/assets/schema.json": {
@@ -429,7 +457,11 @@
           "mode": "100644"
         },
         "skills/wiki/references/freshness.md": {
-          "sha256": "73807b03883274f1741b1295a4611466b55a9c48193e1981cbaf07d2dc294c5a",
+          "sha256": "563c81c70094e76f65cdce61f5979d41953f429fabf2dbbbcca5feae478b8156",
+          "mode": "100644"
+        },
+        "skills/wiki/references/generate.md": {
+          "sha256": "3d38ac80034ea479d39d1dae2fc59804ce77aca89724eb65ce49f2eebe35a66a",
           "mode": "100644"
         },
         "skills/wiki/references/initialization.md": {
@@ -445,7 +477,15 @@
           "mode": "100644"
         },
         "skills/wiki/references/tools.md": {
-          "sha256": "95708ed5517237f686a0df3e1e17a2291c7f8604894e81d7ea1039acbc42b8b5",
+          "sha256": "ddf81ba10b86fe2dab147eb784ed891b4b7f67a993889e79d02582561b2eb8b4",
+          "mode": "100644"
+        },
+        "skills/wiki/references/writing.md": {
+          "sha256": "eec86e341ee5e802d03c6495e2ccc3271290d372e46945d1ec5c98eb60e26c1d",
+          "mode": "100644"
+        },
+        "skills/wiki/scripts/catalog.mjs": {
+          "sha256": "56515bb003afbf402798bf77d2aecb12d67b6a156e66d78dcba0b66d25ef69b4",
           "mode": "100644"
         },
         "skills/wiki/scripts/document-review.mjs": {
@@ -453,11 +493,15 @@
           "mode": "100644"
         },
         "skills/wiki/scripts/freshness.mjs": {
-          "sha256": "5d4f81d9d7de53f4c781d0357e48d019654ac4cb597de16ac7630e640381310f",
+          "sha256": "2db34e53a44cbf5ff1190134b2ba76812b29e2ffc6653fc4f73f0d20e342c48d",
           "mode": "100644"
         },
         "skills/wiki/scripts/mapping.mjs": {
           "sha256": "ecc8760f0dfae0de502e49010080d64ed896a0bbd63223adf7fa087114e99824",
+          "mode": "100644"
+        },
+        "skills/wiki/scripts/scan.mjs": {
+          "sha256": "a9c5d50e3a42ea128980f68d5ab320c8b161dac7e329bb455bf95170ead8f3c2",
           "mode": "100644"
         },
         "skills/wiki/scripts/snapshot.mjs": {
@@ -469,7 +513,7 @@
           "mode": "100644"
         },
         "skills/wiki/scripts/wiki.mjs": {
-          "sha256": "49b6288a7fa6bf2a30f8f27105077bd11a65776bd90aabd22d92083fe65bcc01",
+          "sha256": "2a3a1254151988186f872318fd0961fb0c1696b8953ff0a0c9d357aebde52d07",
           "mode": "100644"
         },
         "tests/wiki.test.mjs": {
@@ -481,15 +525,23 @@
           "mode": "100644"
         },
         "docs/wiki/wiki.config.json": {
-          "sha256": "a10b0b3096744197a125ab2f751229b34eac0d44a1f0eaea4f91cda98bac7eec",
+          "sha256": "37ef70744e36554148f4fcacc5f3fc2a6edd6efa1ad0fe768e288c5f2a33cf78",
           "mode": "100644"
         },
         "tests/wiki-freshness.test.mjs": {
-          "sha256": "4ff5302bbbe7091f52232d5b291a61d217d4083f09ecfbc0e95d671da4981c2e",
+          "sha256": "18c44f853b4e865ad0c0eb1bd51c148a6e35ad484d8082bc50495b6cc6ce33e1",
           "mode": "100644"
         },
         "tests/wiki-mapping.test.mjs": {
           "sha256": "886c2b327d80853945df917585d12f696e7ad621f2198d70444eb3f704c0e795",
+          "mode": "100644"
+        },
+        "tests/wiki-scan.test.mjs": {
+          "sha256": "ac94317447f00e1d6844c81f7436dcf0e1e3be298a39f8dfcedacf4412115462",
+          "mode": "100644"
+        },
+        "tests/wiki-catalog.test.mjs": {
+          "sha256": "92b7ccd3deebe23960ffd95a6f2182f7f3c2515db30f6f766f20b0c77d5de204",
           "mode": "100644"
         },
         "tools/wiki-project.mjs": {
@@ -519,44 +571,40 @@
           "mode": "100644"
         },
         "docs/wiki/modules/wiki-tooling/README.md": {
-          "sha256": "f2560eb11a9b7ecd6c58645cb9cc752c2d66e0ff9c00fe6647998c4569f83a5b",
+          "sha256": "65426e44c789f84c6e23fdad912733b198203b9e9ffbb5b101641c6c322832cc",
           "mode": "100644"
         },
         "docs/wiki/modules/wiki-tooling/rules.md": {
-          "sha256": "246bd5ad3861e992d3793aa4c433f94aa071cab37ecf3748f277336a9cb1256d",
+          "sha256": "5712bc0fe1dde467bcc736b0af8df0d6965794ad569d694a04a79c305806bcfb",
           "mode": "100644"
         },
         "docs/wiki/modules/wiki-tooling/code-map.md": {
-          "sha256": "a6cb23217e7014fb8d732c503a04dc312a583578071bd402f9680b534750de39",
+          "sha256": "d33a7e48b1dba1cd8cd50c5b6a10bf82cd3371e58dec944e600f95e46e26ee6b",
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "cb3d4bd85b35f5df7f9a6be4e47a4bfb6a6a20b7911ff6c3c494d755c6ea7988",
+          "sha256": "8a20d3cb7537f00ad263308cbc88d7067ae4874a71a8b5886b32d5c7ac1e7ec3",
           "mode": "100644"
         },
         "docs/wiki/freshness.md": {
-          "sha256": "c04c9e1f7914d7ff741585a6b3a9c09c8aae7f43d1d85376333a4de0c181271a",
+          "sha256": "01ee541aba6e785cd1a2ef1aa60c845cf6b68ee90b47c5947fa0e4d77c64ab51",
           "mode": "100644"
         }
       }
     },
     "distribution": {
-      "reviewedAt": "2026-10-30T05:50:42.256Z",
-      "reviewer": "Codex",
+      "reviewedAt": "2026-10-30T10:20:34.603Z",
+      "reviewer": "claude-code",
       "decision": "updated",
-      "reason": "核对四处清单均为0.14.1、正式CHANGELOG含两项Wiki修订、README固定tag与分发及环境页同步。发布脚本只本地创建提交标签，Qoder构建十三技能87文件；远端发布和用户安装未从本地结果推导。",
+      "reason": "wiki 脚本新增 scan/catalog 不引入依赖、不改打包与版本流程；CHANGELOG Unreleased 补 Wiki 生成主线与锚点修复；验证页新增第一期记录；依赖页零依赖与 Git 依赖描述仍成立；配置变化仅为 wiki-tooling 新增测试来源",
       "evidence": [
-        ".claude-plugin/plugin.json",
-        ".codex-plugin/plugin.json",
-        ".qoder-plugin/plugin.json",
-        "package.json",
+        "skills/wiki/scripts/scan.mjs",
+        "skills/wiki/scripts/catalog.mjs",
         "CHANGELOG.md",
-        "README.md",
-        "docs/wiki/modules/distribution/README.md",
-        "docs/wiki/environments.md",
-        "docs/wiki/verification.md"
+        "docs/wiki/verification.md",
+        "docs/wiki/modules/distribution/dependencies.md"
       ],
-      "configDigest": "14d8001a772a27fd6e2aceb1da63c53ff1770d912b5228a461b38eeefaafa56c",
+      "configDigest": "b696c8646e1200e434809fa2c44afba3c1485ba65ef5b059bb887c34d1314181",
       "sourceSnapshot": {
         ".agents/plugins/marketplace.json": {
           "sha256": "16c2a3ed2aea0cc4a24c858df3b05f9e77785ab92181848c31a62bece4cd4dab",
@@ -587,7 +635,7 @@
           "mode": "100644"
         },
         ".github/workflows/validate.yml": {
-          "sha256": "605afa4cc430beb6382b748aac8530aadab5a8e8530a5427c28b3f5700da972e",
+          "sha256": "d7323ca8920169dd83ce1672da718d45fa23bee319405ffe642a223a48ac6312",
           "mode": "100644"
         },
         "tools/changelog-section.mjs": {
@@ -599,7 +647,7 @@
           "mode": "100644"
         },
         "tools/package-qoder.mjs": {
-          "sha256": "15dfbc8dce3309bf3e0d5dfcdc6f5e122a46fcbc75fe2f90d71bdfbc5def3b60",
+          "sha256": "71f45ea5b6fe1d87a6bdc82fc1f867a963ba5f8c7fff99629be87de47fc4f57d",
           "mode": "100644"
         },
         "tools/release.mjs": {
@@ -627,7 +675,7 @@
           "mode": "100644"
         },
         "CHANGELOG.md": {
-          "sha256": "fc62d273625128a845f587fa0126af6a75b42e2e18380aeba98eddd763e60b40",
+          "sha256": "1c73f0097b08386fcf547b701c7a75294e92d9ee00fc00ecf8e3be5b4929504e",
           "mode": "100644"
         },
         ".gitignore": {
@@ -639,7 +687,7 @@
           "mode": "100644"
         },
         "docs/architecture.md": {
-          "sha256": "d99eaf31d93f39fa966f0701c7754ece616ca90e91ff725f699c8c3c5a04f163",
+          "sha256": "c3fa1e0ac8eb6957675679b9ad2a6d5f4efc6619294a0ede086ddd30d853ceae",
           "mode": "100644"
         },
         "docs/releasing.md": {
@@ -658,16 +706,24 @@
           "sha256": "b1e28502738589a43cd03b6dc346a5f09ce9b0c9548e3b739b4572e063eb251e",
           "mode": "100644"
         },
+        "skills/wiki/scripts/catalog.mjs": {
+          "sha256": "56515bb003afbf402798bf77d2aecb12d67b6a156e66d78dcba0b66d25ef69b4",
+          "mode": "100644"
+        },
         "skills/wiki/scripts/document-review.mjs": {
           "sha256": "3dde85e4085362be32072353861beff72ca64ad8d019cf70b203112ea375e3c8",
           "mode": "100644"
         },
         "skills/wiki/scripts/freshness.mjs": {
-          "sha256": "5d4f81d9d7de53f4c781d0357e48d019654ac4cb597de16ac7630e640381310f",
+          "sha256": "2db34e53a44cbf5ff1190134b2ba76812b29e2ffc6653fc4f73f0d20e342c48d",
           "mode": "100644"
         },
         "skills/wiki/scripts/mapping.mjs": {
           "sha256": "ecc8760f0dfae0de502e49010080d64ed896a0bbd63223adf7fa087114e99824",
+          "mode": "100644"
+        },
+        "skills/wiki/scripts/scan.mjs": {
+          "sha256": "a9c5d50e3a42ea128980f68d5ab320c8b161dac7e329bb455bf95170ead8f3c2",
           "mode": "100644"
         },
         "skills/wiki/scripts/snapshot.mjs": {
@@ -679,11 +735,11 @@
           "mode": "100644"
         },
         "skills/wiki/scripts/wiki.mjs": {
-          "sha256": "49b6288a7fa6bf2a30f8f27105077bd11a65776bd90aabd22d92083fe65bcc01",
+          "sha256": "2a3a1254151988186f872318fd0961fb0c1696b8953ff0a0c9d357aebde52d07",
           "mode": "100644"
         },
         "skills/wiki/references/freshness.md": {
-          "sha256": "73807b03883274f1741b1295a4611466b55a9c48193e1981cbaf07d2dc294c5a",
+          "sha256": "563c81c70094e76f65cdce61f5979d41953f429fabf2dbbbcca5feae478b8156",
           "mode": "100644"
         },
         ".qoder-plugin/plugin.json": {
@@ -691,11 +747,11 @@
           "mode": "100644"
         },
         "docs/qoder.md": {
-          "sha256": "47632a0cd4448e96a0ae6a6b32f4fb78fa0c60a795a947732821ea9af6182122",
+          "sha256": "e8b8410c42950187b17080b336199f33974ca5e92c89c03e95805dcf2145602b",
           "mode": "100644"
         },
         "tests/qoder-package.test.mjs": {
-          "sha256": "1c318e86ca6ffb4da8c974eb5d8ef863294070975d3762fac2a04e565e97b553",
+          "sha256": "8025df7b2e00370d0401ec79b8d54ce3674aedd859a7fe1e8999c447e9718d49",
           "mode": "100644"
         },
         "tests/release.test.mjs": {
@@ -705,15 +761,15 @@
       },
       "docSnapshot": {
         "docs/wiki/modules/distribution/README.md": {
-          "sha256": "1d84d0637d81fd1056496071996be9364de5d6622b478b119cf4791bc4b06098",
+          "sha256": "34046dce10cc02b04c856234707d3af1107d70bf10136102dde70931dd7a2aac",
           "mode": "100644"
         },
         "docs/wiki/modules/distribution/dependencies.md": {
-          "sha256": "6674f64d94810b74593f0e87bb6c9979a25962568c882eef5e455ab2ebf18f53",
+          "sha256": "f88d05359f175461ccbe88b9254fee17aaa28118bbe27f083d20fda4edbf2f59",
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "cb3d4bd85b35f5df7f9a6be4e47a4bfb6a6a20b7911ff6c3c494d755c6ea7988",
+          "sha256": "8a20d3cb7537f00ad263308cbc88d7067ae4874a71a8b5886b32d5c7ac1e7ec3",
           "mode": "100644"
         },
         "docs/wiki/environments.md": {
@@ -721,7 +777,7 @@
           "mode": "100644"
         },
         "docs/wiki/operations.md": {
-          "sha256": "fa960b857e1d246c143df18304c466dc594ab5a7f50035caf52d82ad7ac562ab",
+          "sha256": "1dd56a2c409a1db36029c54d5b526c79bb2676fd4938cbc4c586b044112acc87",
           "mode": "100644"
         }
       }

@@ -44,7 +44,7 @@ ZIP/本地目录安装不依赖市场自动更新。升级时获取新版本 ZIP
 
 构建保留全部技能正文及 references、assets、脚本。仅在临时副本为 `architecture-scout` 添加 `disable-model-invocation: true` 和 `user-invocable: true`，移除 DSH 调用策略字段与 Codex 的 `agents/openai.yaml`。共享源文件保持原样。包内不包含其他宿主插件清单、DSH 桥接代码或仓库本地状态。
 
-ZIP 根额外生成最小 `package.json`，仅含插件名称、版本、`private: true` 和 `type: commonjs`，使 CommonJS 脚本 `crap.js` 不受解压目标项目的 `type: module` 影响；`.mjs` 工具仍按 ES module 执行。这不是原 DSH 包配置，不包含 `src/`、桥接入口或 npm 依赖。
+包内脚本用扩展名声明模块类型：CommonJS 的 `crap.cjs` 与 ES module 的 `.mjs` 工具都不受解压目标项目 `package.json` 的 `type` 影响，ZIP 不额外生成 `package.json`。
 
 静态清单、ZIP 内容和包内脚本检查只证明对应产物契约。真实客户端的技能加载、主动调用限制、子 Agent 交接与升级缓存还需宿主实测；不能用打包成功或目录校验替代模型执行证据。建议导入后先用只读任务验证技能与 reference 可读，再验证实际使用的开发流程。
 

@@ -16,8 +16,8 @@ add 接受 from、新分支两个参数；remove 接受一个分支参数，动�
 
 ## 公共规则
 
-- 从目标项目的 `git worktree list --porcelain` 确定主工作树根；在 linked worktree 中调用也使用该根，不使用技能安装目录。裸仓库不支持。
-- 校验动作、参数数量及分支名：用 `git check-ref-format "refs/heads/$branch"`，拒绝以 `-` 开头的名称，不展开 checkout 简写。命令参数安全传递，shell 变量始终引用。
+- 用 `git -C "<目标项目目录>" worktree list --porcelain` 确定主工作树根 `$root`；在 linked worktree 中调用也使用该根，不使用技能安装目录或当前 shell 目录。裸仓库不支持。之后所有仓库命令都显式写 `git -C "$root"` 或 `git -C "$target"`，不依赖当前工作目录。
+- 校验动作、参数数量及分支名：用 `git check-ref-format "refs/heads/$branch"`，拒绝以 `-` 开头的名称，不展开 checkout 简写。远端名来自仓库配置，同样视为不可信：必须精确出现在 `git -C "$root" remote` 的输出中，且不能以 `-` 开头、不能含空白或控制字符，否则停止并报告。命令参数安全传递，shell 变量始终引用，远端名放在 `--` 之后，防止被 Git 解析为选项。
 - 目标必须在根 `worktree/` 内，目标和父路径不能经过符号链接、嵌入另一工作树或独立仓库。
 - 旧 `.worktree/` 中的工作树不自动迁移或删除；remove仅核对新约定路径，旧路径另有登记时报告实际位置，不把同名目录当作目标。
 - 使用原生 Git，不要求当前分支为 dev。不切换分支、不自动暂存、提交、stash、推送、删除分支或安装依赖。
@@ -25,15 +25,15 @@ add 接受 from、新分支两个参数；remove 接受一个分支参数，动�
 
 ## add
 
-1. **选择来源**：询问 from 使用本地还是远端；对话已明确时不重复询问。默认远端为 origin，没有 origin 时使用唯一远端，存在多个则补问。无远端或无法查询就停止，即使 from 选择本地也要检查远端重名。
-2. **锁定基线**：本地解析 `refs/heads/<from>^{commit}`；远端先获取指定分支，再解析远端跟踪引用，记录完整 OID。例如：
+1. **选择来源**：询问 from 使用本地还是远端；对话已明确时不重复询问。默认远端为 origin，没有 origin 时使用唯一远端，存在多个则补问；选定后按公共规则校验远端名。无远端或无法查询就停止，即使 from 选择本地也要检查远端重名。
+2. **锁定基线**：本地用 `git -C "$root" rev-parse --verify --end-of-options "refs/heads/$from^{commit}"` 解析；远端先获取指定分支，再解析远端跟踪引用，记录完整 OID。例如：
    ```bash
-   git fetch --no-tags "$remote" "+refs/heads/$from:refs/remotes/$remote/$from"
+   git -C "$root" fetch --no-tags -- "$remote" "+refs/heads/$from:refs/remotes/$remote/$from"
    ```
    来源不存在或获取失败就停止，不改写本地 from，不回退到其他来源或旧缓存。
 3. **检查冲突**：本地已有 `refs/heads/<new>`、目标路径已存在或已登记，都停止；已挂载时报告路径。用下列命令查询所选远端的精确引用，不依赖缓存：
    ```bash
-   git ls-remote --exit-code --heads "$remote" "refs/heads/$new"
+   git -C "$root" ls-remote --exit-code --heads -- "$remote" "refs/heads/$new"
    ```
    核对返回 ref；退出码 0 为存在，停止；2 为无匹配；其他为查询失败，停止。此检查不预留远端分支名。
 4. **准备目录**：确认 `worktree/` 下没有已跟踪文件，并被忽略；必要时在根 `.gitignore` 追加 `/worktree/`，保留原内容。通过路径检查后创建缺失父目录。

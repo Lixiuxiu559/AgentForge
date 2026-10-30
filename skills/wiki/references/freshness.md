@@ -76,7 +76,7 @@ node /absolute/skill-directory/scripts/wiki.mjs gate --root /absolute/project --
 node /absolute/skill-directory/scripts/wiki.mjs gate --root /absolute/project --config docs/wiki/wiki.config.json --scope range --base origin/main --head HEAD
 ```
 
-gate 要求配置模块均有 fresh 记录，并核对本次变化的模块覆盖。未映射且没有明确排除理由的变化不能通过。range 比较 merge-base 到 head，配置、记录及指纹均取自 head 的 Git 树；staged 均取自索引。worktree 检查工作区相对索引及未跟踪文件，使用工作区快照。即使工作区已补新记录，也不能让旧索引或旧提交通过。
+gate 要求配置模块均有 fresh 记录，并核对本次变化的模块覆盖。未映射且没有明确排除理由的变化不能通过。range 比较 merge-base 到 head，配置、记录及指纹均取自 head 的 Git 树；staged 均取自索引。worktree 检查工作区相对索引及未跟踪文件，使用工作区快照；同一路径同时有暂存改动和未暂存改动时，索引内容不是工作区快照能代表的提交候选，gate 在 `divergent` 中列出这些路径并报告 partial，此时按 staged 检查或先对齐两层。即使工作区已补新记录，也不能让旧索引或旧提交通过。
 
 gate 是同步状态检查，不能替代 `check` 的目录、模板和链接校验；CI 应对同一个候选同时运行两者。未知或映射不足报告 partial，已过期或 blocked 报告 issues，参数、记录损坏或执行失败报告 error；退出码继续使用 0、1、2。
 

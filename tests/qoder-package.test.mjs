@@ -41,7 +41,7 @@ test('Qoder archive keeps all thirteen skills and runnable resources without cha
   const entries = execFileSync('unzip', ['-Z1', result.output], { encoding: 'utf8' }).trim().split('\n')
   const expected = (await resources(join(root, 'skills')))
     .filter(file => !file.endsWith('/agents/openai.yaml')).map(file => `skills/${file}`)
-  assert.deepEqual(entries.sort(), [...expected, '.qoder-plugin/plugin.json', 'LICENSE', 'README.md', 'package.json'].sort())
+  assert.deepEqual(entries.sort(), [...expected, '.qoder-plugin/plugin.json', 'LICENSE', 'README.md'].sort())
   const installed = join(root, 'installed', 'agentforge')
   await mkdir(installed, { recursive: true })
   unpack(result.output, installed)
@@ -68,7 +68,7 @@ test('Qoder archive keeps all thirteen skills and runnable resources without cha
   assert.equal(JSON.parse(run.stdout).status, 'passed')
   const xml = join(root, 'jacoco.xml')
   await writeFile(xml, '<report><package name="sample"><class name="sample/Example"><method name="run"><counter type="COMPLEXITY" missed="0" covered="2"/><counter type="LINE" missed="0" covered="3"/></method></class></package></report>')
-  const audit = spawnSync(process.execPath, [join(installed, 'skills/complexity-audit/scripts/crap.js'), xml, '--lang', 'java'],
+  const audit = spawnSync(process.execPath, [join(installed, 'skills/complexity-audit/scripts/crap.cjs'), xml, '--lang', 'java'],
     { cwd: tmpdir(), encoding: 'utf8' })
   assert.equal(audit.status, 0, audit.stdout + audit.stderr)
   assert.match(audit.stdout, /sample\.Example#run/)

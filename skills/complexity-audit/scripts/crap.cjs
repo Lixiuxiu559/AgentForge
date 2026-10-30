@@ -11,7 +11,7 @@
  *
  * ## 为什么用 Node
  * 装 Claude Code 或 DSH 都一定带 Node,但不一定有 Python/uv。用 Node 写脚本 →
- * 任何项目放进来 `node crap.js` 即可,零安装零依赖,利于打包成插件分发。
+ * 任何项目放进来 `node crap.cjs` 即可,零安装零依赖,利于打包成插件分发。
  *
  * ## 多语言支持现状
  * - java  : ✅ 已实装。解析 JaCoCo jacoco.xml(机器生成、格式固定,手写扫描即可)
@@ -22,7 +22,7 @@
  * 新增语言 = 写一个 parse<Lang>() 返回 Method[],注册进 PARSERS。公式/报告层复用。
  *
  * ## 用法
- *   node crap.js [报告路径] [--lang java] [--threshold 30] [--top 30]
+ *   node crap.cjs [报告路径] [--lang java] [--threshold 30] [--top 30]
  *   不传 --lang 时按报告文件名自动探测。
  * 被 cleaner agent 调用; 只报告不改码, 超阈值以退出码 1 返回。
  */

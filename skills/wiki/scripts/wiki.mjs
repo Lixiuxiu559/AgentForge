@@ -5,6 +5,8 @@ import { dirname, isAbsolute, relative, resolve, sep } from 'node:path'
 import { checkStructure, structureConfig } from './structure.mjs'
 import { freshnessConfig, runFreshness } from './freshness.mjs'
 import { inspectMapping } from './mapping.mjs'
+import { scan } from './scan.mjs'
+import { checkCatalog, readCatalog } from './catalog.mjs'
 
 const coverage = { semantic: 'not_run', limitations: [] }
 const findings = []
@@ -12,9 +14,10 @@ const issue = (code, path, message) => findings.push({ code, path, message })
 const limited = message => { if (!coverage.limitations.includes(message)) coverage.limitations.push(message) }
 function args() {
   const [command, ...tokens] = process.argv.slice(2)
-  if (!['check', 'changes', 'mapping', 'freshness', 'review', 'gate'].includes(command)) throw new Error('Expected check, changes, mapping, freshness, review, or gate')
+  if (!['scan', 'check', 'changes', 'mapping', 'freshness', 'review', 'gate'].includes(command)) throw new Error('Expected scan, check, changes, mapping, freshness, review, or gate')
   const result = { command }
   const allowed = {
+    scan: ['root', 'wiki'],
     check: ['root', 'wiki', 'config'],
     changes: ['root', 'scope', 'base', 'head', 'config'],
     mapping: ['root', 'config', 'document'],
@@ -27,6 +30,7 @@ function args() {
     if (tokens[i] !== `--${key}` || !allowed.includes(key) || key in result || !tokens[i + 1] || tokens[i + 1].startsWith('--')) throw new Error(`Invalid argument: ${tokens[i]}`)
     result[key] = tokens[i + 1]
   }
+  if (command === 'scan' && !result.root) result.root = execFileSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8', env: gitEnvironment, stdio: ['ignore', 'pipe', 'ignore'] }).trim()
   if (!result.root || !isAbsolute(result.root)) throw new Error('--root must be an absolute project path')
   return result
 }
@@ -137,14 +141,17 @@ function links(text, path) {
   return out
 }
 async function check(root, options, profile) {
-  if (!options.wiki) throw new Error('--wiki is required')
+  if (!options.wiki) options.wiki = 'docs/wiki'
   const wiki = await safe(root, local(root, options.wiki))
   if (!(await stat(wiki)).isDirectory()) throw new Error('--wiki must be a directory')
+  const wikiPath = relative(root, wiki).split(sep).join('/')
+  const catalog = await readCatalog({ root, wiki: wikiPath, local, safe })
   const files = await markdownFiles(root, wiki)
   coverage.files = files.length
   coverage.links = 0
   coverage.externalLinks = 0
   coverage.anchorStyle = 'common-github-slugs; custom renderers require manual verification'
+  coverage.nonMarkdownAnchors = 0
   if (!files.length) issue('empty-wiki', options.wiki, 'No Markdown documents found')
   for (const mod of profile.modules) for (const field of ['docs', 'sources']) for (const p of mod[field]) {
     try {
@@ -182,7 +189,7 @@ async function check(root, options, profile) {
       }
       if (!image && /\.md$/i.test(actual) && (await stat(actual)).isFile()) graph.get(file).add(actual)
       if (anchor) {
-        if (!/\.md$/i.test(actual)) { limited(`Non-Markdown anchor not checked: ${name}: ${href}`); continue }
+        if (!/\.md$/i.test(actual)) { coverage.nonMarkdownAnchors++; continue }
         const targetText = actual === file ? content : await readFile(actual, 'utf8')
         if (!anchors(targetText).has(anchor)) {
           const lines = prose(targetText).split('\n')
@@ -215,8 +222,9 @@ async function check(root, options, profile) {
     }
     return targets
   }
-  await checkStructure({ root, wiki, files, profile, texts, graph, navigationTargets, safe, local, prose, issue, coverage })
-  return { wiki: relative(root, wiki) }
+  if (catalog) await checkCatalog({ root, wiki: wikiPath, files, texts, graph, catalog, safe, issue, limited, coverage })
+  else await checkStructure({ root, wiki, files, profile, texts, graph, navigationTargets, safe, local, prose, issue, coverage })
+  return { wiki: relative(root, wiki), ...(catalog ? { language: catalog.language, pathLanguage: catalog.pathLanguage } : {}) }
 }
 const gitEnvironment = { ...process.env, GIT_OPTIONAL_LOCKS: '0' }
 // Host commands (including hooks) can export another repository or index. Keep
@@ -281,7 +289,10 @@ function changes(root, options, profile) {
 try {
   const options = args(), root = await realpath(resolve(options.root))
   let result
-  if (['freshness', 'review', 'gate'].includes(options.command)) {
+  if (options.command === 'scan') {
+    const wiki = relative(root, local(root, options.wiki || 'docs/wiki')).split(sep).join('/')
+    result = await scan({ root, wiki, git, limited })
+  } else if (['freshness', 'review', 'gate'].includes(options.command)) {
     result = await runFreshness({ root, options, parseConfig, local, git, revision, parseChanges, coverage, issue, limited })
   } else {
     const profile = await config(root, options.config)

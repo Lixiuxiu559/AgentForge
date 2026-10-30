@@ -7,7 +7,7 @@
 | 适用范围 | 默认模板、项目约定、工具结果与 Git 范围 |
 | 事实状态 | 部分核验 |
 | 核验基线 | 历史功能基线 3e5341d；本轮 ee58dfd 后开发工作区的来源与文档按复核指纹核验 |
-| 核验时间 | 2026-10-29 |
+| 核验时间 | 2026-10-30 |
 
 ## 预期与约定
 
@@ -15,6 +15,7 @@
 
 | 编号 | 规则 |
 |---|---|
+| W19 | wiki 目录存在 catalog.json 时按新结构检查，不读 structure；catalog 只接受白名单字段与 version 2，非法时退出码 2；来源超过 15 个文件的页面只作 oversized 提示，不计问题；源码行号锚点不校验也不降级 |
 | W1 | 无 structure 配置时为 project，不强制默认目录或元数据；显式 documents 和 entry 才启用对应项目规则 |
 | W2 | small 必需 README；modular另需概念页及至少一个modules下的模块README，concepts类型显式路径可沿项目语言命名，未声明时兼容concepts.md；modules、README.md、reviews.json、wiki.config.json保留固定名称，其余按项目文档惯例命名；规则、映射、依赖可选拆分 |
 | W3 | 默认页面按 schema 检查共同字段与各类型 H2；新规则页分为当前实现规则、条件与边界；旧三章节及旧双章节规则页保留兼容并由 legacyDocuments 报告。必需段落不能为空，标题或元数据残余占位符不能冒充完成内容 |
@@ -25,7 +26,7 @@
 | W8 | sources 为文件或目录前缀、docs 精确映射；重命名同时匹配旧新路径，未映射变化保留覆盖缺口 |
 | W9 | freshness 对来源、文档、文件集合、模式及配置指纹比较；缺记录 unknown，变化 stale，显式冲突 blocked |
 | W10 | review 只保存真实复核声明及证据；updated、no-change 不自动证明语义，不能批量刷新记录冒充复核 |
-| W11 | gate 对选定工作区、索引或提交树读取配置、记录和内容；全部模块 fresh 且变化已映射或有明确排除理由才通过 |
+| W11 | gate 对选定工作区、索引或提交树读取配置、记录和内容；全部模块 fresh 且变化已映射或有明确排除理由才通过；worktree 范围下暂存与工作区分离的路径列入 divergent，不能通过 |
 | W18 | Wiki以代码服务开发；实质性多模块任务按模块编写与独立复审，主Agent整合一致性并统一排队，编写/复审/返工共用最多3个运行子Agent名额，宿主更低上限优先；不要求产品确认，待确认项仅必要技术问题 |
 | W16 | mapping --document 只读所选知识页，输出分段任务、字面路径候选与本页来源覆盖；同名歧义和未提及依赖由Agent查证，候选不等于语义依据 |
 | W15 | 正文结论限定到实际证据支持的平台、渠道、环境与时间，追配置生效链，并反查该页来源映射；结构/指纹检查不自动证明正文与实现一致；复核前须读回真实断言及重复位置，关键处置给出原始来源定位，不能只补免责声明便签认 |
@@ -33,7 +34,7 @@
 | W13 | 显式 structure.documents.type 选择专用模板检查，可与项目 requiredSections 叠加；project 未选型页、默认 Wiki 引用的外部未选型手册保留既有章节规则，不自动补默认元数据 |
 | W12 | mapping评估Git可见工作区的路径覆盖、不读来源正文、不写项目；共享比例与未映射候选是人工判断材料，不按统一阈值判错 |
 
-规则依据为 [工具协议](../../../../skills/wiki/references/tools.md)、[模板规范](../../../../skills/wiki/references/templates.md) 与 [schema](../../../../skills/wiki/assets/schema.json)。
+W1–W18 适用于没有 catalog.json 的旧结构。规则依据为 [工具协议](../../../../skills/wiki/references/tools.md)、[模板规范](../../../../skills/wiki/references/templates.md) 与 [schema](../../../../skills/wiki/assets/schema.json)。
 
 ## 实现观察
 

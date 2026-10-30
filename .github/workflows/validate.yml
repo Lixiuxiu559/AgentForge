@@ -74,7 +74,7 @@ jobs:
           node --check tools/package-qoder.mjs
           node --check tools/changelog-section.mjs
           node --check src/index.js
-          node --check skills/complexity-audit/scripts/crap.js
+          node --check skills/complexity-audit/scripts/crap.cjs
 
       - name: CHANGELOG 段落提取可用
         # publish.yml 用它生成 Release 正文；这里提前验，免得发布当天才发现抽不出来。

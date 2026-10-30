@@ -4,32 +4,42 @@
 
 | 字段 | 内容 |
 |---|---|
-| 适用范围 | Wiki 技能的五种意图、模板、检查与显式复核工具 |
+| 适用范围 | Wiki 技能的生成主线（scan、catalog、页面模板）与旧结构的检查、新鲜度和显式复核工具 |
 | 事实状态 | 部分核验 |
 | 核验基线 | 历史功能基线 3e5341d；本轮 ee58dfd 后开发工作区的来源与文档按复核指纹核验 |
-| 核验时间 | 2026-10-29 |
+| 核验时间 | 2026-10-30 |
 
 ## 用途与边界
 
-Wiki 支持用户或 agent 独立调用；阅读／检查保持只读，其他技能不调度或附带 Wiki 检查和维护。Wiki 内容保存在目标项目，技能资源随插件分发。Agent 负责取证、填充模板和增量维护；check、changes、mapping、freshness 和 gate 只读；review 仅显式保存复核声明，不调用外部模型、不生成业务事实。已有约定优先，无约定的新知识库才采用默认 small 或 modular 骨架。
+Wiki 支持用户或 agent 独立调用；阅读／检查保持只读，其他技能不调度或附带 Wiki 检查和维护。Wiki 内容保存在目标项目，技能资源随插件分发。脚本只做扫描和机械检查，不调用模型、不生成业务事实；review 仅显式保存复核声明。
 
-| 意图 | 输出 |
-|---|---|
-| read | 按问题读取并给出依据与未知项 |
-| init | 选择布局和模板，生成有来源的知识与检查配置 |
-| maintain | 保留人工内容的局部更新 |
-| check | 结构、路径、链接及覆盖限制 |
-| sync | 指定 Git 范围的影响分析；按已授权范围建议或更新 |
+技能按目录中是否存在 `catalog.json` 分成两套结构：
+
+| 结构 | 入口 | 用途 |
+|---|---|---|
+| 新结构（catalog.json，version 2） | [SKILL.md](../../../../skills/wiki/SKILL.md) 的生成／阅读／更新／检查四个任务；[generate.md](../../../../skills/wiki/references/generate.md)、[writing.md](../../../../skills/wiki/references/writing.md) | 从零生成按开发问题组织、关键结论附源码行号的 Wiki，既供 Agent 按 summary 选页，也供人阅读 |
+| 旧结构（wiki.config.json） | [freshness.md](../../../../skills/wiki/references/freshness.md)、[tools.md](../../../../skills/wiki/references/tools.md) 的旧结构一节 | 已有 Wiki 继续按 structure、mapping、freshness、review、gate 维护；本仓库自用 Wiki 仍是这种结构 |
+
+新结构的 `status`／`finalize` 增量更新与旧结构迁移尚未实现，设计与分期见 [重构方案](../../../design/2026-10-30-wiki-refactor.md)。
 
 ## 主要流程
 
-1. 读取项目指令、现有入口及相关未提交内容，确定开发知识范围和模块职责。
-2. 以当前代码、配置、调用关系与工程脚本解释架构、业务实现、部署和运维，关键结论附来源；产品资料不同不阻断代码描述。
-3. 实质性多模块维护由模块编写者专注取证，再由独立上下文追源复审；主 Agent 整合导航、来源映射及跨模块关系，并统一排队调度。运行中的子Agent默认最多3个，编写/复审/返工共用名额，宿主更低上限优先；遇限流降并发，不叠加未停止的超时任务。小修正直接完成，无宿主委派能力时明确自行复核范围。这是技能的调度约定，由执行者落实，工具脚本不启动或限制宿主Agent。
-4. mapping 检查路径覆盖，--document直接列本页覆盖/缺口/歧义；check检查结构与链接。工具不自动证明正文语义，也不代写知识。
-5. 已接入项目在读取前检查freshness，收尾核对实际diff及相关知识，再保存实际范围的review；gate按所选候选及项目策略检查同步状态。
+新结构生成：
 
-当前 AgentForge 自用 Wiki 采用 modular，本模块单独拆出规则和代码映射；其余模块按需保持合并。文件/目录沿用项目现有文档命名语言及风格，modules、README.md、reviews.json、wiki.config.json保留固定名称；模板英文资源名不约束目标文件名。modular概念页可在structure.documents中以concepts类型声明实际路径，未声明时兼容concepts.md。已有项目不自动批量重命名。本仓库继续沿用现有英文路径。默认规则模板以“当前实现规则”“条件与边界”组织，旧两代规则章节继续兼容。
+1. `scan` 只读输出 Git 可见文件清单、编程语言分布、入口候选、目录体量、已有文档及语言建议。语言按已有 catalog > 项目文档正文 > 代码注释与提交信息判定，信号不足时返回 null，由对话语言兜底；`pathLanguage` 跟随已有文档路径的中文／ASCII 风格，无参考时等于 `language`。
+2. Agent 读入口代码与已有文档，规划 `catalog.json`（页面 id、标题、路径、摘要、来源、子页），请用户确认后逐页按 `assets/pages/` 四个模板生成；派发子 Agent 时必须传入 `language`。
+3. 写 README 导航后运行 `check`：catalog 格式、页面存在（planned 可缺）、来源存在、H1 与引用块摘要和 catalog 一致、正文主要语言（仅中英文）、未收录页面、从 README 可达；来源超过 15 个文件的页面列入 `coverage.catalog.oversized` 作为拆页提示，不影响退出码。
+4. 写作要求以代码为准：来源是文档时不转述原文，只写跨文件关系、生效位置与修改时需同步之处；关键实现写到判定条件、失败表现与边界，追不到证据处就近标“推断”。
+
+旧结构维护：
+
+1. 读取项目指令、现有入口及相关未提交内容，确定开发知识范围和模块职责。
+2. 以当前代码、配置、调用关系与工程脚本解释架构、业务实现、部署和运维，关键结论附来源。
+3. 实质性多模块维护由模块编写者取证、独立上下文复审，主 Agent 整合导航与跨模块关系；运行中的子 Agent 默认最多 3 个，宿主更低上限优先。这是技能的调度约定，工具脚本不启动或限制宿主 Agent。
+4. mapping 检查路径覆盖，`--document` 直接列本页覆盖／缺口／歧义；check 检查结构与链接。工具不自动证明正文语义，也不代写知识。
+5. 已接入项目在读取前检查 freshness，收尾核对实际 diff 及相关知识，再保存实际范围的 review；gate 按所选候选及项目策略检查同步状态。
+
+当前 AgentForge 自用 Wiki 采用 modular 旧结构，本模块单独拆出规则和代码映射；文件／目录沿用现有英文路径，modules、README.md、reviews.json、wiki.config.json 保留固定名称。旧模板 `assets/templates/` 继续服务旧检查，删除安排在迁移之后。
 
 ### 架构与运行知识
 
@@ -60,6 +70,8 @@ mapping和单页包只读路径及所选知识页，不读源码内容。工具�
 ## 依据与核验
 
 通用规则不能替代业务验收；复杂 Markdown、定制渲染器、外链可达性及跨宿主模型行为保留为边界。
+
+2026-10-30 对照新结构的 [scan](../../../../skills/wiki/scripts/scan.mjs)、[catalog](../../../../skills/wiki/scripts/catalog.mjs) 与 [CLI](../../../../skills/wiki/scripts/wiki.mjs) 实现及 [scan 回归](../../../../tests/wiki-scan.test.mjs)、[catalog 回归](../../../../tests/wiki-catalog.test.mjs)，npm test 98/98 通过；用新流程为本仓库试生成 14 页 Wiki，check 通过，暴露的相对路径层级、源码行号锚点误降级与页面偏薄问题已分别写入规则或修复。
 
 2026-10-27 对照 [Wiki 技能](../../../../skills/wiki/SKILL.md)、[正文核对方法](../../../../skills/wiki/references/content-verification.md)、[结构 schema](../../../../skills/wiki/assets/schema.json) 和相关脚本；上一轮补读初始化交付层级、知识分类、mapping 实现和规则页兼容逻辑；Node v24.15.0 下 npm test 66/66 通过。2026-10-28 新增架构部署运维模板与显式类型后，71/71 回归通过；分项和边界见验证页。
 

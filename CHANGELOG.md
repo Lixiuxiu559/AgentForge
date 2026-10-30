@@ -16,7 +16,19 @@
 
 ### Added
 
-- 
+- `wiki`：改为以生成为主线。新增 `scan` 命令（只读输出文件清单、语言分布、入口候选、目录体量与文档语言建议）、`catalog.json`（version 2）目录真源及其 `check` 检查（页面、来源、标题与摘要、正文语言、未收录与不可达页面），以及 `assets/pages/` 四个页面模板和 `references/generate.md`、`references/writing.md`。语言按用户指定 > 已有 catalog > `scan` 建议 > 对话语言确定，新建路径跟随项目已有文档的路径风格。没有 `catalog.json` 的旧 Wiki 继续按原流程维护。
+- `wiki check`：来源超过 15 个文件的页面列入 `coverage.catalog.oversized`，作为拆页提示，不影响退出码。
+
+### Changed
+
+- `wiki`：写作规则要求来源本身是文档时不转述原文，只写跨文件关系、生效位置与修改时需同步之处；关键实现写到判定条件、失败表现与边界。
+
+### Fixed
+
+- `worktree`：远端名按不可信输入校验（必须在 `git remote` 中、不能以 `-` 开头），fetch/ls-remote 将远端放在 `--` 之后，防止 `--upload-pack=<命令>` 类远端名注入 Git 选项；所有仓库命令显式使用 `git -C "$root"`，不依赖当前目录。
+- `complexity-audit`：`crap.js` 改名为 `crap.cjs`，修复其在源码、npm/DSH 与 Codex/Claude Code 安装形态下因上层 `type: module` 启动即报 `require is not defined` 的问题；Qoder 包不再额外生成 `package.json`。
+- `wiki check`：指向源码等非 Markdown 文件的行号锚点不再记为覆盖受限，避免带源码链接的正常页面整体降为 partial、退出码 1。
+- Wiki gate：worktree 范围下同一路径同时存在暂存与未暂存改动时，报告 `divergent` 并降为 partial，避免工作区快照放行未复核的索引内容。
 
 ---
 
