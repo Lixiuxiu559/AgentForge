@@ -16,6 +16,14 @@
 
 ### Added
 
+- 
+
+---
+
+## [0.15.0] - 2026-10-30
+
+### Added
+
 - `wiki`：改为以生成为主线。新增 `scan` 命令（只读输出文件清单、语言分布、入口候选、目录体量与文档语言建议）、`catalog.json`（version 2）目录真源及其 `check` 检查（页面、来源、标题与摘要、正文语言、未收录与不可达页面），以及 `assets/pages/` 四个页面模板和 `references/generate.md`、`references/writing.md`。语言按用户指定 > 已有 catalog > `scan` 建议 > 对话语言确定，新建路径跟随项目已有文档的路径风格。没有 `catalog.json` 的旧 Wiki 继续按原流程维护。
 - `wiki check`：来源超过 15 个文件的页面列入 `coverage.catalog.oversized`，作为拆页提示，不影响退出码。
 

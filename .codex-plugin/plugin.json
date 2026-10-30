@@ -1,6 +1,6 @@
 {
   "name": "agentforge",
-  "version": "0.14.1",
+  "version": "0.15.0",
   "description": "Worktree 创建与删除、项目 Wiki 维护、需求澄清、PRD 撰写、页面原型与架构设计、调研、业务测试设计、Bug 调试与确认后修复、实施编排、代码评审与质量审计的十三个工程技能。",
   "author": {
     "name": "lixiuxiu",
