@@ -165,7 +165,7 @@ dsh --profile web --dump-config | grep -A2 agentforge
 | 技能 | 作用 |
 |---|---|
 | `worktree` | add 从本地或远端基线创建分支与分层目录；remove 检查未提交和忽略内容后移除工作树，保留分支 |
-| `wiki` | 独立面向开发人员，按当前代码讲清架构、业务实现、部署与运维；维护来源、新鲜度及跨模块一致性 |
+| `wiki` | 按当前代码生成并维护项目 Wiki：catalog 目录、每页摘要与源码行号来源，供开发者与 Agent 查阅 |
 | `pm` | 按需澄清需求并产出 PRD：问题与目标、范围、业务规则、用户故事、验收标准与开放问题；默认交付可阅读的 HTML 文件 |
 | `prototype` | 将 PRD 或明确页面需求转为可离线走查的 HTML 原型与页面、字段、交互状态清单 |
 | `architecture-design` | 比较方案并由用户决定关键取舍，完成整体与专项设计、适用图示和风险验证；复杂专项按需委派，独立交付含可见图示的 HTML 设计文档 |
@@ -177,8 +177,6 @@ dsh --profile web --dump-config | grep -A2 agentforge
 | `diff-review` | Correctness / Standards / Spec 三轴独立评审 |
 | `complexity-audit` | 复杂度与覆盖率风险审计；数据不足时明确降级 |
 | `mutation-testing` | 使用现有突变测试工具查找存活突变体和测试漏洞 |
-
-Wiki 初始化同时评估架构、部署环境与运维排障；已有架构和发布手册优先复用。专用模板按需显式选型，环境状态保留观察时间与证据，仓库配置不代表实际部署。重要结论还需核对证据范围、配置实际生效链和本页来源映射，避免局部观测扩大为整体结论。
 
 PM、架构设计、测试设计与实施编排独立使用，没有固定前置技能或调用顺序，也不自动相互调用。用户可选用任意材料并自由组合，包括只凭明确需求直接实施；缺少文档本身不是阻塞，只有影响本次结果的关键问题才需澄清。
 
@@ -195,8 +193,8 @@ Codex、Claude Code 与 Qoder 通过插件发现技能；DSH 的桥接入口仅�
 ### 使用示例
 
 ```text
-用 wiki 为这个项目整理知识索引，并注明事实来源与未确认项。
-用 wiki 检查暂存改动影响哪些文档，先给出同步建议。
+用 wiki 为这个项目生成中文 Wiki。
+用 wiki 按这次改动更新受影响的页面，最后跑 check。
 用 pm 把这些已明确的需求整理成 PRD，标出假设和待确认项。
 用 prototype 根据这份 PRD 设计页面，生成 HTML 原型和字段／状态清单。
 用 architecture-design 根据 PRD 和原型做技术方案，先比较可行方案和优缺点，由我决定关键路线，再完成整体与专项设计，提供架构图、流程图和 ER 图及实施交接包。
@@ -220,21 +218,11 @@ Claude Code 可显式使用 `/agentforge:research` 等技能命令。`architectu
 
 ### 项目 Wiki
 
-Wiki 可由用户或 agent 独立调用，支持阅读、检查、创建、维护与同步；其他技能可以参考已有文档，但不调度 Wiki，不在执行或收尾时夹带检查、更新正文或保存复核记录。下面的新鲜度与同步命令是 AgentForge 仓库自身已启用的项目约定，不是其他技能对用户项目的隐式步骤。
+Wiki 可由用户或 agent 独立调用，其他技能不调度它。生成流程是 `scan` → 规划 `catalog.json` 并确认 → 逐页生成 → `check`；产物在目标项目的 `docs/wiki/`，以当前代码为准，关键结论链接源码行号。语言按用户指定 > 已有 catalog > 扫描建议 > 对话语言确定。
 
-AgentForge 自身的知识入口见 [项目 Wiki](docs/wiki/README.md)，覆盖技能职责、发现适配、Wiki 工具和分发验证。
+`check` 只做机械检查：catalog 与文件一致、摘要、语言、页面宽度（超过 30 个代码文件必须拆页）、链接与锚点；通过不代表正文正确。流程与规则见 [生成流程](skills/wiki/references/generate.md)、[写作规则](skills/wiki/references/writing.md)、[扫描与检查](skills/wiki/references/tools.md)。
 
-`wiki` 复用目标项目既有文档目录、术语与模块划分，不要求固定语言、业务角色或四文件布局。知识保存在目标项目，技能资源随插件安装；检查命令必须显式传入目标项目根目录，不依赖插件安装位置；只有 review 命令会按明确复核声明写入项目记录。
-
-读取、初始化与维护由宿主 Agent 按证据执行；`check` 检查文档结构和本地链接，`changes` 收集暂存区、工作区或分支改动并按可选配置映射模块。机械检查通过不代表业务语义一致，也不代表已上线。命令、配置及覆盖限制见 [Wiki 检查协议](skills/wiki/references/tools.md)。
-
-无既有约定的新知识库可采用小型或多模块默认骨架，配套入口、概念、模块、规则、代码映射、依赖和通用主题模板。默认规范检查必需文档、章节、文档信息、未替换占位符及入口导航；已有项目保持原约定，可显式声明自己的必需文件和章节。使用方法见 [Wiki 模板与目录](skills/wiki/references/templates.md)。
-
-Wiki 面向开发人员与编码 Agent，以当前代码、配置和工程脚本为主要依据，讲清职责、流程、条件、依赖和修改边界，关键结论附来源；不等待 PRD 或产品批准。模块按开发理解与修改问题组织，与源码多对多关联。实质性多模块任务采用模块编写与独立复审，主 Agent 整合跨模块关系；小修正直接完成。方法见 [初始化与模块来源设计](skills/wiki/references/initialization.md) 和 [模块协作](skills/wiki/references/module-workflow.md)。
-
-`npm run wiki:mapping` 查看路径覆盖；加 `-- --document docs/wiki/modules/wiki-tooling/README.md` 可直接列所选页的覆盖、缺口与歧义，无需解析嵌套字段。来源清单辅助代码核实，正文由模块编写与独立复审保证质量；不要求逐段记录。初始化交付与持续同步/强制门分别说明，沿用项目已有约定。
-
-读取 Wiki 前运行 `npm run wiki:freshness`；开发收尾核对实际变更后，用 `npm run wiki:review -- ...` 保存更新、无需更新或冲突结论。交付前运行 `npm run wiki:check` 和 `npm run wiki:gate`；PR 工作流会检查提交树中的同步状态。新鲜度按来源与文档指纹判断，命令不会自动证明语义正确。使用方式见 [新鲜度与收尾同步](docs/wiki/freshness.md)。
+旧版 `wiki.config.json` 结构（mapping、freshness、review、gate）已在 0.16.0 移除，旧 Wiki 需重新生成。
 
 ## 项目结构
 
