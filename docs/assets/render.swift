@@ -92,8 +92,8 @@ let hero = canvas(height: 540) {
     label("AgentForge", 58, 122, 76, ink, weight: .bold)
     label("From intent", 62, 226, 42, ink, weight: .medium)
     label("to verified code.", 62, 278, 42, mint, weight: .medium)
-    label("Understand the task. Build with a plan.", 64, 360, 21, muted)
-    label("Review the change. Show the evidence.", 64, 392, 21, muted)
+    label("Build a project Wiki. Understand the code.", 64, 360, 21, muted)
+    label("Plan the change. Verify the result.", 64, 392, 21, muted)
     line(64, 452, 1216, 452, border)
     label("Codex   /   Claude Code   /   DeepSeek Harness", 64, 480, 19, muted)
     label("13 SKILLS  ·  MIT", 1006, 483, 16, mint, mono: true)
@@ -101,70 +101,70 @@ let hero = canvas(height: 540) {
     // A visual of reusable skills, deliberately presented as a diagram rather than a host UI.
     let x: CGFloat = 752
     let cards: [(String, String, String, NSColor)] = [
-        ("01", "Understand", "research  /  wiki", blue),
-        ("02", "Build", "implementation-workflow", violet),
-        ("03", "Verify", "diff-review  /  audits", mint),
+        ("01", "Project Wiki", "wiki  /  source-linked knowledge", mint),
+        ("02", "Investigate", "research  /  evidence", blue),
+        ("03", "Build", "implementation-workflow", violet),
+        ("04", "Verify", "diff-review  /  audits", mint),
     ]
     for (i, card) in cards.enumerated() {
-        let y = CGFloat(112 + i * 104)
-        if i < 2 { line(x + 24, y + 84, x + 24, y + 104, border, thickness: 2) }
-        rect(x, y, 464, 84, panel, radius: 12, stroke: border)
-        rect(x, y + 18, 3, 48, card.3, radius: 1)
-        label(card.0, x + 24, y + 27, 21, card.3, mono: true)
-        label(card.1, x + 78, y + 12, 25, ink, weight: .semibold)
-        label(card.2, x + 78, y + 49, 17, muted, mono: true)
+        let y = CGFloat(96 + i * 86)
+        rect(x, y, 464, 74, panel, radius: 12, stroke: border)
+        rect(x, y + 16, 3, 42, card.3, radius: 1)
+        label(card.0, x + 24, y + 23, 21, card.3, mono: true)
+        label(card.1, x + 78, y + 8, 25, ink, weight: .semibold)
+        label(card.2, x + 78, y + 44, 16, muted, mono: true)
     }
 }
 try png(hero, "hero.png")
 
-let titles = ["Understand", "Build & test", "Review"]
-let skills = ["research", "implementation-workflow", "diff-review"]
+let titles = ["Project Wiki", "Investigate", "Build & test", "Review"]
+let skillLabels = [["wiki"], ["research"], ["implementation-", "workflow"], ["diff-review"]]
 let details = [
-    ["Trace the code paths", "Check constraints", "Collect evidence"],
-    ["Break down the work", "Implement the change", "Run relevant checks"],
+    ["Map architecture", "Link source evidence", "Maintain project docs"],
+    ["Trace code paths", "Check constraints", "Collect evidence"],
+    ["Break down the work", "Implement changes", "Run relevant checks"],
     ["Correctness", "Repository standards", "Requirements"],
 ]
-let colors = [blue, violet, mint]
-let outputs = ["Evidence & constraints", "Code & validation results", "Findings by review axis"]
+let colors = [mint, blue, violet, mint]
+let outputs = ["Source-linked, maintainable project Wiki", "Evidence & constraints",
+               "Code & validation results", "Findings by review axis"]
 
 func workflow(stage: Int, progress: CGFloat, complete: Bool = false) -> CGImage {
-    canvas(height: 510) {
-        rect(1, 1, 1278, 508, .clear, radius: 18, stroke: border)
+    canvas(height: 590) {
+        rect(1, 1, 1278, 588, .clear, radius: 18, stroke: border)
         forgeMark(40, 34, size: 28)
-        label("ONE TASK. A FEW SKILLS. CLEAR OUTPUTS.", 86, 38, 18, ink, weight: .medium, mono: true)
+        label("PROJECT KNOWLEDGE. CODE. EVIDENCE.", 86, 38, 18, ink, weight: .medium, mono: true)
         label("ILLUSTRATIVE WORKFLOW", 956, 41, 14, muted, mono: true)
-        for i in 0..<3 {
-            let x = CGFloat(40 + i * 410)
+        for i in titles.indices {
+            let x = CGFloat(40 + i * 306)
             let active = complete || i == stage
             let accent = active ? colors[i] : border
-            rect(x, 108, 380, 280, panel, radius: 14, stroke: accent)
+            rect(x, 108, 282, 340, panel, radius: 14, stroke: accent)
             rect(x + 20, 128, 38, 30, accent.withAlphaComponent(0.12), radius: 6)
             label(String(format: "%02d", i + 1), x + 27, 133, 16, active ? colors[i] : muted, mono: true)
-            label(titles[i], x + 20, 178, 31, active ? ink : muted, weight: .semibold)
-            label(skills[i], x + 20, 226, 19, active ? colors[i] : muted, mono: true)
+            label(titles[i], x + 20, 178, 28, active ? ink : muted, weight: .semibold)
+            for (j, skill) in skillLabels[i].enumerated() {
+                label(skill, x + 20, CGFloat(226 + j * 26), 19, active ? colors[i] : muted, mono: true)
+            }
             for (j, detail) in details[i].enumerated() {
-                rect(x + 22, CGFloat(275 + j * 31), 4, 4, active ? colors[i] : border, radius: 2)
-                label(detail, x + 36, CGFloat(265 + j * 31), 20, active ? ink : muted)
+                rect(x + 22, CGFloat(325 + j * 31), 4, 4, active ? colors[i] : border, radius: 2)
+                label(detail, x + 36, CGFloat(315 + j * 31), 18, active ? ink : muted)
             }
-            rect(x + 20, 370, 340, 3, border, radius: 1)
+            rect(x + 20, 430, 242, 3, border, radius: 1)
             let filled: CGFloat = complete || i < stage ? 1 : (i == stage ? progress : 0)
-            if filled > 0 { rect(x + 20, 370, 340 * filled, 3, colors[i], radius: 1) }
-            if i < 2 {
-                line(x + 386, 245, x + 404, 245, border, thickness: 2)
-                line(x + 399, 240, x + 404, 245, border, thickness: 2)
-                line(x + 399, 250, x + 404, 245, border, thickness: 2)
-            }
+            if filled > 0 { rect(x + 20, 430, 242 * filled, 3, colors[i], radius: 1) }
+            if i < titles.count - 1 { label("+", x + 288, 260, 22, muted) }
         }
-        line(40, 420, 1240, 420, border)
-        label("OUTPUT", 40, 449, 15, muted, mono: true)
-        label(complete ? "Choose the skills your task needs." : outputs[stage], 134, 442, 25,
+        line(40, 480, 1240, 480, border)
+        label("OUTPUT", 40, 519, 15, muted, mono: true)
+        label(complete ? "Choose the skills your task needs." : outputs[stage], 134, 512, 25,
               complete ? ink : colors[stage], weight: .medium)
-        label("AgentForge", 1113, 451, 17, muted, weight: .medium)
+        label("AgentForge", 1113, 521, 17, muted, weight: .medium)
     }
 }
 
-try png(workflow(stage: 2, progress: 1, complete: true), "workflow.png")
-let frameCount = 61
+try png(workflow(stage: titles.count - 1, progress: 1, complete: true), "workflow.png")
+let frameCount = titles.count * 20 + 1
 let destination = CGImageDestinationCreateWithURL(output.appendingPathComponent("workflow.gif") as CFURL,
                                                   UTType.gif.identifier as CFString, frameCount, nil)!
 CGImageDestinationSetProperties(destination, [kCGImagePropertyGIFDictionary: [
@@ -172,7 +172,7 @@ CGImageDestinationSetProperties(destination, [kCGImagePropertyGIFDictionary: [
 ]] as CFDictionary)
 for frame in 0..<frameCount {
     let complete = frame == frameCount - 1
-    let stage = min(frame / 20, 2)
+    let stage = min(frame / 20, titles.count - 1)
     let progress = CGFloat(frame % 20 + 1) / 20
     let properties = [kCGImagePropertyGIFDictionary: [
         kCGImagePropertyGIFDelayTime: complete ? 2.4 : 0.12,

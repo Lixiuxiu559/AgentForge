@@ -4,8 +4,8 @@
 
 | 文件 | 用途 |
 |---|---|
-| `hero.png` | 首页产品头图，1280 × 540 |
-| `workflow.gif` | research → implementation-workflow → diff-review 的循环示意，1280 × 510 |
+| `hero.png` | 首页产品头图，突出项目 Wiki、调查、实现与验证，1280 × 540 |
+| `workflow.gif` | wiki / research / implementation-workflow / diff-review 的能力组合示意，1280 × 590 |
 | `workflow.png` | 流程静态版，供不希望观看动画的读者使用 |
 | [render.swift](render.swift) | 全部视觉素材的可编辑生成源文件 |
 

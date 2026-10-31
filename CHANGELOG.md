@@ -16,7 +16,7 @@
 
 ### Changed
 
-- README 改为面向开发者的 Coding Agent 产品介绍，补充产品头图、开发流程动图与按场景选择技能的入口；详细安装与更新说明移至 `docs/installation.md`。
+- README 改为面向开发者的 Coding Agent 产品介绍，突出项目 Wiki 的生成、阅读与按变更维护，以及功能实现、调试与评审；补充产品头图、能力组合动图与按场景选择技能的入口，详细安装与更新说明移至 `docs/installation.md`。
 
 ### Removed
 
