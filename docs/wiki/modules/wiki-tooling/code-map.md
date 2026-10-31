@@ -32,7 +32,7 @@
 
 | 概念 | 实现职责 |
 |---|---|
-| CLI 参数与配置 | wiki.mjs 的 args/config，校验 root、scope、模块映射及 structure；scan 的 root 默认当前 Git 根，check 的 wiki 默认 docs/wiki |
+| CLI 参数与配置 | wiki.mjs 的 args/config，校验 root、scope、模块映射及 structure；scan 与 check 的 root 默认当前 Git 根，check 的 wiki 默认 docs/wiki |
 | 仓库扫描 | scan.mjs 的 scan 读取 Git 可见文件，统计语言、入口候选与目录体量；tokens/verdict 判定中英文，按类别最多抽样 200 个文件，无提交时跳过提交信息 |
 | catalog | catalog.mjs 的 parseCatalog 按字段白名单校验 version 2、路径唯一且不越出 wiki 目录、来源合法；非法 catalog 以执行错误退出 |
 | catalog 检查 | checkCatalog 检查来源、页面、标题与摘要、正文语言、未收录与不可达页面，并把来源超过 15 个文件的页面列入 coverage.catalog.oversized；wiki 目录有 catalog.json 时代替 checkStructure |

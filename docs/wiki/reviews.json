@@ -2,13 +2,12 @@
   "version": 1,
   "modules": {
     "skill-methods": {
-      "reviewedAt": "2026-10-30T10:20:33.433Z",
+      "reviewedAt": "2026-10-30T11:10:17.265Z",
       "reviewer": "claude-code",
       "decision": "updated",
-      "reason": "wiki 改为生成主线：方法页的 wiki 职责与流程第 5 条改写为 scan→确认 catalog→逐页生成→check 与语言决策顺序；worktree 注入修复与 crap.cjs 改名沿用此前已同步内容；设计稿示例围栏修正。配置仅为 wiki-tooling 新增两个测试来源，本模块覆盖不变",
+      "reason": "wiki 技能语言规则改为用户指定文档语言时路径语言随之确定，同步职责说明第 5 条",
       "evidence": [
         "skills/wiki/SKILL.md",
-        "docs/design/2026-10-30-wiki-refactor.md",
         "docs/wiki/modules/skill-methods/README.md"
       ],
       "configDigest": "b696c8646e1200e434809fa2c44afba3c1485ba65ef5b059bb887c34d1314181",
@@ -238,7 +237,7 @@
           "mode": "100644"
         },
         "skills/wiki/SKILL.md": {
-          "sha256": "b7f466d73f54c79d56c11a7de588ba6dbc0f78197318f67e27b4e45c00735d10",
+          "sha256": "0bf5f641e52e7fc83bad05407fe6e1bf5d74371e2e6fa84a5d6dd65f15505512",
           "mode": "100644"
         },
         "docs/architecture.md": {
@@ -254,7 +253,7 @@
           "mode": "100644"
         },
         "docs/design/2026-10-30-wiki-refactor.md": {
-          "sha256": "b6e35579b61b6f60092b68aca1be95a47e21fae93251c3ef2c0eb7ef9cc3d3d6",
+          "sha256": "7dd39e021dee0e0a2950feb0757d0eae15358d987165ea82b7094adaf86b7af4",
           "mode": "100644"
         },
         "docs/research/2026-09-23-mattpocock-code-review.md": {
@@ -304,7 +303,7 @@
       },
       "docSnapshot": {
         "docs/wiki/modules/skill-methods/README.md": {
-          "sha256": "d85d618831eb1a74200eb29e47c57f09f3d9533cc5c8fa8485743bea0e66a0c7",
+          "sha256": "a3c1e9a76fd417812169059a5e2b91abaf99a44925d8c9c321860dcc80aabcb8",
           "mode": "100644"
         }
       }
@@ -354,34 +353,36 @@
       }
     },
     "wiki-tooling": {
-      "reviewedAt": "2026-10-30T10:22:20.222Z",
+      "reviewedAt": "2026-10-31T01:56:41.465Z",
       "reviewer": "claude-code",
-      "decision": "no-change",
-      "reason": "release.mjs 只把 package.json 版本从 0.14.1 改为 0.15.0，wiki 工具代码、规则与 npm 脚本未变，模块页无版本表述",
+      "decision": "updated",
+      "reason": "catalog check 新增 bilingual-heading（页面与 README 的 ATX 标题及 summary，排除代码块，新增测试覆盖）；generate.md 要求规划阶段运行 check 并在确认目录前处理 oversized；模板注释与 writing/tools 同步；流程第 3 条已更新",
       "evidence": [
-        "package.json",
+        "skills/wiki/scripts/catalog.mjs",
+        "tests/wiki-catalog.test.mjs",
+        "skills/wiki/references/generate.md",
         "docs/wiki/modules/wiki-tooling/README.md"
       ],
       "configDigest": "b696c8646e1200e434809fa2c44afba3c1485ba65ef5b059bb887c34d1314181",
       "sourceSnapshot": {
         "skills/wiki/SKILL.md": {
-          "sha256": "b7f466d73f54c79d56c11a7de588ba6dbc0f78197318f67e27b4e45c00735d10",
+          "sha256": "0bf5f641e52e7fc83bad05407fe6e1bf5d74371e2e6fa84a5d6dd65f15505512",
           "mode": "100644"
         },
         "skills/wiki/assets/pages/architecture.md": {
-          "sha256": "82ed2b105a2e361d21a2ea052fab43f43b4e84e99f40acb0d57651cf5cb6d0d4",
+          "sha256": "f1a9b4a8bc6267492485ceb49dbbab7416cc2e349fbb01d60951ff08380a5028",
           "mode": "100644"
         },
         "skills/wiki/assets/pages/guide.md": {
-          "sha256": "136c847d6f957c47658edc92a7f3f7f59c266753fe9ca910f972dd0746442e95",
+          "sha256": "6b430bd804c8037ed5ccb039ec5994bf86dee215c8b3dcf3866cae292655e559",
           "mode": "100644"
         },
         "skills/wiki/assets/pages/module.md": {
-          "sha256": "0a7e77ec05c64c51a30ce5bda87ea9453c975e37ea918d30c28af8fc1b08074e",
+          "sha256": "c159b11a4424e76761bbe720deb1c5ee5c2b65b54e8e37f0fe47fe65649acc46",
           "mode": "100644"
         },
         "skills/wiki/assets/pages/overview.md": {
-          "sha256": "239047b11664cf66ecfcb621748c5252ebe105f1f0142ca00d090e856bb91822",
+          "sha256": "ae7a9ffd8f9f22d1ad9018d991d0a3a484acf5b4bc642f2f61520df12e06f42d",
           "mode": "100644"
         },
         "skills/wiki/assets/schema.json": {
@@ -453,7 +454,7 @@
           "mode": "100644"
         },
         "skills/wiki/references/generate.md": {
-          "sha256": "3d38ac80034ea479d39d1dae2fc59804ce77aca89724eb65ce49f2eebe35a66a",
+          "sha256": "1ca863d214f2117ff7e35114fce4c72d3121d36051fc6e289e529be5ac6e7672",
           "mode": "100644"
         },
         "skills/wiki/references/initialization.md": {
@@ -469,15 +470,15 @@
           "mode": "100644"
         },
         "skills/wiki/references/tools.md": {
-          "sha256": "ddf81ba10b86fe2dab147eb784ed891b4b7f67a993889e79d02582561b2eb8b4",
+          "sha256": "4e4576f244b3016d96d3fadbcf724ba27259b276ac82e272abe59c95e23ae5d0",
           "mode": "100644"
         },
         "skills/wiki/references/writing.md": {
-          "sha256": "eec86e341ee5e802d03c6495e2ccc3271290d372e46945d1ec5c98eb60e26c1d",
+          "sha256": "eb9c2d3a5253199ef8cf11ff3420de08a45f3d345a9796ad2641d8041f53edb1",
           "mode": "100644"
         },
         "skills/wiki/scripts/catalog.mjs": {
-          "sha256": "56515bb003afbf402798bf77d2aecb12d67b6a156e66d78dcba0b66d25ef69b4",
+          "sha256": "3c3555f7c0c9f7b2da8e7912e216bd0ac238669ac6ea8feed78203f63a6a384d",
           "mode": "100644"
         },
         "skills/wiki/scripts/document-review.mjs": {
@@ -505,7 +506,7 @@
           "mode": "100644"
         },
         "skills/wiki/scripts/wiki.mjs": {
-          "sha256": "2a3a1254151988186f872318fd0961fb0c1696b8953ff0a0c9d357aebde52d07",
+          "sha256": "e15a730087774c7111acc175dd7dda7226da33fa742a7e8a83842d0dce441044",
           "mode": "100644"
         },
         "tests/wiki.test.mjs": {
@@ -533,7 +534,7 @@
           "mode": "100644"
         },
         "tests/wiki-catalog.test.mjs": {
-          "sha256": "92b7ccd3deebe23960ffd95a6f2182f7f3c2515db30f6f766f20b0c77d5de204",
+          "sha256": "d03e47a807d95f349fd2d645d587337bc060e8b9aa2cae4974a6d15585a4ae9e",
           "mode": "100644"
         },
         "tools/wiki-project.mjs": {
@@ -563,7 +564,7 @@
           "mode": "100644"
         },
         "docs/wiki/modules/wiki-tooling/README.md": {
-          "sha256": "65426e44c789f84c6e23fdad912733b198203b9e9ffbb5b101641c6c322832cc",
+          "sha256": "c9393f10af00a632a49229a0e5d19ed6fec62524717b4012b9b5a472910b212a",
           "mode": "100644"
         },
         "docs/wiki/modules/wiki-tooling/rules.md": {
@@ -571,7 +572,7 @@
           "mode": "100644"
         },
         "docs/wiki/modules/wiki-tooling/code-map.md": {
-          "sha256": "d33a7e48b1dba1cd8cd50c5b6a10bf82cd3371e58dec944e600f95e46e26ee6b",
+          "sha256": "49b1bbdc7c3902cc07ba520ef9b56d50cfc8598975a2c09ce34dc1c58760a4e8",
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
@@ -585,18 +586,12 @@
       }
     },
     "distribution": {
-      "reviewedAt": "2026-10-30T10:22:20.784Z",
+      "reviewedAt": "2026-10-31T01:56:41.936Z",
       "reviewer": "claude-code",
-      "decision": "updated",
-      "reason": "release.mjs minor 将四处清单同步到 0.15.0 并把 Unreleased 转为 0.15.0 段；分发页、环境页、入口页的当前版本与段落归属，README 钉 tag 示例改为 v0.15.0；验证页记录 98/98 与 ZIP 十三技能 94 文件；远端 Release 未推送、未核实",
+      "decision": "no-change",
+      "reason": "CHANGELOG 仅在 Unreleased 新增 wiki 粒度与 bilingual-heading 条目，发布流程、清单与版本未变",
       "evidence": [
-        "CHANGELOG.md",
-        "package.json",
-        ".claude-plugin/plugin.json",
-        "README.md",
-        "docs/wiki/modules/distribution/README.md",
-        "docs/wiki/environments.md",
-        "docs/wiki/verification.md"
+        "CHANGELOG.md"
       ],
       "configDigest": "b696c8646e1200e434809fa2c44afba3c1485ba65ef5b059bb887c34d1314181",
       "sourceSnapshot": {
@@ -669,7 +664,7 @@
           "mode": "100644"
         },
         "CHANGELOG.md": {
-          "sha256": "3cf900de1052e65b0def9a2b55e94af6c5ab40a870ae8d90f0b316b237fd1544",
+          "sha256": "9022f15c0aaad0bad8298915ae7cd25a8723128ea6723cf33344f71519f36d3d",
           "mode": "100644"
         },
         ".gitignore": {
@@ -701,7 +696,7 @@
           "mode": "100644"
         },
         "skills/wiki/scripts/catalog.mjs": {
-          "sha256": "56515bb003afbf402798bf77d2aecb12d67b6a156e66d78dcba0b66d25ef69b4",
+          "sha256": "3c3555f7c0c9f7b2da8e7912e216bd0ac238669ac6ea8feed78203f63a6a384d",
           "mode": "100644"
         },
         "skills/wiki/scripts/document-review.mjs": {
@@ -729,7 +724,7 @@
           "mode": "100644"
         },
         "skills/wiki/scripts/wiki.mjs": {
-          "sha256": "2a3a1254151988186f872318fd0961fb0c1696b8953ff0a0c9d357aebde52d07",
+          "sha256": "e15a730087774c7111acc175dd7dda7226da33fa742a7e8a83842d0dce441044",
           "mode": "100644"
         },
         "skills/wiki/references/freshness.md": {

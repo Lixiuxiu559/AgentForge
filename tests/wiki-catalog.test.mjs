@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { spawnSync } from 'node:child_process'
+import { execFileSync, spawnSync } from 'node:child_process'
 import { mkdtemp, realpath, mkdir, writeFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
@@ -43,6 +43,18 @@ test('a consistent catalog passes with Chinese paths and the default wiki direct
   assert.deepEqual(data.coverage.limitations, [])
 })
 
+test('check defaults --root to the enclosing Git root, like scan', async t => {
+  const root = await project(t, { ...base, 'docs/wiki/catalog.json': catalog([page]) })
+  execFileSync('git', ['-C', root, 'init', '-q'])
+  const run = spawnSync(process.execPath, [script, 'check'], { cwd: join(root, 'src'), encoding: 'utf8' })
+  assert.equal(run.status, 0, run.stdout)
+  assert.equal(JSON.parse(run.stdout).coverage.catalog.pages, 1)
+  const bare = await project(t, {})
+  const outside = spawnSync(process.execPath, [script, 'check'], { cwd: bare, encoding: 'utf8', env: { ...process.env, GIT_CEILING_DIRECTORIES: dirname(bare) } })
+  assert.equal(outside.status, 2)
+  assert.match(JSON.parse(outside.stdout).findings[0].message, /--root is required/)
+})
+
 test('pages backed by more than 15 source files are listed as advisory, except README', async t => {
   const many = Object.fromEntries(Array.from({ length: 16 }, (_, i) => [`src/order/f${i}.ts`, 'export {}\n']))
   const overview = { id: 'overview', title: '订单服务', path: 'README.md', summary: '项目概览。', sources: ['src'] }
@@ -63,6 +75,23 @@ test('catalog check reports missing sources, summary drift, language drift and o
   const { code, data } = check(root)
   assert.equal(code, 1)
   assert.deepEqual(codes(data), ['language-mismatch', 'missing-source', 'summary-mismatch', 'uncatalogued-page', 'unreachable-page'])
+})
+
+test('template headings left bilingual are reported in pages and README, monolingual ones pass', async t => {
+  const body = `# 订单模块\n\n> 负责下单与支付回调。\n\n${zh}\n\n## 概述 / Overview\n\n## 输入 / 输出\n\n\`\`\`\n## 修改须知 / Notes for Changes\n\`\`\`\n\n<details><summary>来源 / Sources</summary>\n\n</details>\n`
+  const root = await project(t, {
+    ...base,
+    'docs/wiki/catalog.json': catalog([page]),
+    'docs/wiki/README.md': `# 订单服务\n\n> 项目概览。\n\n## 文档导航 / Navigation\n\n- [订单模块](核心模块/订单.md)\n`,
+    'docs/wiki/核心模块/订单.md': body,
+  })
+  const { code, data } = check(root)
+  assert.equal(code, 1)
+  assert.deepEqual(data.findings.map(item => [item.path, item.message.match(/"(.+)"/)[1]]), [
+    ['docs/wiki/核心模块/订单.md', '概述 / Overview'],
+    ['docs/wiki/核心模块/订单.md', '来源 / Sources'],
+    ['docs/wiki/README.md', '文档导航 / Navigation'],
+  ])
 })
 
 test('planned pages may be absent, but missing pages and a missing title or summary are reported', async t => {

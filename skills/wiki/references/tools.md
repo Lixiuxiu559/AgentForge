@@ -7,7 +7,7 @@ node /absolute/skill-directory/scripts/wiki.mjs scan [--root /absolute/project] 
 node /absolute/skill-directory/scripts/wiki.mjs check [--root /absolute/project] [--wiki docs/wiki]
 ```
 
-`scan` 的 `--root` 默认当前 Git 根，只读输出文件清单、语言分布、入口候选、目录体量和文档语言建议；语言信号按类别最多抽样 200 个文件，抽样时报告覆盖限制。`check` 的 `--wiki` 默认 `docs/wiki`；目录中存在 `catalog.json` 时按 catalog 检查：格式、页面存在（`planned` 可缺）、来源存在、标题和摘要、摘要与 catalog 一致、正文主要语言（仅中英文）、未收录页面、从 README 可达；来源超过 15 个文件的页面列在 `coverage.catalog.oversized`，只作拆页提示，不影响退出码。非法 catalog 以退出码 2 报错。
+`scan` 与 `check` 的 `--root` 默认当前 Git 根（不在 Git 仓库内时必须显式传入）。`scan` 只读输出文件清单、语言分布、入口候选、目录体量和文档语言建议；语言信号按类别最多抽样 200 个文件，抽样时报告覆盖限制。`check` 的 `--wiki` 默认 `docs/wiki`；目录中存在 `catalog.json` 时按 catalog 检查：格式、页面存在（`planned` 可缺）、来源存在、标题和摘要、摘要与 catalog 一致、正文主要语言（仅中英文）、标题与来源折叠块未保留模板双语（`bilingual-heading`）、未收录页面、从 README 可达；来源超过 15 个文件的页面列在 `coverage.catalog.oversized`，只作拆页提示，不影响退出码。非法 catalog 以退出码 2 报错。
 
 退出码：0 通过，1 有问题或覆盖受限，2 执行错误。
 
