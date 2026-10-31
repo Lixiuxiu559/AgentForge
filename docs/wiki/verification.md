@@ -13,6 +13,10 @@
 
 本页保留功能基线 3e5341d 及 v0.9.0 发布准备阶段的历史本地核验；新增的当前副本结果单独列出。以下旧记录不是本轮重跑证据；来源和文档另以内容指纹追溯。所有命令从仓库根执行；此页不自动追踪后续远端发布与 CI 状态。
 
+### Wiki 语言、粒度与双语标题修正（2026-10-31）
+
+两个外部仓库试生成后修正：portunus（中型 Go/Electron）中文正文、英文路径，check 通过，抽查锚点偏移 5 处；kuavodatahubai（8124 文件）中文正文与路径，20 页 check 通过，607 个符号锚点中 8 处偏移、无指向不存在符号。据此 check 未传 --root 时默认 Git 根；用户指定文档语言时路径语言随之确定；粒度改在规划阶段运行 check 处理 oversized；新增 bilingual-heading，对 kuavodatahubai 报出 13 页残留的“来源 / Sources”，portunus 仍通过。release.mjs patch 将四处清单同步到 0.15.1。npm test 100/100、doctor、wiki:check 与 staged／worktree gate 通过；远端 Release 在推送后独立核实，非中文对话下的语言判定仍未实测。
+
 ### Wiki 生成主线第一期（2026-10-30）
 
 新增 scan、catalog.json 检查、四个页面模板及生成与写作规范，SKILL.md 改为生成／阅读／更新／检查四个任务入口；旧结构命令与模板保留。用新流程为本仓库试生成 14 页 Wiki（中文正文、英文路径），check 通过；抽查的 10 个源码行号锚点与 8 条事实陈述均与代码一致。试生成暴露的相对路径层级错误写入写作规则，源码行号锚点误降级为 partial 的问题已修复并加回归；页面偏薄与复述来源文档的问题以写作规则和 oversized 拆页提示约束。试生成产物未入库。release.mjs minor 将四处清单同步到 0.15.0，本地 Qoder ZIP 含十三技能、94 文件；远端 Release 在推送后独立核实。npm test 98/98、doctor 与本仓库 wiki:check 通过；中型代码仓库试生成和非中文对话下的语言判定尚未实测。

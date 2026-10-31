@@ -353,15 +353,12 @@
       }
     },
     "wiki-tooling": {
-      "reviewedAt": "2026-10-31T01:56:41.465Z",
+      "reviewedAt": "2026-10-31T02:03:07.992Z",
       "reviewer": "claude-code",
-      "decision": "updated",
-      "reason": "catalog check 新增 bilingual-heading（页面与 README 的 ATX 标题及 summary，排除代码块，新增测试覆盖）；generate.md 要求规划阶段运行 check 并在确认目录前处理 oversized；模板注释与 writing/tools 同步；流程第 3 条已更新",
+      "decision": "no-change",
+      "reason": "v0.15.1 版本 bump 仅改 package.json 版本号；wiki-tooling 页对 scan/check/catalog 的描述与当前实现一致，无需修改",
       "evidence": [
-        "skills/wiki/scripts/catalog.mjs",
-        "tests/wiki-catalog.test.mjs",
-        "skills/wiki/references/generate.md",
-        "docs/wiki/modules/wiki-tooling/README.md"
+        "package.json"
       ],
       "configDigest": "b696c8646e1200e434809fa2c44afba3c1485ba65ef5b059bb887c34d1314181",
       "sourceSnapshot": {
@@ -542,7 +539,7 @@
           "mode": "100644"
         },
         "package.json": {
-          "sha256": "135c01ac5e4136f3dabf58a1438782042ab163bdc67c5ff5963fd1e809dbe736",
+          "sha256": "f05703e123e26d28fbb050f7a5972dcecdb5744880627345eec5d04f31309d9a",
           "mode": "100644"
         },
         "AGENTS.md": {
@@ -556,7 +553,7 @@
       },
       "docSnapshot": {
         "docs/wiki/README.md": {
-          "sha256": "a4542b013cf0656354997c74cec1106572b59f23d3b4d87a199a779a665ce9ed",
+          "sha256": "c437b04dcf971be741de0a364ac50d9cf6d47a94355525f615b120ddd11415b2",
           "mode": "100644"
         },
         "docs/wiki/concepts.md": {
@@ -576,7 +573,7 @@
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "8c13b6f2dd84217df6166cb6529d9d09bd69dc1fe371e81a628a387b66945d56",
+          "sha256": "33ffec9f2362e7508b4e66a1fcdfd54c334b77bb829af67defc2fc90a21086f7",
           "mode": "100644"
         },
         "docs/wiki/freshness.md": {
@@ -586,12 +583,15 @@
       }
     },
     "distribution": {
-      "reviewedAt": "2026-10-31T01:56:41.936Z",
+      "reviewedAt": "2026-10-31T02:03:08.684Z",
       "reviewer": "claude-code",
-      "decision": "no-change",
-      "reason": "CHANGELOG 仅在 Unreleased 新增 wiki 粒度与 bilingual-heading 条目，发布流程、清单与版本未变",
+      "decision": "updated",
+      "reason": "release.mjs patch 将四处清单与 CHANGELOG 同步到 0.15.1；同步分发页、environments、README 版本表述与钉 tag 示例，verification 补充 0.15.1 核验记录",
       "evidence": [
-        "CHANGELOG.md"
+        "CHANGELOG.md",
+        "package.json",
+        "docs/wiki/modules/distribution/README.md",
+        "docs/wiki/verification.md"
       ],
       "configDigest": "b696c8646e1200e434809fa2c44afba3c1485ba65ef5b059bb887c34d1314181",
       "sourceSnapshot": {
@@ -604,11 +604,11 @@
           "mode": "100644"
         },
         ".claude-plugin/plugin.json": {
-          "sha256": "d6cb820a78bb00906bdefc8cb4defe118146af48f82bef675aa2ea3af5d0b11a",
+          "sha256": "f0edd321dd372fa61c92f3aa325dcd1c6e742671f8e701752de0eb9ca637e5af",
           "mode": "100644"
         },
         ".codex-plugin/plugin.json": {
-          "sha256": "adfcf0a9608c945daa52d54bb3c801eb515dc9778d5fd7c9adff4efe0e108e9e",
+          "sha256": "65b27ea8aad58c09afe483e756fe1d72f52c3273dc43c26d6e3f076fc66154d5",
           "mode": "100644"
         },
         ".github/dependabot.yml": {
@@ -648,11 +648,11 @@
           "mode": "100644"
         },
         "package.json": {
-          "sha256": "135c01ac5e4136f3dabf58a1438782042ab163bdc67c5ff5963fd1e809dbe736",
+          "sha256": "f05703e123e26d28fbb050f7a5972dcecdb5744880627345eec5d04f31309d9a",
           "mode": "100644"
         },
         "README.md": {
-          "sha256": "d23c46825a6eb0724b7259891f0e0a3409096d7c2302872c8e3e352d8fcddd90",
+          "sha256": "58014b5e3192f9f42e8a768db431b1942edc5e5bb4bc20eab36ccd88534b8d0a",
           "mode": "100644"
         },
         "awesome-dsh-plugin-entry.yml": {
@@ -664,7 +664,7 @@
           "mode": "100644"
         },
         "CHANGELOG.md": {
-          "sha256": "9022f15c0aaad0bad8298915ae7cd25a8723128ea6723cf33344f71519f36d3d",
+          "sha256": "1b80feb3aa24f6222200fad34c0fca3b8a1db37e2fcd42072ce9d0f0bfe8c80a",
           "mode": "100644"
         },
         ".gitignore": {
@@ -732,7 +732,7 @@
           "mode": "100644"
         },
         ".qoder-plugin/plugin.json": {
-          "sha256": "87b900b3768a226011ca592c3300f3179fe269260566863d6db73b2823873363",
+          "sha256": "f2ae24e85ca3504b5def0a1dedd0b78566e28952eaa03861ea9260ab66fdf000",
           "mode": "100644"
         },
         "docs/qoder.md": {
@@ -750,7 +750,7 @@
       },
       "docSnapshot": {
         "docs/wiki/modules/distribution/README.md": {
-          "sha256": "b0ca7a79e437e0ec2ae9943a02829d3dc1c66bca4919c127985dc620520ad88e",
+          "sha256": "3c87645ee4b2a5f40a326c902096c9ddf30362e557d16a80287abe317414f172",
           "mode": "100644"
         },
         "docs/wiki/modules/distribution/dependencies.md": {
@@ -758,11 +758,11 @@
           "mode": "100644"
         },
         "docs/wiki/verification.md": {
-          "sha256": "8c13b6f2dd84217df6166cb6529d9d09bd69dc1fe371e81a628a387b66945d56",
+          "sha256": "33ffec9f2362e7508b4e66a1fcdfd54c334b77bb829af67defc2fc90a21086f7",
           "mode": "100644"
         },
         "docs/wiki/environments.md": {
-          "sha256": "65046d4d8c174d09cecf1eaae72aa5ec4da2a1b921b5ec0bec9ddcebe4911983",
+          "sha256": "668129ea212d9f5cbf8664db61e39d1612588a8aa1626fb5ac83fad0603c69a0",
           "mode": "100644"
         },
         "docs/wiki/operations.md": {
