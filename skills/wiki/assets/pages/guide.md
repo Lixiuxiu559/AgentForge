@@ -1,4 +1,4 @@
-<!-- 指南页模板：关键流程、部署、运维、开发指南共用，按主题增删小节；章节名与来源标题只保留 catalog.language 一种，对照见 references/writing.md。 -->
+<!-- 指南页模板：流程、上手、部署、运维、开发指南共用，按主题增删小节。章节名与来源标题只保留 catalog.language 一侧；规则见 references/writing.md。 -->
 # {主题}
 
 > {一句话：读完能完成什么。与 catalog summary 一致。}

@@ -64,6 +64,26 @@ test('pages backed by more than 15 source files are listed as advisory, except R
   assert.deepEqual(data.coverage.catalog.oversized, [{ id: 'order', path: 'docs/wiki/核心模块/订单.md', sourceFiles: 17 }])
 })
 
+test('pages backed by more than 30 code files, counting body links, must be split', async t => {
+  const declared = Object.fromEntries(Array.from({ length: 20 }, (_, i) => [`src/order/f${i}.ts`, 'export {}\n']))
+  const linked = Object.fromEntries(Array.from({ length: 11 }, (_, i) => [`src/pay/p${i}.ts`, 'export {}\n']))
+  const links = Object.keys(linked).map(path => `[${path}](../../../${path}#L1)`).join('\n')
+  const notes = { 'src/order/README.md': '# 说明\n' }
+  const body = `# 订单模块\n\n> 负责下单与支付回调。\n\n${zh}\n\n${links}\n`
+  const files = { ...base, ...declared, ...linked, ...notes, 'docs/wiki/catalog.json': catalog([{ ...page, sources: ['src/order', 'src/order.ts'] }]) }
+  // 20 declared + 1 file + 11 linked = 32 code files; Markdown under sources is not counted.
+  const broad = check(await project(t, { ...files, 'docs/wiki/核心模块/订单.md': body }))
+  assert.equal(broad.code, 1)
+  assert.deepEqual(broad.data.findings.map(item => [item.code, item.path]), [['page-too-broad', 'docs/wiki/核心模块/订单.md']])
+  assert.match(broad.data.findings[0].message, /32 code files \(limit 30\)/)
+  assert.deepEqual(broad.data.coverage.catalog.oversized, [])
+  // Linking a file that is already a declared source does not count twice.
+  const fewer = Object.keys(linked).slice(0, 9).map(path => `[${path}](../../../${path})`).join('\n') + '\n[f0](../../../src/order/f0.ts)'
+  const ok = check(await project(t, { ...files, 'docs/wiki/核心模块/订单.md': body.replace(links, fewer) }))
+  assert.equal(ok.code, 0, JSON.stringify(ok.data.findings))
+  assert.deepEqual(ok.data.coverage.catalog.oversized, [{ id: 'order', path: 'docs/wiki/核心模块/订单.md', sourceFiles: 30 }])
+})
+
 test('catalog check reports missing sources, summary drift, language drift and orphan pages', async t => {
   const root = await project(t, {
     ...base,

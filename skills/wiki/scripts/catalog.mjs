@@ -8,8 +8,12 @@ const TOP = ['version', 'title', 'language', 'pathLanguage', 'pages']
 const PAGE = ['id', 'title', 'path', 'summary', 'sources', 'children', 'status']
 const text = value => typeof value === 'string' && value.trim() !== ''
 const posix = path => path.split(sep).join('/')
-// Pages backed by more files than this usually answer several questions at once.
+// Breadth = declared sources (directories expanded) plus files the page body links to,
+// Markdown excluded. Above SOURCE_LIMIT a page usually answers several questions and
+// is listed as advisory; above SPLIT_LIMIT it must be split into child pages. Fixed on
+// purpose: the generating agent writes catalog.json, so a limit there would be self-graded.
 const SOURCE_LIMIT = 15
+const SPLIT_LIMIT = 30
 // Template headings read "中文 / English"; a generated page keeps only one side.
 const BILINGUAL = /^[^/]*\p{Script=Han}[^/]*\s\/\s[A-Za-z][A-Za-z ]*$/u
 
@@ -67,7 +71,7 @@ const normalize = value => value.replace(/\s+/g, ' ').trim()
 
 // Mechanical consistency between catalog.json and the files on disk; semantic
 // accuracy of page content stays with the agent.
-export async function checkCatalog({ root, wiki, files, texts, graph, catalog, safe, issue, limited, coverage }) {
+export async function checkCatalog({ root, wiki, files, texts, graph, codeLinks, catalog, safe, issue, limited, coverage }) {
   const base = resolve(root, wiki), name = path => posix(relative(root, path))
   const pages = new Map(catalog.pages.map(page => [resolve(base, page.path), page]))
   const expected = family(catalog.language)
@@ -79,13 +83,15 @@ export async function checkCatalog({ root, wiki, files, texts, graph, catalog, s
   }
   for (const [file, page] of pages) {
     const where = posix(join(wiki, page.path))
-    let count = 0
+    const backing = new Set(codeLinks?.get(file) ?? [])
     for (const source of page.sources) {
-      try { count += await sourceFiles(await safe(root, resolve(root, source))) }
+      try { for (const found of await sourceFiles(await safe(root, resolve(root, source)))) if (!/\.md$/i.test(found)) backing.add(found) }
       catch (error) { if (error.code === 'ENOENT') issue('missing-source', where, `${page.id}: source not found: ${source}`); else throw error }
     }
-    // Advisory only: the overview page legitimately spans the whole project.
-    if (file !== readme && count > SOURCE_LIMIT) coverage.catalog.oversized.push({ id: page.id, path: where, sourceFiles: count })
+    // The overview page legitimately spans the whole project.
+    const count = backing.size
+    if (file !== readme && count > SPLIT_LIMIT) issue('page-too-broad', where, `${page.id}: backed by ${count} code files (limit ${SPLIT_LIMIT}); split into child pages or narrow its scope`)
+    else if (file !== readme && count > SOURCE_LIMIT) coverage.catalog.oversized.push({ id: page.id, path: where, sourceFiles: count })
     if (!texts.has(file)) {
       if (page.status !== 'planned') issue('missing-page', where, `${page.id}: catalog page not found`)
       continue
@@ -119,9 +125,9 @@ function headings(content) {
 }
 
 async function sourceFiles(path) {
-  if (!(await stat(path)).isDirectory()) return 1
+  if (!(await stat(path)).isDirectory()) return [path]
   const entries = await readdir(path, { recursive: true, withFileTypes: true })
-  return entries.filter(entry => entry.isFile()).length
+  return entries.filter(entry => entry.isFile()).map(entry => join(entry.parentPath, entry.name))
 }
 
 export async function readCatalog({ root, wiki, local, safe }) {

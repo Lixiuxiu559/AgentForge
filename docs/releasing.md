@@ -179,12 +179,6 @@ node tools/release.mjs patch --push
 **`release.mjs` 不发布 npm。** 它只同步四个版本号、提交、打标签并推送。
 推送 tag 触发 [`.github/workflows/release.yml`](../.github/workflows/release.yml) 创建 GitHub Release 并上传 Qoder ZIP 附件；npm 发布工作流当前仅手动触发，详见 [`npm-publishing.md`](npm-publishing.md)。
 
-### 启用 Wiki 新鲜度后的发布准备
-
-版本清单和 CHANGELOG 属于分发模块的来源；bump 后旧复核记录会失效。当前脚本不自动改写知识或签认，因此先运行不带 `--push` 的 release 命令，保留本地标签，核对并同步受影响 Wiki 后保存真实复核声明。将知识与记录提交，再检查该发布候选的 `wiki:check` 和 `wiki:gate`。
-
-若知识同步形成后续提交，将**尚未推送**的本地版本标签指向检查通过的新候选后再推送。不要移动已发布的远端标签；已发布内容有问题时使用新版本。这里的记录应基于实际差异，不能为发布全绿机械批量刷新。
-
 加 `--dry-run` 只预览不落盘：
 
 ```bash

@@ -1,0 +1,155 @@
+{
+  "version": 2,
+  "title": "AgentForge",
+  "language": "zh-CN",
+  "pathLanguage": "en",
+  "pages": [
+    {
+      "id": "architecture",
+      "title": "系统架构",
+      "path": "architecture.md",
+      "summary": "说明十三个技能如何以一份真源分发到四个宿主、DSH 桥接如何加载技能，以及打包与发布链路的边界；不展开单个技能的方法细节。",
+      "sources": [
+        "src/index.js",
+        "package.json",
+        "cordis.patch.yml",
+        ".claude-plugin/plugin.json",
+        ".codex-plugin/plugin.json",
+        ".qoder-plugin/plugin.json",
+        ".claude-plugin/marketplace.json",
+        ".agents/plugins/marketplace.json",
+        "tools/package-qoder.mjs",
+        "tools/release.mjs",
+        "docs/architecture.md"
+      ]
+    },
+    {
+      "id": "concepts",
+      "title": "核心概念",
+      "path": "concepts.md",
+      "summary": "统一技能、方法真源、宿主适配、调用策略与版本开关的口径及跨宿主差异；不替代各技能的适用场景说明。",
+      "sources": [
+        "README.md",
+        "docs/architecture.md",
+        "src/index.js",
+        ".claude-plugin/plugin.json",
+        ".codex-plugin/plugin.json",
+        ".qoder-plugin/plugin.json",
+        "docs/releasing.md",
+        "docs/qoder.md"
+      ]
+    },
+    {
+      "id": "skills-overview",
+      "title": "技能套件与分工",
+      "path": "modules/skills-overview.md",
+      "summary": "列出十三个技能的分组、适用场景与调用策略，说明技能之间不互相调度；不展开单个技能的执行步骤。",
+      "sources": [
+        "skills/pm/SKILL.md",
+        "skills/prototype/SKILL.md",
+        "skills/architecture-design/SKILL.md",
+        "skills/architecture-scout/SKILL.md",
+        "skills/research/SKILL.md",
+        "skills/test-design/SKILL.md",
+        "skills/implementation-workflow/SKILL.md",
+        "skills/bug-debugging/SKILL.md",
+        "skills/diff-review/SKILL.md",
+        "skills/complexity-audit/SKILL.md",
+        "skills/mutation-testing/SKILL.md",
+        "skills/wiki/SKILL.md",
+        "skills/worktree/SKILL.md"
+      ]
+    },
+    {
+      "id": "design-skills",
+      "title": "需求与设计技能",
+      "path": "modules/design-skills.md",
+      "summary": "说明 pm、prototype、architecture-design、architecture-scout、research、test-design 的交付物、输入与边界；不涉及实施、评审与质量审计。",
+      "sources": [
+        "skills/pm/SKILL.md",
+        "skills/prototype/SKILL.md",
+        "skills/architecture-design/SKILL.md",
+        "skills/architecture-scout/SKILL.md",
+        "skills/research/SKILL.md",
+        "skills/test-design/SKILL.md"
+      ]
+    },
+    {
+      "id": "implementation-skills",
+      "title": "实施、评审与审计技能",
+      "path": "modules/implementation-skills.md",
+      "summary": "说明 implementation-workflow、bug-debugging、diff-review、complexity-audit、mutation-testing、worktree 的角色、触发条件与边界；不包含需求定义与项目知识维护。",
+      "sources": [
+        "skills/implementation-workflow/SKILL.md",
+        "skills/bug-debugging/SKILL.md",
+        "skills/diff-review/SKILL.md",
+        "skills/complexity-audit/SKILL.md",
+        "skills/complexity-audit/scripts/crap.cjs",
+        "skills/mutation-testing/SKILL.md",
+        "skills/worktree/SKILL.md"
+      ]
+    },
+    {
+      "id": "wiki-skill",
+      "title": "Wiki 技能",
+      "path": "modules/wiki-skill.md",
+      "summary": "说明 wiki 技能的 scan、catalog 目录、逐页生成与 check 判定规则及脚本边界；不重复技能内的写作规范与模板正文。",
+      "sources": [
+        "skills/wiki/SKILL.md",
+        "skills/wiki/references/generate.md",
+        "skills/wiki/references/tools.md",
+        "skills/wiki/references/writing.md",
+        "skills/wiki/scripts/catalog.mjs",
+        "skills/wiki/scripts/scan.mjs",
+        "skills/wiki/scripts/wiki.mjs",
+        "skills/wiki/assets/pages"
+      ]
+    },
+    {
+      "id": "tooling",
+      "title": "仓库工具与校验",
+      "path": "modules/tooling.md",
+      "summary": "说明 doctor 的校验项、release 与 Qoder 打包脚本、CHANGELOG 提取工具及 DSH 桥接入口；不覆盖各宿主客户端的安装操作。",
+      "sources": [
+        "tools/doctor.mjs",
+        "tools/release.mjs",
+        "tools/package-qoder.mjs",
+        "tools/changelog-section.mjs",
+        "src/index.js",
+        "package.json",
+        "cordis.patch.yml"
+      ]
+    },
+    {
+      "id": "local-development",
+      "title": "本地开发与测试",
+      "path": "guides/local-development.md",
+      "summary": "说明本地安装各宿主插件、测试与校验命令、新增技能时需要同步的位置；不覆盖发版流程与线上工作流的实际结果。",
+      "sources": [
+        "package.json",
+        "tools/doctor.mjs",
+        "tests",
+        "README.md",
+        "docs/releasing.md"
+      ]
+    },
+    {
+      "id": "release",
+      "title": "构建与发布",
+      "path": "guides/release.md",
+      "summary": "说明四个清单的版本同步、release.mjs 的前置检查、tag 触发的 Release 与 Qoder 包构建；不证明某个版本已在客户端安装生效。",
+      "sources": [
+        "tools/release.mjs",
+        "tools/changelog-section.mjs",
+        "tools/package-qoder.mjs",
+        ".github/workflows/release.yml",
+        ".github/workflows/validate.yml",
+        ".github/workflows/publish.yml",
+        "CHANGELOG.md",
+        "docs/releasing.md",
+        "docs/npm-publishing.md",
+        "docs/qoder.md"
+      ]
+    }
+  ]
+}
