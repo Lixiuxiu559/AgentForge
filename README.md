@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/hero.png" alt="AgentForge — 项目 Wiki、代码调查、功能实现与验证评审，面向 Coding Agent 的工程技能套件。" width="100%">
+  <img src="docs/assets/hero.zh-CN.png" alt="AgentForge — 项目 Wiki、代码调查、功能实现与验证评审，面向 Coding Agent 的工程技能套件。" width="100%">
 </p>
 
 <p align="center">
@@ -65,9 +65,9 @@
 
 ## 一次开发，可以这样协作
 
-![能力组合示意：wiki 建立可维护的项目知识，research 收集代码证据，implementation-workflow 实现并验证，diff-review 检查正确性、规范和需求。](docs/assets/workflow.gif)
+![能力组合示意：wiki 建立可维护的项目知识，research 收集代码证据，implementation-workflow 实现并验证，diff-review 检查正确性、规范和需求。](docs/assets/workflow.zh-CN.gif)
 
-*能力组合示意，并非宿主实录。按任务选择技能，不要求跑完整条流程。[查看静态图](docs/assets/workflow.png)。*
+*能力组合示意，并非宿主实录。按任务选择技能，不要求跑完整条流程。[查看静态图](docs/assets/workflow.zh-CN.png) · [English visuals](docs/assets/README.md)。*
 
 需要先理清需求时，用 `pm` 整理 PRD；需要看页面或比较技术路线时，用 `prototype`、`architecture-design` 产出可阅读的 HTML。需求已经明确，也可以直接进入实施。
 
