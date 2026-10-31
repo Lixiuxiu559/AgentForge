@@ -31,10 +31,10 @@
 | Mermaid 节点文字和说明 | 使用 `language`；节点 ID 用 ASCII |
 | 代码标识符、文件路径、命令、配置键、错误信息原文 | 原样保留，不翻译 |
 | 专业术语 | 首次出现可附原文，如“工作树（worktree）”；之后沿用同一译法，项目已有译法优先 |
-| 新建的文件和目录名 | 使用 `pathLanguage`；已有路径不重命名 |
+| 文件和目录名 | 使用 `pathLanguage`；更新时已有路径不重命名，只有用户改变路径语言时才按新语言改名并同步入链 |
 | `README.md`、`catalog.json`、`.state.json` | 固定名称，不翻译 |
 
-模板中的章节名写成“中文 / English”，生成时只保留 `language` 对应的一种：
+模板中的章节名和来源折叠块标题（`<summary>`）写成“中文 / English”，生成时只保留 `language` 对应的一种，例如中文页写 `<summary>来源</summary>`。`check` 把保留双语的标题报为 `bilingual-heading`：
 
 | 中文 | English |
 |---|---|

@@ -30,7 +30,11 @@ function args() {
     if (tokens[i] !== `--${key}` || !allowed.includes(key) || key in result || !tokens[i + 1] || tokens[i + 1].startsWith('--')) throw new Error(`Invalid argument: ${tokens[i]}`)
     result[key] = tokens[i + 1]
   }
-  if (command === 'scan' && !result.root) result.root = execFileSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8', env: gitEnvironment, stdio: ['ignore', 'pipe', 'ignore'] }).trim()
+  // New-structure commands default to the enclosing Git root; legacy commands keep requiring --root.
+  if (['scan', 'check'].includes(command) && !result.root) {
+    try { result.root = execFileSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8', env: gitEnvironment, stdio: ['ignore', 'pipe', 'ignore'] }).trim() }
+    catch { throw new Error('--root is required outside a Git repository') }
+  }
   if (!result.root || !isAbsolute(result.root)) throw new Error('--root must be an absolute project path')
   return result
 }

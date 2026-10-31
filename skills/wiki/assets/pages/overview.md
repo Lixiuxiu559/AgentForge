@@ -1,4 +1,4 @@
-<!-- 概览页模板。章节名按 catalog.language 写出，中英对照见 references/writing.md。 -->
+<!-- 概览页模板。章节名与来源标题只保留 catalog.language 一种，对照见 references/writing.md。 -->
 # {项目名}
 
 > {一句话：做什么、给谁用。与 catalog 中本页 summary 一致。}

@@ -10,6 +10,8 @@ const text = value => typeof value === 'string' && value.trim() !== ''
 const posix = path => path.split(sep).join('/')
 // Pages backed by more files than this usually answer several questions at once.
 const SOURCE_LIMIT = 15
+// Template headings read "中文 / English"; a generated page keeps only one side.
+const BILINGUAL = /^[^/]*\p{Script=Han}[^/]*\s\/\s[A-Za-z][A-Za-z ]*$/u
 
 export function parseCatalog(raw, { root, wiki, local }) {
   const data = JSON.parse(raw)
@@ -72,6 +74,9 @@ export async function checkCatalog({ root, wiki, files, texts, graph, catalog, s
   if (!expected) limited(`Page language check supports Chinese and English only: ${catalog.language}`)
   coverage.catalog = { pages: catalog.pages.length, planned: catalog.pages.filter(page => page.status === 'planned').length, oversized: [] }
   const readme = resolve(base, 'README.md')
+  const bilingual = (content, where) => {
+    for (const heading of headings(content)) if (BILINGUAL.test(heading)) issue('bilingual-heading', where, `Keep only the ${catalog.language} side of template heading "${heading}"`)
+  }
   for (const [file, page] of pages) {
     const where = posix(join(wiki, page.path))
     let count = 0
@@ -92,16 +97,25 @@ export async function checkCatalog({ root, wiki, files, texts, graph, catalog, s
     else if (normalize(head.summary) !== normalize(page.summary)) issue('summary-mismatch', where, `${page.id}: page summary differs from catalog.json`)
     const found = expected && pageLanguage(content)
     if (found && found !== expected) issue('language-mismatch', where, `${page.id}: page prose reads as ${found}, catalog language is ${catalog.language}`)
+    bilingual(content, where)
   }
   for (const file of files) {
     if (file !== readme && !pages.has(file)) issue('uncatalogued-page', name(file), 'Markdown page is not listed in catalog.json')
   }
   if (!texts.has(readme)) { issue('missing-readme', posix(join(wiki, 'README.md')), 'Wiki needs README.md as its entry'); return }
+  bilingual(texts.get(readme), posix(join(wiki, 'README.md')))
   const seen = new Set([readme]), queue = [readme]
   while (queue.length) for (const next of graph.get(queue.shift()) ?? []) if (!seen.has(next)) { seen.add(next); queue.push(next) }
   for (const [file, page] of pages) {
     if (texts.has(file) && !seen.has(file)) issue('unreachable-page', posix(join(wiki, page.path)), `${page.id}: not reachable from README.md`)
   }
+}
+
+function headings(content) {
+  return stripCode(content).split('\n').flatMap(line => {
+    const atx = line.match(/^ {0,3}#{1,6}\s+(.+?)\s*#*\s*$/), summary = line.match(/<summary>(.*?)<\/summary>/i)
+    return atx ? [atx[1].trim()] : summary ? [summary[1].trim()] : []
+  })
 }
 
 async function sourceFiles(path) {

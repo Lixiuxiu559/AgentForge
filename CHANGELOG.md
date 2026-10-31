@@ -14,9 +14,19 @@
 
 ## [Unreleased]
 
+### Changed
+
+- `wiki`：用户指定文档语言而未单独指定路径语言时，`pathLanguage` 随之使用该语言，优先于已有 catalog 和 `scan` 按已有路径给出的建议；路径语言改变时，规划阶段列出将改名的页面与 Wiki 外入链，确认后改名并同步。
+
+- `wiki`：页面粒度改在规划阶段确定：写好 catalog 后先运行 `check`，超过 15 个来源文件的页面在确认目录前拆为子页或收窄来源，保留时须说明理由；页面数随项目规模增长。
+
 ### Added
 
-- 
+- `wiki check`：页面与 README 的标题、来源折叠块残留模板“中文 / English”双语时报告 `bilingual-heading`；模板注释同步说明只保留 `language` 一种。
+
+### Fixed
+
+- `wiki check`：未传 `--root` 时与 `scan` 一样默认使用当前 Git 根，不再直接报错。
 
 ---
 
