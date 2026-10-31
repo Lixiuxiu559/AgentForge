@@ -1,6 +1,6 @@
 # 生成 Wiki
 
-从零生成，或按新目录重写一套 Wiki。四个阶段：扫描、规划目录、逐页生成、收尾检查。
+从零生成，或按新目录重写一套 Wiki。
 
 ## 1. 扫描
 
@@ -8,24 +8,20 @@
 node <技能目录>/scripts/wiki.mjs scan [--root <项目根>] [--wiki docs/wiki]
 ```
 
-输出文件数、编程语言分布、入口候选、目录体量、已有文档清单，以及 `language` 建议（`suggested`、`pathLanguage`、`evidence`）。扫描只读，不调用模型。`suggested` 为 `null` 时使用当前对话语言。
-
-扫描结果只是线索。规划前还要读入口代码（manifest、main、路由、CLI）、README 和已有文档，弄清项目做什么、怎么运行、主链路经过哪些模块。
+只读输出文件数、编程语言分布、入口候选、目录体量、已有文档和语言建议（`suggested`、`pathLanguage`、`evidence`）。扫描结果只是线索：规划前还要读入口代码（manifest、main、路由、CLI）、README 和已有文档，弄清项目做什么、怎么运行、主链路经过哪些模块。
 
 ## 2. 规划目录
 
-先确定语言，`language` 与 `pathLanguage` 各自按顺序取第一个有结论的：
+先确定语言，两项各取第一个有结论的：
 
 | 顺序 | `language` | `pathLanguage` |
 |---|---|---|
-| 1 | 用户本次指定的文档语言 | 用户本次指定的路径语言 |
-| 2 | 已有 catalog | 用户本次指定的文档语言（如“生成中文 Wiki”同时得到中文路径） |
-| 3 | 扫描建议 `suggested` | 已有 catalog |
-| 4 | 对话语言 | 扫描建议 `pathLanguage` |
+| 1 | 用户指定的文档语言 | 用户指定的路径语言 |
+| 2 | 已有 catalog | 用户指定的文档语言（“生成中文 Wiki”即得到中文路径） |
+| 3 | 扫描 `suggested` | 已有 catalog |
+| 4 | 对话语言 | 扫描 `pathLanguage` |
 
-扫描建议只反映项目现状，用户的语言要求优先于它。规则见 `writing.md` 的“语言”。
-
-写 `<wiki>/catalog.json`：
+再写 `<wiki>/catalog.json`：
 
 ```json
 {
@@ -48,18 +44,18 @@ node <技能目录>/scripts/wiki.mjs scan [--root <项目根>] [--wiki docs/wiki
 
 | 字段 | 要求 |
 |---|---|
-| `id` | 稳定标识，ASCII，改标题不改 id |
-| `path` | 相对 wiki 目录的 `.md` 路径，命名语言按 `pathLanguage`；`README.md` 是入口，不列入 pages |
-| `summary` | 一句话，写明负责和不负责的范围，与页面开头的引用块一致 |
+| `id` | 稳定 ASCII 标识，改标题不改 id |
+| `path` | 相对 wiki 目录的 `.md` 路径，按 `pathLanguage` 命名；`README.md` 不列入 pages |
+| `summary` | 一句话写明负责与不负责的范围，与页面引用块一致 |
 | `sources` | 项目相对路径，可以是目录；只列本页结论真正依赖的文件 |
 | `children` | 可选，子页面的 `path` |
 | `status` | 可选，`planned` 表示暂未生成 |
 
-默认骨架，按项目实际裁剪，没有内容的不建：
+默认骨架，按项目裁剪，没有内容的不建：
 
 | 分组 | 模板 | 内容 |
 |---|---|---|
-| 项目概览 | overview | 做什么、给谁用、技术栈、如何运行（通常写在 `README.md`） |
+| 项目概览 | overview | 做什么、给谁用、技术栈、如何运行（写在 `README.md`） |
 | 快速上手 | guide | 本地启动、测试、常用命令 |
 | 系统架构 | architecture | 组件、数据流、外部依赖 |
 | 核心模块 | module | 每个能力一页，按开发问题划分，不照搬目录 |
@@ -67,44 +63,35 @@ node <技能目录>/scripts/wiki.mjs scan [--root <项目根>] [--wiki docs/wiki
 | 部署与运维 | guide | 构建产物、环境配置、排障入口 |
 | 开发指南 | guide | 约定、扩展点、测试方法 |
 
-页面粒度：一页回答一类开发问题，通常对应 3～15 个来源文件。来源过少时并入相邻页；小项目可以只有 README 加三四页。页面数随项目规模增长，不为压缩目录把多个能力塞进一页：一页来源过多时，正文只能停在职责概述，判定条件、错误码、上限和状态集合会被挤掉。
+### 页面粒度
 
-粒度在规划阶段定下，不留到收尾：写好 catalog 后先运行 `check`（页面尚未生成，忽略 `missing-page` 与 `missing-readme`），读 `coverage.catalog.oversized`（来源超过 15 个文件的页面，README 除外）。每个超出的页面在确认目录前处理：
+一页回答一类开发问题。页面数随项目规模增长，不为压缩目录把多个能力塞进一页，否则判定条件、错误码、上限和状态集合会被挤掉；来源过少的页面并入相邻页。
 
-- 按开发问题拆成父页加子页（`children`），父页讲边界与主链路，子页各讲一个能力；
-- 或收窄 `sources`，只保留本页结论真正依赖的文件，用具体文件替代整个目录；
-- 确实需要保留的（如一页说明一个大目录的约定），在展示目录时说明理由。
+`check` 按页面宽度判定：`sources` 展开后的文件加正文链接到的文件，去重，不计 Markdown；README 除外；阈值固定。
+
+| 宽度 | 结果 | 处理 |
+|---|---|---|
+| ≤ 15 | 通过 | — |
+| 16～30 | 列入 `coverage.catalog.oversized` | 确认是否在讲多个能力；保留时在确认目录时说明理由 |
+| > 30 | `page-too-broad`，退出码 1 | 必须拆：父页讲边界与主链路，子页（`children`）各讲一个能力；或把目录换成真正依赖的具体文件 |
+
+写好 catalog 后先运行一次 `check`（忽略 `missing-page`、`missing-readme`），在确认目录前处理宽度。正文写完后宽度会因链接增加，收尾仍报 `page-too-broad` 时同样拆页，不靠删链接过关。
 
 ## 3. 确认目录
 
-生成正文前，把目录展示给用户：分组与页面标题、每页摘要、文档语言与路径语言及其依据，以及保留超出粒度的页面和理由。用户确认或修改后再继续。用户明确要求一次完成时跳过确认。
+生成正文前向用户展示：分组、页面标题与摘要、两项语言及依据、保留的 `oversized` 页面及理由。用户确认后继续；用户明确要求一次完成时跳过。
 
-已有 Wiki 但没有 catalog.json 时，先说明将按新结构重写，旧文件保留，不自动删除。
-
-确定的 `pathLanguage` 与已有页面路径的命名语言不同时（例如用户要中文 Wiki，而旧页面是 `modules/gateway/README.md`），展示目录时列出将改名的页面，以及 Wiki 外引用这些路径的文件（如 `AGENTS.md`、`CLAUDE.md`、项目 README）。确认后按新路径生成，并同步这些入链。
+- 已有旧 Wiki 而没有 catalog：说明将按新结构重写；旧文件保留，用户要求时才删除。
+- `pathLanguage` 与已有页面路径的命名语言不同：列出将改名的页面和 Wiki 外引用这些路径的文件（如 `AGENTS.md`、`CLAUDE.md`、代码注释），确认后按新路径生成并同步入链。
 
 ## 4. 逐页生成
 
-每页按对应模板（`assets/pages/`）和 `writing.md` 编写：读该页 `sources` 的实际代码，追入口和调用方，写结论并就近链接源码。
+每页按 `assets/pages/` 对应模板和 `writing.md` 编写：读该页 `sources` 的实际代码，追入口和调用方，写结论并就近链接源码。
 
-宿主支持子 Agent 时可并行：每个子 Agent 领一个或几个页面，只写自己的文件。派发时传入：
-
-- 项目根和 wiki 目录的绝对路径；
-- 页面的 catalog 条目，以及相邻页面的标题与路径（用于互链）；
-- `language`，子 Agent 不自行判断语言；
-- 模板和 `writing.md` 的绝对路径。
-
-宿主不支持时串行生成。大仓库可以分批：未生成的页面在 catalog 中标 `status: "planned"`，下次继续。
+宿主支持子 Agent 时可并行，每个子 Agent 只写自己的页面。派发时传入项目根与 wiki 目录的绝对路径、页面的 catalog 条目、相邻页面的标题与路径、`language`，以及模板和 `writing.md` 的绝对路径。大仓库可以分批，未生成的页面标 `status: "planned"`。
 
 ## 5. 收尾
 
-1. 写 `README.md`：概览内容加完整导航，导航按 catalog 分组列出每页链接与摘要。
-2. 运行检查：
-
-```bash
-node <技能目录>/scripts/wiki.mjs check [--root <项目根>] [--wiki docs/wiki]
-```
-
-处理 `missing-source`、`summary-mismatch`、`language-mismatch`、`broken-link`、`unreachable-page` 等问题后重新检查。检查只证明结构和链接，正文是否符合代码仍由生成者负责。
-
-3. 交付：报告页面数、语言、未生成的 planned 页面，以及推断较多或来源不足的页面。
+1. 写 `README.md`：概览加完整导航，按 catalog 分组列出每页链接与摘要。
+2. 运行 `check`（命令与问题代码见 `tools.md`），处理全部问题后重跑至通过。
+3. 交付：报告页面数、语言、planned 页面，以及推断较多或来源不足的页面。

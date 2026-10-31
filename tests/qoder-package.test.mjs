@@ -61,7 +61,10 @@ test('Qoder archive keeps all thirteen skills and runnable resources without cha
     assert.equal(await readFile(join(installed, file), 'utf8'), await readFile(join(root, file), 'utf8'), file)
   }
   await mkdir(join(root, 'project/knowledge'), { recursive: true })
-  await writeFile(join(root, 'project/knowledge/start.md'), '# Project knowledge\n')
+  await writeFile(join(root, 'project/knowledge/README.md'), '# Project knowledge\n\n> Overview.\n\n- [Start](start.md)\n')
+  await writeFile(join(root, 'project/knowledge/start.md'), '# Start\n\n> Where to begin.\n')
+  await writeFile(join(root, 'project/knowledge/catalog.json'), JSON.stringify({ version: 2, title: 'Project', language: 'en', pathLanguage: 'en',
+    pages: [{ id: 'start', title: 'Start', path: 'start.md', summary: 'Where to begin.', sources: [] }] }))
   const run = spawnSync(process.execPath, [join(installed, 'skills/wiki/scripts/wiki.mjs'), 'check',
     '--root', join(root, 'project'), '--wiki', 'knowledge'], { cwd: tmpdir(), encoding: 'utf8' })
   assert.equal(run.status, 0, run.stdout + run.stderr)

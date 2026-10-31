@@ -1,4 +1,4 @@
-<!-- 架构页模板。至少一张 Mermaid 图；节点 ID 用 ASCII，节点文字用 catalog.language；章节名与来源标题只保留 catalog.language 一种，对照见 references/writing.md。 -->
+<!-- 架构页模板。章节名与来源标题只保留 catalog.language 一侧；规则见 references/writing.md。 -->
 # {系统架构}
 
 > {一句话：系统由哪些部分组成、边界在哪。与 catalog summary 一致。}

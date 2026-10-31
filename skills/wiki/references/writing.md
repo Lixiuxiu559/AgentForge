@@ -2,7 +2,7 @@
 
 ## 页面结构
 
-每页以一级标题开头，紧跟一行引用块摘要，与 catalog 的 `summary` 完全一致。Agent 只读首段就能判断要不要打开整页。
+每页以一级标题开头，紧跟一行引用块摘要，与 catalog 的 `summary` 完全一致，Agent 读首段就能判断要不要打开整页：
 
 ```markdown
 # 订单模块
@@ -10,54 +10,21 @@
 > 负责下单、支付回调和状态流转；不负责库存扣减（见[库存模块](库存.md)）。
 ```
 
-页尾用折叠块列出全部来源，与 catalog 的 `sources` 一致。模板在 `assets/pages/`：
-
-| 模板 | 用途 |
-|---|---|
-| `overview.md` | 项目概览、Wiki 入口 README |
-| `architecture.md` | 系统架构、组件与数据流 |
-| `module.md` | 单个能力或模块 |
-| `guide.md` | 关键流程、快速上手、部署、运维、开发指南 |
-
-模板只给结构和写作要求。没有内容的小节删除，确有需要可加小节。
+页尾用折叠块列出来源，与 catalog 的 `sources` 一致。模板在 `assets/pages/`：`overview`（README）、`architecture`、`module`（单个能力）、`guide`（流程、上手、部署、运维、开发指南）。模板只给结构，没有内容的小节删除，确有需要可加小节。
 
 ## 语言
 
-整个 Wiki 使用 catalog 的 `language`，不按页面切换，不因对话语言改变。
+整个 Wiki 使用 catalog 的 `language`，不按页面或对话语言切换。
 
 | 内容 | 规则 |
 |---|---|
-| 页面标题、摘要、正文、章节标题、表头 | 使用 `language` |
-| Mermaid 节点文字和说明 | 使用 `language`；节点 ID 用 ASCII |
-| 代码标识符、文件路径、命令、配置键、错误信息原文 | 原样保留，不翻译 |
+| 标题、摘要、正文、表头、Mermaid 节点文字 | 使用 `language`；Mermaid 节点 ID 用 ASCII |
+| 代码标识符、路径、命令、配置键、错误信息原文 | 原样保留 |
 | 专业术语 | 首次出现可附原文，如“工作树（worktree）”；之后沿用同一译法，项目已有译法优先 |
-| 文件和目录名 | 使用 `pathLanguage`；更新时已有路径不重命名，只有用户改变路径语言时才按新语言改名并同步入链 |
-| `README.md`、`catalog.json`、`.state.json` | 固定名称，不翻译 |
+| 文件和目录名 | 使用 `pathLanguage`；更新时不重命名已有路径，用户改变路径语言时才改名并同步入链 |
+| `README.md`、`catalog.json` | 固定名称 |
 
-模板中的章节名和来源折叠块标题（`<summary>`）写成“中文 / English”，生成时只保留 `language` 对应的一种，例如中文页写 `<summary>来源</summary>`。`check` 把保留双语的标题报为 `bilingual-heading`：
-
-| 中文 | English |
-|---|---|
-| 项目简介 | Introduction |
-| 技术栈 | Tech Stack |
-| 快速上手 | Getting Started |
-| 文档导航 | Navigation |
-| 概述 | Overview |
-| 组件 | Components |
-| 数据流 | Data Flow |
-| 外部依赖 | External Dependencies |
-| 设计取舍 | Design Decisions |
-| 核心流程 | Core Flow |
-| 关键实现 | Key Implementation |
-| 配置与扩展 | Configuration and Extension |
-| 修改须知 | Notes for Changes |
-| 适用场景 | When to Use |
-| 步骤 | Steps |
-| 流程图 | Flow |
-| 排障 | Troubleshooting |
-| 来源 | Sources |
-
-其他语言按同样结构翻译。`check` 会报告正文主要语言与 `language` 不一致的页面。
+模板的章节名和 `<summary>` 写成“中文 / English”，生成时只保留 `language` 一侧（如 `<summary>来源</summary>`），其他语言按同样结构翻译。`check` 报告残留双语（`bilingual-heading`）和正文语言不一致（`language-mismatch`）。
 
 ## 以代码为准
 
@@ -72,23 +39,21 @@
 
 来源本身就是文档（规则文件、设计文档、技能说明）时，不转述原文：链接过去，Wiki 只写原文分散或缺失的部分——规则之间的关系与冲突、在哪个入口和哪段代码生效、不同环境下的差异、修改时要同步的位置。一段内容与来源逐条对应时，改成一句结论加链接。
 
-讲关键实现时写到能指导修改的深度：判定条件、失败时的表现、边界和默认值，而不只是“职责 + 链接”。追调用链时查不到证据的地方按“推断与未知”标注；整页没有任何推断，通常说明只读了文档、没追代码。
+讲关键实现时写到能指导修改的深度：判定条件、失败时的表现、边界和默认值，而不只是“职责 + 链接”。配置和路径追完整生效链：启动目录、配置读取基准、环境变量覆盖、默认值；单平台或单渠道的默认值不扩大为整体结论；只写配置名，不写凭据值。
 
-配置和路径追完整生效链：启动目录、配置读取基准、环境变量覆盖、默认值。单平台或单渠道的默认值不扩大为整体结论。只写配置名，不写凭据值。
+查不到证据的地方就近标注，如“（推断：未找到调用方）”；整页没有任何推断，通常说明只读了文档、没追代码。不设“待确认项”章节，查证后仍影响开发理解的问题放页尾“未解决问题”。
 
-## 来源链接与图
+## 链接与图
 
-- 关键结论就近链接源码，带行号：`[OrderService.create](../../src/order/service.ts#L42)`。链接相对当前页面计算。
-- 普通说明不必逐句引用。
-- 架构和流程页至少一张 Mermaid 图：架构用 `flowchart`，调用时序用 `sequenceDiagram`，状态机用 `stateDiagram-v2`。图只画主链路，细节放正文。
-- 页面之间互链：提到另一页负责的内容时链接过去，不重复讲。
-
-## 推断与未知
-
-推断和未验证内容就近标注，如“（推断：未找到调用方）”。不单独设“待确认项”章节；查证后仍影响开发理解的开放问题，可以在页尾加“未解决问题”。
+- 关键结论就近链接源码并带行号，如 `[OrderService.create](../../src/order/service.ts#L42)`；普通说明不必逐句引用。
+- 链接从当前页面文件出发计算：`docs/wiki/` 下一级子目录的页面指向仓库根是 `../../../`。
+- 提到另一页负责的内容时链接过去，不重复讲。
+- 架构和流程页至少一张 Mermaid 图（架构 `flowchart`、时序 `sequenceDiagram`、状态机 `stateDiagram-v2`），只画主链路。
 
 ## 修订
 
-更新页面时修改错误的原句、表格或步骤，把新知识融入对应章节，不在末尾追加补丁段。同步受影响的摘要（同时改 catalog 的 `summary`）、职责描述和步骤；删除被替代的结论。保留仍然有效的人工解释，不为统一外观重排无关章节。
+更新时修改错误的原句、表格或步骤，把新知识融入对应章节，不在末尾追加补丁段；同步受影响的摘要（连同 catalog 的 `summary`），删除被替代的结论；保留仍然有效的人工解释，不重排无关章节。
 
-页面改名或移动目录时，同时改 `catalog.json` 的 `path`、`children` 和所有页面的入链，然后运行 `check`——`broken-link` 与 `unreachable-page` 会指出漏改的位置。链接一律从当前页面文件出发计算相对路径：`docs/wiki/` 下的子目录页面指向仓库根是 `../../../`，指向同级页面是 `../分组/页面.md`。
+更新后 `check` 报 `page-too-broad`（含更新前就已超出的页面）时，在本次更新里拆成子页，不靠删链接或收窄 `sources` 过关，原页保留边界与主链路。
+
+拆页、改名或移动页面时，同步 catalog 的 `path`、`children`、`summary` 和所有入链，再运行 `check`；`broken-link` 与 `unreachable-page` 会指出漏改的位置。

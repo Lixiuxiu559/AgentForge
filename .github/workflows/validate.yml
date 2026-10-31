@@ -13,26 +13,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  wiki-gate:
-    name: Wiki 合并前检查
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: '24'
-      - name: Wiki 结构与链接
-        run: npm run wiki:check
-      - name: 候选提交的 Wiki 复核与变更覆盖
-        env:
-          WIKI_BASE: ${{ github.event.pull_request.base.sha }}
-          WIKI_HEAD: ${{ github.event.pull_request.head.sha }}
-        run: npm run wiki:gate -- --scope range --base "$WIKI_BASE" --head "$WIKI_HEAD"
-
   validate:
     runs-on: ubuntu-latest
     strategy:

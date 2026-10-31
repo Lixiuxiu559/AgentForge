@@ -14,9 +14,16 @@
 
 ## [Unreleased]
 
-### Added
+### Changed
 
-- 
+- `wiki check`：页面宽度按 `sources` 展开后的文件加正文链接到的代码文件去重计算（不计 Markdown 与 README）；超过 30 报 `page-too-broad`、退出码 1，必须拆为子页或收窄来源，16～30 仍列入 `coverage.catalog.oversized` 作提示。阈值固定，不放进 catalog。
+- `wiki`：更新后报 `page-too-broad`（含更新前已超出的页面）时须在本次更新里拆页，不靠删链接或收窄来源过关。
+- `wiki`：精简技能文档：`SKILL.md` 只保留任务入口与边界，写作原则不再与 `writing.md` 重复；`generate.md`、`writing.md` 合并重复的语言、粒度与链接说明；`tools.md` 的 catalog 检查改为问题代码表；删除未被引用的 `references/evaluation-cases.md`。
+
+### Removed
+
+- `wiki`：移除旧版 `wiki.config.json` 结构的全部支持：`changes`、`mapping`、`freshness`、`review`、`gate` 命令与 `--config` 参数，structure 检查、`assets/templates/` 与 `schema.json`，以及 `freshness`、`templates`、`initialization`、`module-workflow`、`content-verification` 参考文档。`check` 现在要求 `catalog.json`，没有时以退出码 2 报错；旧 Wiki 需按生成流程重新生成。
+- 仓库：移除 `npm run wiki:*` 脚本、`tools/wiki-project.mjs` 和 PR 上的 Wiki gate 任务。本仓库 `docs/wiki/` 仍是旧结构，暂停维护，待重新生成。
 
 ---
 
