@@ -7,16 +7,20 @@
 
 > **注意**：只有 bump `.claude-plugin/plugin.json` 的 `version` 并打标签才算发版。
 > 日常 push 不改变用户看到的版本。发版时 `release.mjs` 会**同步 bump
-> `.codex-plugin/plugin.json`、`.qoder-plugin/plugin.json` 与 `package.json`**，四处漂移会被 `doctor` 判为 error。
+> `.codex-plugin/plugin.json` 与 `package.json`**，三处漂移会被 `doctor` 判为 error。
 > 详见 [`docs/releasing.md`](docs/releasing.md)。
 
 ---
 
 ## [Unreleased]
 
-### Added
+### Changed
 
-- 
+- README 改为面向开发者的 Coding Agent 产品介绍，补充产品头图、开发流程动图与按场景选择技能的入口；详细安装与更新说明移至 `docs/installation.md`。
+
+### Removed
+
+- 移除 Qoder 适配：插件清单、ZIP 打包脚本与测试、CI 构建和 Release 附件分发，以及对应安装说明；继续支持 Codex、Claude Code 与 DeepSeek Harness，版本同步调整为三处。
 
 ---
 

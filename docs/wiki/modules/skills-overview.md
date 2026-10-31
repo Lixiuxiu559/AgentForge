@@ -42,7 +42,7 @@ flowchart LR
 ### 调用策略
 
 - 默认技能允许用户与模型调用；`architecture-scout` 只接受用户主动调用，避免模型自行发起全仓调查（[SKILL.md](../../../skills/architecture-scout/SKILL.md)）。
-- DSH 侧的 `dsh-model-invocable`、`disable-model-invocation`、`user-invocable` 由桥接解释（[src/index.js](../../../src/index.js#L145)）；Codex 侧 `architecture-scout` 用 `agents/openai.yaml` 固定同样的策略；Qoder 打包时改写为模型不可主动调用。
+- DSH 侧的 `dsh-model-invocable`、`disable-model-invocation`、`user-invocable` 由桥接解释（[src/index.js](../../../src/index.js#L145)）；Codex 侧 `architecture-scout` 用 `agents/openai.yaml` 固定同样的策略。
 
 ### 技能之间不互相调度
 
@@ -58,7 +58,7 @@ flowchart LR
 
 ## 修改须知
 
-- 新增技能要同时更新四处清单的描述、Qoder 打包的十三技能断言、`doctor` 的命名检查与版本号，见[构建与发布](../guides/release.md)。
+- 新增技能要同时更新三处清单的描述、`doctor` 的命名检查与版本号，见[构建与发布](../guides/release.md)。
 - 改变技能的默认可调用性属于行为契约变化，按 MINOR 处理。
 - 技能改名会使 `/agentforge:<旧名>` 立即失效，属于破坏性变更。
 

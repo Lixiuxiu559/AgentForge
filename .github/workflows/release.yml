@@ -36,24 +36,21 @@ jobs:
         with:
           node-version: '24'
 
-      - name: 校验与构建 Qoder ZIP
+      - name: 校验发布版本
         run: |
           node tools/doctor.mjs
-          version=$(node -p "JSON.parse(require('fs').readFileSync('.qoder-plugin/plugin.json', 'utf8')).version")
+          version=$(node -p "JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version")
           test "${GITHUB_REF_NAME}" = "v${version}"
-          npm run package:qoder
 
-      - name: 创建 GitHub Release 并上传 Qoder ZIP
+      - name: 创建 GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           tag="${GITHUB_REF_NAME}"
           version="${tag#v}"
 
-          # Release 已存在时仍补齐附件，支持上传失败后重跑。
+          # Release 已存在时保留已有内容，支持安全重跑。
           if ! gh release view "$tag" >/dev/null 2>&1; then
             node tools/changelog-section.mjs "$version" > /tmp/release-notes.md
             gh release create "$tag" --title "$tag" --notes-file /tmp/release-notes.md
           fi
-
-          gh release upload "$tag" "dist/qoder/agentforge-${version}.zip" --clobber

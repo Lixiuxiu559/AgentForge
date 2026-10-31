@@ -1,7 +1,7 @@
 {
   "name": "dsh-agentforge",
   "version": "0.16.0",
-  "description": "通用 agent 工作流与工程技能集，可用于 Codex、Claude Code、Qoder 与 DeepSeek Harness。",
+  "description": "面向 Coding Agent 的工程工作流与技能集，可用于 Codex、Claude Code 与 DeepSeek Harness。",
   "type": "module",
   "main": "src/index.js",
   "license": "MIT",
@@ -32,14 +32,12 @@
     "skills",
     "cordis.patch.yml",
     ".claude-plugin",
-    ".codex-plugin",
-    ".qoder-plugin"
+    ".codex-plugin"
   ],
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "test": "node --test tests/*.test.mjs",
-    "package:qoder": "node tools/package-qoder.mjs"
+    "test": "node --test tests/*.test.mjs"
   }
 }

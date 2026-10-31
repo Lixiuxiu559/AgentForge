@@ -68,19 +68,11 @@ PM、架构、测试设计和实施编排没有固定调用依赖。各技能依
 
 Codex 安装后加载插件副本；修改仓库文件不会自动更新已安装副本。更新 marketplace/插件并开启新任务后再验证技能发现、reference 路径与实际委派行为。独立上下文和并行仍由当前 Codex 宿主提供。
 
-## Qoder 装配
-
-`.qoder-plugin/plugin.json` 声明插件元数据与 `./skills/`。仓库清单是构建输入；安装使用 `npm run package:qoder` 生成的 `dist/qoder/agentforge-<version>.zip` 或其解压目录，不直接安装仓库根。ZIP 根直接包含 `.qoder-plugin/plugin.json`、`skills/`、LICENSE与独立 README，不附加外层目录，也不包含其他宿主的插件清单或 DSH 桥接层。
-
-`tools/package-qoder.mjs` 在临时副本中处理宿主差异：为 `architecture-scout` 写入 `disable-model-invocation: true` 和 `user-invocable: true`，移除 DSH 调用策略字段与 Codex 的 `agents/openai.yaml`。共用技能源文件不变，技能正文、references、assets 和执行脚本随包保留。该策略配置用于保留仅用户主动发起架构调查的约定；真实客户端的自动触发与手动调用行为仍须在宿主中验证。
-
-技能脚本用扩展名固定模块类型：`crap.cjs` 为 CommonJS，Wiki 工具为 `.mjs`。因此仓库根 `package.json` 的 `type: module`、npm/DSH 安装目录或解压到的目标项目都不会改变脚本的加载方式，Qoder 包也无需额外的 `package.json`。
-
-Qoder 负责技能发现、模型执行、缓存、权限及通用子 Agent 委派；本项目不新增 MCP 或自定义 Agent。缺少委派能力时沿用技能的串行执行约定。脚本运行依赖可用 Node.js，Git 操作还依赖 Git；构建另外需要系统 `zip`。安装方式与验收范围见 [Qoder 说明](qoder.md)。
-
 ## DSH 装配
 
 `package.json` 声明 `dsh.bundle.patch`，`cordis.patch.yml` 加载 `src/index.js`。桥接代码只使用 Node 内置模块，不依赖 DSH 内部 npm 包。
+
+技能脚本用扩展名固定模块类型：`crap.cjs` 为 CommonJS，Wiki 工具为 `.mjs`，不受仓库或安装目录上层 `package.json` 的 `type` 影响。运行这些脚本需要 Node.js，涉及 Git 的操作还需 Git。
 
 - `name` 与 npm 包名 `dsh-agentforge` 一致。
 - `inject = ['skills']`，`apply(ctx)` 只注册技能提供者。
@@ -101,25 +93,24 @@ Qoder 负责技能发现、模型执行、缓存、权限及通用子 Agent 委�
 
 ## 验证边界
 
-`tools/doctor.mjs` 验证四端结构、清单、版本、技能引用、发布资产与入口契约。Node 内置测试验证在仅有 skills 服务时加载 DSH 插件、动态扫描、按需加载、资源路径与 invocation 策略。Qoder 打包回归核对 ZIP 布局、策略转换、资源完整性与源文件保持不变。CI 在 Node 22/24 上运行。
+`tools/doctor.mjs` 验证三端结构、清单、版本、技能引用、发布资产与入口契约。Node 内置测试验证在仅有 skills 服务时加载 DSH 插件、动态扫描、按需加载、资源路径与 invocation 策略。CI 在 Node 22/24 上运行。
 
 这些检查验证包内行为，不替代 Claude Code / DSH / 其他宿主的真实派发测试；不声称每个宿主都具备相同并发或上下文能力。
 
 ## 组件与数据流
 
-本项目的架构约定与实现分层如下，2026-10-29 按 src/index.js、cordis.patch.yml、四端清单、Qoder 打包脚本、package.json 及技能目录补充静态说明；宿主实际执行结果另行记录。
+本项目的架构约定与实现分层如下，2026-10-31 按 src/index.js、cordis.patch.yml、三端清单、package.json 及技能目录补充静态说明；宿主实际执行结果另行记录。
 
 | 组件 | 职责与边界 |
 |---|---|
 | skills 目录 | 技能正文、references、assets 和脚本；共用方法真源，不提供独立常驻 Agent 服务 |
 | DSH provider | src/index.js 依赖宿主 skills 服务注册 provider；list 扫描目录并读 frontmatter，get 按 locator 返回正文、资源目录和路径 |
 | Codex / Claude Code 清单 | 声明插件或技能目录供相应宿主发现；清单存在不能证明用户安装成功 |
-| Qoder 打包层 | 从共用技能生成独立 ZIP，仅在副本转换平台调用策略、排除其他宿主元数据 |
 | 宿主 | 提供模型、工具、执行与可用的委派能力；用户目标项目与技能安装目录分离 |
 | Wiki CLI | 按显式项目根执行 scan/check，只读；不修改文档、不写入复核记录，也不提供外部模型或部署服务 |
 | 分发工具与 CI | 校验、版本准备和按触发条件发布；实际安装和运行结果需另行取证 |
 
-DSH 路径为：宿主加载 bundle → apply 注册 provider → list 暴露候选 → get 按需读取正文与资源位置 → 宿主执行技能方法。Codex/Claude Code 通过各自清单发现共用技能；Qoder 构建输入 → 临时副本转换 → ZIP 导入 → 宿主发现技能，具体缓存与调度由宿主决定。Wiki 路径为：Agent 在目标项目取证并生成或更新页面 → CLI 对目标项目文件执行机械检查 → 知识随目标项目提交。源码未定义独立数据库、消息队列或自营在线 API；目标项目的数据和外部服务不因此成为本插件的托管资源。
+DSH 路径为：宿主加载 bundle → apply 注册 provider → list 暴露候选 → get 按需读取正文与资源位置 → 宿主执行技能方法。Codex/Claude Code 通过各自清单发现共用技能；具体缓存与调度由宿主决定。Wiki 路径为：Agent 在目标项目取证并生成或更新页面 → CLI 对目标项目文件执行机械检查 → 知识随目标项目提交。源码未定义独立数据库、消息队列或自营在线 API；目标项目的数据和外部服务不因此成为本插件的托管资源。
 
 ## 架构核验范围
 

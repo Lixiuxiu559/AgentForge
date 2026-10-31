@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
- * AgentForge Doctor —— 四种宿主的插件结构与资产体检。
+ * AgentForge Doctor —— 三种宿主的插件结构与资产体检。
  *
  * 零依赖，只用 node: 内置模块。检查项：
  *   1. 插件清单与市场清单
- *   2. Claude Code、Codex、Qoder 与 package.json 的版本号一致性
+ *   2. Claude Code、Codex 与 package.json 的版本号一致性
  *   3. 组件目录位置（必须在插件根，不能嵌进 .claude-plugin/）
  *   4. 技能 frontmatter 与目录名一致性
  *   5. 技能内 references 引用是否存在
@@ -20,7 +20,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { qoderManifest } from './package-qoder.mjs'
 
 const ROOT = path.resolve(process.argv[2] ?? path.join(import.meta.dirname, '..'))
 
@@ -464,16 +463,6 @@ if (!exists(ROOT)) {
 checkManifests()
 checkCodexPlugin()
 checkVersionSync()
-try {
-  await qoderManifest(ROOT)
-  const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'))
-  if (!pkg.files?.includes('.qoder-plugin')) add('error', 'qoder', 'npm files 缺少 .qoder-plugin')
-  for (const file of ['tools/package-qoder.mjs', 'docs/qoder.md']) {
-    if (!exists(path.join(ROOT, file))) add('error', 'qoder', `缺少 Qoder 分发资产：${file}`)
-  }
-} catch (error) {
-  add('error', 'qoder', 'Qoder 清单、路径或四处版本不一致', error.message)
-}
 checkComponentLayout()
 checkSkills()
 checkHardcodedPaths()
