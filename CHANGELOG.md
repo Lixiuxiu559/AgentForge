@@ -14,6 +14,14 @@
 
 ## [Unreleased]
 
+### Added
+
+- 
+
+---
+
+## [0.16.0] - 2026-10-31
+
 ### Changed
 
 - `wiki check`：页面宽度按 `sources` 展开后的文件加正文链接到的代码文件去重计算（不计 Markdown 与 README）；超过 30 报 `page-too-broad`、退出码 1，必须拆为子页或收窄来源，16～30 仍列入 `coverage.catalog.oversized` 作提示。阈值固定，不放进 catalog。
