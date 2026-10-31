@@ -8,6 +8,8 @@
   <img src="https://img.shields.io/badge/Skills-13-8b5cf6.svg" alt="13 skills">
 </p>
 
+<p align="center">简体中文 · <a href="README.en.md">English</a></p>
+
 # 让 Coding Agent 有章法地交付代码
 
 **AgentForge 是一套面向 Coding Agent 的工程技能插件。** 用项目 Wiki 沉淀代码知识，用工程工作流推进实现与验证，覆盖理解仓库、开发功能、定位 Bug、评审改动和检查测试。
@@ -67,7 +69,7 @@
 
 ![能力组合示意：wiki 建立可维护的项目知识，research 收集代码证据，implementation-workflow 实现并验证，diff-review 检查正确性、规范和需求。](docs/assets/workflow.zh-CN.gif)
 
-*能力组合示意，并非宿主实录。按任务选择技能，不要求跑完整条流程。[查看静态图](docs/assets/workflow.zh-CN.png) · [English visuals](docs/assets/README.md)。*
+*能力组合示意，并非宿主实录。按任务选择技能，不要求跑完整条流程。[查看静态图](docs/assets/workflow.zh-CN.png)。*
 
 需要先理清需求时，用 `pm` 整理 PRD；需要看页面或比较技术路线时，用 `prototype`、`architecture-design` 产出可阅读的 HTML。需求已经明确，也可以直接进入实施。
 
