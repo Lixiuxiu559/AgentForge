@@ -8,17 +8,15 @@
       "id": "architecture",
       "title": "系统架构",
       "path": "architecture.md",
-      "summary": "说明十三个技能如何以一份真源分发到四个宿主、DSH 桥接如何加载技能，以及打包与发布链路的边界；不展开单个技能的方法细节。",
+      "summary": "说明十三个技能如何以一份真源分发到三个宿主、DSH 桥接如何加载技能，以及校验与发布链路的边界；不展开单个技能的方法细节。",
       "sources": [
         "src/index.js",
         "package.json",
         "cordis.patch.yml",
         ".claude-plugin/plugin.json",
         ".codex-plugin/plugin.json",
-        ".qoder-plugin/plugin.json",
         ".claude-plugin/marketplace.json",
         ".agents/plugins/marketplace.json",
-        "tools/package-qoder.mjs",
         "tools/release.mjs",
         "docs/architecture.md"
       ]
@@ -34,9 +32,7 @@
         "src/index.js",
         ".claude-plugin/plugin.json",
         ".codex-plugin/plugin.json",
-        ".qoder-plugin/plugin.json",
-        "docs/releasing.md",
-        "docs/qoder.md"
+        "docs/releasing.md"
       ]
     },
     {
@@ -109,11 +105,10 @@
       "id": "tooling",
       "title": "仓库工具与校验",
       "path": "modules/tooling.md",
-      "summary": "说明 doctor 的校验项、release 与 Qoder 打包脚本、CHANGELOG 提取工具及 DSH 桥接入口；不覆盖各宿主客户端的安装操作。",
+      "summary": "说明 doctor 的校验项、release 脚本、CHANGELOG 提取工具及 DSH 桥接入口；不覆盖各宿主客户端的安装操作。",
       "sources": [
         "tools/doctor.mjs",
         "tools/release.mjs",
-        "tools/package-qoder.mjs",
         "tools/changelog-section.mjs",
         "src/index.js",
         "package.json",
@@ -137,18 +132,16 @@
       "id": "release",
       "title": "构建与发布",
       "path": "guides/release.md",
-      "summary": "说明四个清单的版本同步、release.mjs 的前置检查、tag 触发的 Release 与 Qoder 包构建；不证明某个版本已在客户端安装生效。",
+      "summary": "说明三个清单的版本同步、release.mjs 的前置检查、tag 触发的 GitHub Release；不证明某个版本已在客户端安装生效。",
       "sources": [
         "tools/release.mjs",
         "tools/changelog-section.mjs",
-        "tools/package-qoder.mjs",
         ".github/workflows/release.yml",
         ".github/workflows/validate.yml",
         ".github/workflows/publish.yml",
         "CHANGELOG.md",
         "docs/releasing.md",
-        "docs/npm-publishing.md",
-        "docs/qoder.md"
+        "docs/npm-publishing.md"
       ]
     }
   ]

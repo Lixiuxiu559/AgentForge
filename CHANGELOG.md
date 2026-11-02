@@ -7,16 +7,24 @@
 
 > **注意**：只有 bump `.claude-plugin/plugin.json` 的 `version` 并打标签才算发版。
 > 日常 push 不改变用户看到的版本。发版时 `release.mjs` 会**同步 bump
-> `.codex-plugin/plugin.json`、`.qoder-plugin/plugin.json` 与 `package.json`**，四处漂移会被 `doctor` 判为 error。
+> `.codex-plugin/plugin.json` 与 `package.json`**，三处漂移会被 `doctor` 判为 error。
 > 详见 [`docs/releasing.md`](docs/releasing.md)。
 
 ---
 
 ## [Unreleased]
 
-### Added
+### Changed
 
-- 
+- `prototype`：绘制前提取现有项目的样式基线，沿用页面骨架、组件与信息密度，并对照参照页面验证视觉一致性。
+- `architecture-design`：数据库设计补充表用途与字段字典，说明新表全部字段及已有表受影响字段的业务含义，并纳入 HTML 交付与完整性检查。
+- 新增独立英文 `README.en.md`，与中文 README 提供相同的产品介绍、Wiki 卖点、技能清单和安装入口，分别引用对应语言的视觉素材，并提供双向语言切换。
+- README 视觉素材提供简体中文与英文两套头图、能力组合动图和静态图，统一布局与时序；中文 README 使用中文素材。
+- README 改为面向开发者的 Coding Agent 产品介绍，突出项目 Wiki 的生成、阅读与按变更维护，以及功能实现、调试与评审；补充产品头图、能力组合动图与按场景选择技能的入口，详细安装与更新说明移至 `docs/installation.md`。
+
+### Removed
+
+- 移除 Qoder 适配：插件清单、ZIP 打包脚本与测试、CI 构建和 Release 附件分发，以及对应安装说明；继续支持 Codex、Claude Code 与 DeepSeek Harness，版本同步调整为三处。
 
 ---
 

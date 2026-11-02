@@ -7,8 +7,8 @@
 | 概念 | 口径 | 不是什么 |
 |---|---|---|
 | 技能（skill） | `skills/<name>/SKILL.md`，含 frontmatter 的 `name`、`description` 与正文方法 | 不是带独立上下文的 agent 定义 |
-| 方法真源 | 技能正文与 `references/`、`scripts/`，四个宿主共用同一份 | 不按宿主分叉出多套提示词 |
-| 宿主适配 | 清单、桥接、打包三类差异 | 不改变技能方法本身 |
+| 方法真源 | 技能正文与 `references/`、`scripts/`，三个宿主共用同一份 | 不按宿主分叉出多套提示词 |
+| 宿主适配 | 清单与桥接的差异 | 不改变技能方法本身 |
 | 调用策略 | 模型可否主动调用、用户可否从命令面板调用 | 不是权限或授权机制 |
 | 版本开关 | Claude Code 按 `version` 判断更新；DSH `github:` 安装按 commit | 不是所有宿主都按版本号更新 |
 | 交付物 | 各技能约定的文件，如 PRD、原型、设计、测试设计默认交付 HTML | 不要求维护重复的 Markdown 正本 |
@@ -21,13 +21,12 @@
 
 需要独立上下文或并行时，主 Agent 调用宿主的通用子 agent 能力；技能本身不提供执行引擎。没有派发能力的宿主上只能在主上下文执行，并如实报告限制。
 
-### 四个宿主的差异
+### 三个宿主的差异
 
 | 宿主 | 发现方式 | 版本与更新 | 备注 |
 |---|---|---|---|
 | Claude Code | `.claude-plugin/` 清单，自动发现插件根的 `skills/` | `/plugin update`，按 `version` 判断 | 技能调用名带插件命名空间 |
 | Codex | `.codex-plugin/plugin.json` 的 `skills: "./skills/"`，`.agents/plugins/marketplace.json` 指仓库根 | 刷新 marketplace 后更新 | `architecture-scout` 的 `agents/openai.yaml` 是策略元数据 |
-| Qoder | 导入构建出的 ZIP | 重新下载并导入新 ZIP；无 marketplace 自动更新 | ZIP 只含清单、`skills/`、`LICENSE`、README |
 | DSH | npm 包装载 `src/index.js` 桥接，`dsh.bundle.patch` 挂载 | 装法决定：`link:` 直接读盘、`github:` 钉 commit、`github:…#tag` 钉标签 | 正文中的 `${CLAUDE_PLUGIN_ROOT}` 加载时展开 |
 
 DSH 的 `github:` 安装没有版本门控：lockfile 钉具体 commit，`pnpm update` 会重解析到分支最新 commit；要稳定版本应钉 tag（[docs/releasing.md](../../docs/releasing.md)）。
@@ -47,12 +46,11 @@ DSH 的 `github:` 安装没有版本门控：lockfile 钉具体 commit，`pnpm u
 | 调用策略的 DSH 实现 | [src/index.js](../../src/index.js#L145) |
 | Claude Code 清单 | [.claude-plugin/plugin.json](../../.claude-plugin/plugin.json) |
 | Codex 清单 | [.codex-plugin/plugin.json](../../.codex-plugin/plugin.json) |
-| Qoder 清单 | [.qoder-plugin/plugin.json](../../.qoder-plugin/plugin.json) |
 
 ## 修改须知
 
 - 改技能 `description` 会改变模型触发时机；改 `name` 会破坏用户已有的调用习惯与脚本。
-- 新增技能要同步四处清单的描述、打包断言与版本号，详见[构建与发布](guides/release.md)。
+- 新增技能要同步三处清单的描述、命名检查与版本号，详见[构建与发布](guides/release.md)。
 - 跨宿主行为不一致时，先确认是清单或桥接差异，而不是方法本身分叉；方法应始终回到 `skills/` 真源。
 
 <details><summary>来源</summary>
@@ -62,8 +60,6 @@ DSH 的 `github:` 安装没有版本门控：lockfile 钉具体 commit，`pnpm u
 - [src/index.js](../../src/index.js)
 - [.claude-plugin/plugin.json](../../.claude-plugin/plugin.json)
 - [.codex-plugin/plugin.json](../../.codex-plugin/plugin.json)
-- [.qoder-plugin/plugin.json](../../.qoder-plugin/plugin.json)
 - [docs/releasing.md](../../docs/releasing.md)
-- [docs/qoder.md](../../docs/qoder.md)
 
 </details>

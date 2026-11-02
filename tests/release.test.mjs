@@ -1,13 +1,13 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { execFileSync } from 'node:child_process'
-import { copyFile, mkdir, mkdtemp, readFile, realpath, rm, writeFile } from 'node:fs/promises'
+import { execFileSync, spawnSync } from 'node:child_process'
+import { cp, copyFile, mkdir, mkdtemp, readFile, realpath, rm, writeFile } from 'node:fs/promises'
 import { devNull, tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 
 const ROOT = resolve(import.meta.dirname, '..')
 const manifests = [
-  '.claude-plugin/plugin.json', '.codex-plugin/plugin.json', '.qoder-plugin/plugin.json', 'package.json',
+  '.claude-plugin/plugin.json', '.codex-plugin/plugin.json', 'package.json',
 ]
 
 async function releaseFixture(t) {
@@ -26,7 +26,7 @@ async function releaseFixture(t) {
     await mkdir(dirname(join(root, file)), { recursive: true })
     await writeFile(join(root, file), `${JSON.stringify({ name: 'agentforge', version: '1.2.3', fixture: file }, null, 2)}\n`)
   }
-  await writeFile(join(root, 'CHANGELOG.md'), '# Changelog\n\n## [Unreleased]\n\n### Added\n\n- Qoder plugin support.\n\n## [1.2.3] - 2026-01-01\n\n- Previous release.\n')
+  await writeFile(join(root, 'CHANGELOG.md'), '# Changelog\n\n## [Unreleased]\n\n### Added\n\n- Engineering workflow update.\n\n## [1.2.3] - 2026-01-01\n\n- Previous release.\n')
   git('init', '--initial-branch=main')
   git('config', 'user.name', 'Release Test')
   git('config', 'user.email', 'release-test@example.invalid')
@@ -41,7 +41,7 @@ async function releaseFixture(t) {
   return { root, git, release }
 }
 
-test('release dry-run preserves all four manifests, changelog, commit and tags', async t => {
+test('release dry-run preserves all three manifests, changelog, commit and tags', async t => {
   const { root, git, release } = await releaseFixture(t)
   const files = [...manifests, 'CHANGELOG.md']
   const before = await Promise.all(files.map(file => readFile(join(root, file), 'utf8')))
@@ -53,7 +53,7 @@ test('release dry-run preserves all four manifests, changelog, commit and tags',
   assert.equal(git('status', '--porcelain'), '')
 })
 
-test('patch release commits all four versions and changelog under the release tag', async t => {
+test('patch release commits all three versions and changelog under the release tag', async t => {
   const { root, git, release } = await releaseFixture(t)
   const previousHead = git('rev-parse', 'HEAD')
   release('patch')
@@ -65,7 +65,7 @@ test('patch release commits all four versions and changelog under the release ta
   }
   const changelog = await readFile(join(root, 'CHANGELOG.md'), 'utf8')
   assert.match(changelog, /^## \[Unreleased\]/m)
-  assert.match(changelog, /^## \[1\.2\.4\] - \d{4}-\d{2}-\d{2}\n\n### Added\n\n- Qoder plugin support\./m)
+  assert.match(changelog, /^## \[1\.2\.4\] - \d{4}-\d{2}-\d{2}\n\n### Added\n\n- Engineering workflow update\./m)
   assert.match(changelog, /^## \[1\.2\.3\] - 2026-01-01\n\n- Previous release\./m)
   assert.deepEqual(git('diff-tree', '--no-commit-id', '--name-only', '-r', 'HEAD').split('\n').sort(), [...manifests, 'CHANGELOG.md'].sort())
   assert.equal(git('log', '-1', '--format=%s'), 'chore(release): v1.2.4')
@@ -73,4 +73,25 @@ test('patch release commits all four versions and changelog under the release ta
   assert.equal(git('rev-parse', 'v1.2.4^{}'), git('rev-parse', 'HEAD'))
   assert.equal(git('cat-file', '-t', 'v1.2.4'), 'tag')
   assert.equal(git('status', '--porcelain'), '')
+})
+
+test('real doctor accepts the three supported manifests and rejects version drift in each', async t => {
+  const root = await realpath(await mkdtemp(join(tmpdir(), 'agentforge-doctor-')))
+  t.after(() => rm(root, { recursive: true, force: true }))
+  for (const file of ['.claude-plugin', '.codex-plugin', '.agents/plugins', 'package.json', 'src', 'skills', 'cordis.patch.yml', 'tools']) {
+    await mkdir(dirname(join(root, file)), { recursive: true })
+    await cp(join(ROOT, file), join(root, file), { recursive: true })
+  }
+  const doctor = () => spawnSync(process.execPath, [join(root, 'tools/doctor.mjs')], { encoding: 'utf8' })
+  const baseline = doctor()
+  assert.equal(baseline.status, 0, baseline.stdout + baseline.stderr)
+  for (const file of manifests) {
+    const target = join(root, file)
+    const original = await readFile(target, 'utf8')
+    await writeFile(target, JSON.stringify({ ...JSON.parse(original), version: '99.0.0' }))
+    const run = doctor()
+    assert.equal(run.status, 1, file)
+    assert.match(run.stdout, /三处版本号不一致/, file)
+    await writeFile(target, original)
+  }
 })
