@@ -33,6 +33,8 @@
 
 先建立依据与约束，再比较真实可行方案，由用户决定重大取舍后才定稿；单端任务不凭空增加另一端。交付可含契约、Schema、迁移草案与关键伪代码，不写生产实现。数据库设计要比较迁移脚本与实际 Schema，没有连接时标明环境未核实（[architecture-design/SKILL.md](../../../skills/architecture-design/SKILL.md)）。
 
+表结构变更须在正文解释表用途与字段含义：新表覆盖全部字段，已有表覆盖变更及受影响字段，并与物理定义一致；关键语义未定不能标为可实施（[专项设计要点](../../../skills/architecture-design/references/specialist-design.md#表用途与字段字典)）。
+
 ### research：证据先于结论
 
 调查问题先限定范围，证据不足的结论标注为推断；子任务可委派给宿主子 agent，但结论由主 Agent 汇总。简单事实查询、定位符号不属于本技能（[research/SKILL.md](../../../skills/research/SKILL.md)）。
