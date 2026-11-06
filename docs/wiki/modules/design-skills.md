@@ -11,11 +11,11 @@
 | `pm` | 想法、需求变更、已有材料 | 默认 `prd.html`，含业务规则、范围、用户故事、验收标准、假设与开放问题 | 技术选型、架构、实施 |
 | `prototype` | PRD、对话需求、截图、现有页面 | 可离线走查的 HTML 原型与页面/字段/交互状态清单 | 生产组件、连接真实服务、实施 |
 | `architecture-design` | 需求、PRD、原型、已有方案或工程事实 | 默认 `spec.html`，含边界、流程、数据归属、契约与风险验证 | 生产代码、数据库变更、发布 |
-| `architecture-scout` | 指定范围 | 架构机会报告，允许零候选 | 修改代码 |
+| `architecture-scout` | 指定范围 | 默认 HTML 架构机会报告，允许零候选 | 修改代码 |
 | `research` | 需要多步取证的问题 | 有证据的结论与不确定性说明 | 简单事实查询 |
 | `test-design` | 业务规则、已有材料 | 默认 HTML 测试设计，含用例与断言缺口 | 编写或执行测试、运行覆盖率/突变工具 |
 
-`pm`、`architecture-design` 与 `test-design` 默认沿用 `skills/_shared/assets/document-themes/blueprint.html` 的蓝图内联样式与文档骨架，生成时直接写入实际内容，不各自重新设计主题。`prototype` 不使用这份母版，仍遵循目标项目的样式基线。
+`pm`、`architecture-design`、`architecture-scout` 与 `test-design` 默认沿用 `skills/_shared/assets/document-themes/blueprint.html` 的蓝图内联样式与文档骨架，生成时直接写入实际内容，不各自重新设计主题。`prototype` 不使用这份母版，仍遵循目标项目的样式基线。
 
 ## 核心流程
 
@@ -49,6 +49,8 @@
 
 仅在用户明确要求架构机会调查时启动，先定范围、再取证、按硬门槛筛选候选，允许零候选；不修改代码，报告后停下等用户决定（[architecture-scout/SKILL.md](../../../skills/architecture-scout/SKILL.md)）。
 
+报告默认交付自包含 HTML，不强制另出 Markdown 副本；优先用户路径、项目约定和已有报告目录，无约定时保存到 `docs/architecture-scout/YYYY-MM-DD-主题.html`，共享目录下的文件名带 `architecture-scout` 前缀。页面包含范围与结论、候选证据和反证、三方案对照及迁移风险；零候选仍说明证据与限制。用户明确格式或已有正本约定优先（[HTML 报告交付](../../../skills/architecture-scout/references/html-delivery.md)）。
+
 ## 关键实现
 
 | 职责 | 位置 |
@@ -57,7 +59,7 @@
 | PRD 模板与 HTML 交付 | [pm/references](../../../skills/pm/references) |
 | 原型清单与 HTML 交付 | [prototype/references](../../../skills/prototype/references) |
 | 方案比较、质量验证、HTML 交付 | [architecture-design/references](../../../skills/architecture-design/references) |
-| 侦察判据 | [architecture-scout/references](../../../skills/architecture-scout/references) |
+| 侦察判据、候选模板与 HTML 交付 | [architecture-scout/references](../../../skills/architecture-scout/references) |
 | 测试设计模板 | [test-design/references](../../../skills/test-design/references) |
 
 ## 修改须知
@@ -72,6 +74,7 @@
 - [skills/prototype/SKILL.md](../../../skills/prototype/SKILL.md)
 - [skills/architecture-design/SKILL.md](../../../skills/architecture-design/SKILL.md)
 - [skills/architecture-scout/SKILL.md](../../../skills/architecture-scout/SKILL.md)
+- [skills/architecture-scout/references/html-delivery.md](../../../skills/architecture-scout/references/html-delivery.md)
 - [skills/research/SKILL.md](../../../skills/research/SKILL.md)
 - [skills/test-design/SKILL.md](../../../skills/test-design/SKILL.md)
 - [skills/_shared/assets/document-themes/blueprint.html](../../../skills/_shared/assets/document-themes/blueprint.html)
