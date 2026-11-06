@@ -15,6 +15,8 @@
 | `research` | 需要多步取证的问题 | 有证据的结论与不确定性说明 | 简单事实查询 |
 | `test-design` | 业务规则、已有材料 | 默认 HTML 测试设计，含用例与断言缺口 | 编写或执行测试、运行覆盖率/突变工具 |
 
+`pm`、`architecture-design` 与 `test-design` 默认沿用 `skills/_shared/assets/document-themes/blueprint.html` 的蓝图内联样式与文档骨架，生成时直接写入实际内容，不各自重新设计主题。`prototype` 不使用这份母版，仍遵循目标项目的样式基线。
+
 ## 核心流程
 
 ### pm：按需澄清，直接产出
@@ -51,6 +53,7 @@
 
 | 职责 | 位置 |
 |---|---|
+| 共享蓝图母版 | [_shared/assets/document-themes](../../../skills/_shared/assets/document-themes) |
 | PRD 模板与 HTML 交付 | [pm/references](../../../skills/pm/references) |
 | 原型清单与 HTML 交付 | [prototype/references](../../../skills/prototype/references) |
 | 方案比较、质量验证、HTML 交付 | [architecture-design/references](../../../skills/architecture-design/references) |
@@ -71,5 +74,6 @@
 - [skills/architecture-scout/SKILL.md](../../../skills/architecture-scout/SKILL.md)
 - [skills/research/SKILL.md](../../../skills/research/SKILL.md)
 - [skills/test-design/SKILL.md](../../../skills/test-design/SKILL.md)
+- [skills/_shared/assets/document-themes/blueprint.html](../../../skills/_shared/assets/document-themes/blueprint.html)
 
 </details>

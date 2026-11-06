@@ -34,6 +34,8 @@ user-invocable: true
 
 按 `references/prd-template.md` 核对内容，按 [HTML 交付说明](references/html-delivery.md) 编排正式产物；参考文件使用 Markdown 不代表产出也要用 Markdown。按需求规模裁剪，不适用的章节说明原因，不留空占位。
 
+默认视觉母版为从当前 `SKILL.md` 所在目录解析的 `../_shared/assets/document-themes/blueprint.html`。生成时读取并沿用其中的蓝图内联样式与文档骨架，直接写入本次内容，不每次重新设计主题；用户另有风格要求时优先。
+
 只写业务预期、行为、规则和可观察结果，不主动设计技术实现。用户已确定且影响业务行为或验收的技术约束、外部契约可以记录并标明来源，不删除，也不扩展成新的技术选型。
 
 ## 结果与交付
