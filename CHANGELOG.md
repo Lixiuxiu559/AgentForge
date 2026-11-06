@@ -14,9 +14,9 @@
 
 ## [Unreleased]
 
-### Added
+### Changed
 
-- 
+- `architecture-scout` 默认交付自包含 HTML 架构机会报告，沿用共享蓝图母版，保留证据、反证、三方案取舍与零候选结论；用户明确格式和既有正本约定优先。
 
 ---
 

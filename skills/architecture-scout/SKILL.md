@@ -1,6 +1,6 @@
 ---
 name: architecture-scout
-description: 仅在用户明确要求架构机会调查时使用。调查值得深化的模块边界、跨模块修改的根因和难测试的结构；只报告，不修改代码，允许零候选。
+description: 仅在用户明确要求架构机会调查时使用。调查值得深化的模块边界、跨模块修改的根因和难测试的结构，默认交付便于阅读的 HTML 报告；不修改代码，允许零候选。
 dsh-model-invocable: false
 ---
 
@@ -57,9 +57,11 @@ dsh-model-invocable: false
 
 ## 4. 只出报告，停下等用户
 
-默认落盘。位置按顺序取第一个命中项：① 用户显式指定的路径；② 仓库明文约定（`AGENTS.md` / `CONTRIBUTING.md` / `README.md`）；③ 仓库已有报告类目录 `docs/research/`、`docs/architecture/`；④ 都没有时新建 `docs/architecture-scout/`（仓库无 `docs/` 则先建）。文件名 `YYYY-MM-DD-主题.md`；落在共享目录（如 `docs/research/`）时写成 `YYYY-MM-DD-architecture-scout-主题.md` 以区分来源。用户只要即时回答时可直接在对话中报告。文档报告列出候选及证据、反证、三方案取舍和迁移风险；证据不足时明确写“未发现值得优先改造的机会”。格式见 `references/candidate-report.md`。
+默认按 [HTML 报告交付](references/html-delivery.md) 生成实际 HTML 文件，不强制另出 Markdown 副本。位置按顺序取第一个命中项：① 用户显式指定的路径；② 仓库明文约定（`AGENTS.md` / `CONTRIBUTING.md` / `README.md`）；③ 仓库已有报告类目录 `docs/research/`、`docs/architecture/`；④ 都没有时新建 `docs/architecture-scout/`（仓库无 `docs/` 则先建）。文件名 `YYYY-MM-DD-主题.html`；落在共享目录（如 `docs/research/`）时写成 `YYYY-MM-DD-architecture-scout-主题.html` 以区分来源。用户明确要求其他格式、已有正本约定或只要即时回答时遵循其要求。
 
-**不生成依赖网络 CDN 的 HTML，不自动打开浏览器。** 需要可视化时，经用户确认后再采用当前环境已有且不引入新强依赖的方式；图示不能代替源码证据。
+默认视觉母版为从当前 `SKILL.md` 所在目录解析的 `../_shared/assets/document-themes/blueprint.html`。生成时读取并沿用其中的蓝图内联样式与文档骨架，直接写入本次内容；用户另有风格要求时优先。报告自包含、可离线阅读，不依赖网络 CDN。
+
+按 `references/candidate-report.md` 保留候选及证据、反证、三方案取舍和迁移风险；证据不足时明确写“未发现值得优先改造的机会”。可选图示不能代替源码证据，不为出报告引入新的强依赖。交付实际文件链接和关键摘要，不在对话中粘贴长篇正文替代文件。
 
 报告后询问用户要深入哪个候选；用户未选之前**不设计新接口、不开始重构、不进入无限追问循环**。选定后可另行做详细设计，再交给 `implementation-workflow` 实施。
 
@@ -72,4 +74,5 @@ dsh-model-invocable: false
 - `references/deep-module-criteria.md` —— 深/浅边界、删除测试、反证与成本判据
 - `references/research-briefs.md` —— 0–4 个调查子 agent 的调查分工和统一输出
 - `references/candidate-report.md` —— 候选报告及零候选模板
+- `references/html-delivery.md` —— HTML 阅读结构、离线要求与交付检查
 - `references/evaluation-cases.md` —— 正例、反例和验收标准
