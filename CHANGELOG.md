@@ -16,6 +16,14 @@
 
 ### Added
 
+- 
+
+---
+
+## [0.17.0] - 2026-11-06
+
+### Added
+
 - 新增共享蓝图文档母版 `skills/_shared/assets/document-themes/blueprint.html`，统一 `pm`、`architecture-design`、`test-design` 生成的 HTML 视觉风格。
 
 ### Changed
