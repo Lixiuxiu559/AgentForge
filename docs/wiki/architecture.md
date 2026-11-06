@@ -4,7 +4,7 @@
 
 ## 概述
 
-AgentForge 是一个技能集插件：方法真源只有 `skills/<name>/SKILL.md` 与其 `references/`、`scripts/`，不维护任何自定义 agent 定义，也不把同一套方法复制成宿主专用提示词。三个宿主的差异全部落在清单与桥接上。
+AgentForge 是一个技能集插件：方法真源位于 `skills/<name>/SKILL.md` 与其 `references/`、`scripts/`；`skills/_shared/` 只存放跨技能复用资源，不作为独立技能发现。不维护任何自定义 agent 定义，也不把同一套方法复制成宿主专用提示词。三个宿主的差异全部落在清单与桥接上。
 
 ```mermaid
 flowchart LR
@@ -76,6 +76,7 @@ flowchart LR
 <details><summary>来源</summary>
 
 - [src/index.js](../../src/index.js)
+- [skills/_shared/assets/document-themes/blueprint.html](../../skills/_shared/assets/document-themes/blueprint.html)
 - [package.json](../../package.json)
 - [cordis.patch.yml](../../cordis.patch.yml)
 - [.claude-plugin/plugin.json](../../.claude-plugin/plugin.json)

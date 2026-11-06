@@ -16,7 +16,11 @@
 
 ### Added
 
-- 
+- 新增共享蓝图文档母版 `skills/_shared/assets/document-themes/blueprint.html`，统一 `pm`、`architecture-design`、`test-design` 生成的 HTML 视觉风格。
+
+### Changed
+
+- `pm`、`architecture-design`、`test-design` 默认沿用蓝图母版的配色、导航、组件与响应式／打印样式，不再各自临时设计主题；`prototype` 仍遵循目标项目自身的样式基线。
 
 ---
 
