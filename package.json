@@ -1,6 +1,6 @@
 {
   "name": "dsh-agentforge",
-  "version": "0.17.1",
+  "version": "0.18.0",
   "description": "面向 Coding Agent 的工程工作流与技能集，可用于 Codex、Claude Code 与 DeepSeek Harness。",
   "type": "module",
   "main": "src/index.js",
