@@ -5,7 +5,7 @@
 <p align="center">
   <a href="https://github.com/Lixiuxiu559/AgentForge/actions/workflows/validate.yml"><img src="https://github.com/Lixiuxiu559/AgentForge/actions/workflows/validate.yml/badge.svg" alt="Validate"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-22c55e.svg" alt="MIT License"></a>
-  <img src="https://img.shields.io/badge/Skills-13-8b5cf6.svg" alt="13 skills">
+  <img src="https://img.shields.io/badge/Skills-14-8b5cf6.svg" alt="14 skills">
 </p>
 
 <p align="center">简体中文 · <a href="README.en.md">English</a></p>
@@ -16,7 +16,7 @@
 
 安装到 **Codex、Claude Code 或 DeepSeek Harness**，在你已有的仓库里工作。你提出目标，Agent 按技能组织调查、实施与验证，并交代结果和未解决的问题。
 
-[开始使用](#开始使用) · [项目 Wiki](#让开发者和-agent-都读得懂你的项目) · [全部技能](#按需选择十三个技能) · [安装与更新](docs/installation.md)
+[开始使用](#开始使用) · [项目 Wiki](#让开发者和-agent-都读得懂你的项目) · [全部技能](#按需选择十四个技能) · [安装与更新](docs/installation.md)
 
 ## 能帮你做什么
 
@@ -105,11 +105,12 @@ dsh plugin --profile web add github:Lixiuxiu559/AgentForge
 
 安装后重启对应 profile。更新、本地安装、固定版本与故障检查见[安装与更新](docs/installation.md)。
 
-## 按需选择十三个技能
+## 按需选择十四个技能
 
 | 你要做的事 | 使用技能 | 得到什么 |
 |---|---|---|
 | 建立与维护项目知识 | [`wiki`](skills/wiki/SKILL.md) | 开发者和 Agent 共用的项目 Wiki：目录导航、架构与模块说明、源码来源、按变更更新 |
+| 压力测试计划与决策 | [`grilling`](skills/grilling/SKILL.md) | 先查事实、逐题追问、每题给出推荐，由你决定并确认共识 |
 | 实现功能 | [`implementation-workflow`](skills/implementation-workflow/SKILL.md) | 任务拆分、代码实现、集成验证与交付说明 |
 | 排查并修复 Bug | [`bug-debugging`](skills/bug-debugging/SKILL.md) | 复现与根因证据、待确认方案、获批后的修复与回归 |
 | 提交前评审 | [`diff-review`](skills/diff-review/SKILL.md) | 正确性、规范、需求三条轴各自的评审结果 |
@@ -118,6 +119,12 @@ dsh plugin --profile web add github:Lixiuxiu559/AgentForge
 | 检查测试保护 | [`test-design`](skills/test-design/SKILL.md) · [`mutation-testing`](skills/mutation-testing/SKILL.md) | 业务场景与断言缺口，或已有突变工具的审计结果 |
 | 判断修改风险与重构机会 | [`complexity-audit`](skills/complexity-audit/SKILL.md) · [`architecture-scout`](skills/architecture-scout/SKILL.md) | 复杂度与覆盖率风险，或有依据的架构候选；架构调查由你主动发起 |
 | 为开发准备独立工作目录 | [`worktree`](skills/worktree/SKILL.md) | 创建或安全移除 Git worktree，保留分支 |
+
+```text
+用 grilling 压力测试这个计划：一次问一个问题，每题给出推荐，等我回答后再继续。
+```
+
+`grilling` 交付决策共识；需要 PRD 时使用 `pm`，需要执行时另行提出，不自动切换流程。
 
 ## 在你现有的开发环境中工作
 

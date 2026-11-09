@@ -4,7 +4,7 @@
 
 ## 项目简介
 
-AgentForge 面向日常工程协作：需求整理、原型与架构设计、调研取证、测试设计、实施编排、Bug 调试、代码评审与质量审计。十三个技能以 Markdown 保存方法，配套参考与零依赖脚本；不维护自定义 agent 定义，需要独立上下文或并行时使用宿主提供的通用子 agent 能力。
+AgentForge 面向日常工程协作：计划与决策追问、需求整理、原型与架构设计、调研取证、测试设计、实施编排、Bug 调试、代码评审与质量审计。十四个技能以 Markdown 保存方法，配套参考与零依赖脚本；不维护自定义 agent 定义，需要独立上下文或并行时使用宿主提供的通用子 agent 能力。
 
 不负责：生产部署、凭据管理、模型调用；技能内的脚本只做机械检查，不联网。
 
@@ -34,13 +34,13 @@ node tools/doctor.mjs       # 清单、技能与 DSH 适配校验
 
 ### 系统与概念
 
-- [系统架构](architecture.md)：说明十三个技能如何以一份真源分发到三个宿主、DSH 桥接如何加载技能，以及校验与发布链路的边界；不展开单个技能的方法细节。
+- [系统架构](architecture.md)：说明十四个技能如何以一份真源分发到三个宿主、DSH 桥接如何加载技能，以及校验与发布链路的边界；不展开单个技能的方法细节。
 - [核心概念](concepts.md)：统一技能、方法真源、宿主适配、调用策略与版本开关的口径及跨宿主差异；不替代各技能的适用场景说明。
 
 ### 技能
 
-- [技能套件与分工](modules/skills-overview.md)：列出十三个技能的分组、适用场景与调用策略，说明技能之间不互相调度；不展开单个技能的执行步骤。
-- [需求与设计技能](modules/design-skills.md)：说明 pm、prototype、architecture-design、architecture-scout、research、test-design 的交付物、输入与边界；不涉及实施、评审与质量审计。
+- [技能套件与分工](modules/skills-overview.md)：列出十四个技能的分组、适用场景与调用策略，说明技能之间不互相调度；不展开单个技能的执行步骤。
+- [需求与设计技能](modules/design-skills.md)：说明 grilling、pm、prototype、architecture-design、architecture-scout、research、test-design 的交付物、输入与边界；不涉及实施、评审与质量审计。
 - [实施、评审与审计技能](modules/implementation-skills.md)：说明 implementation-workflow、bug-debugging、diff-review、complexity-audit、mutation-testing、worktree 的角色、触发条件与边界；不包含需求定义与项目知识维护。
 - [Wiki 技能](modules/wiki-skill.md)：说明 wiki 技能的 scan、catalog 目录、逐页生成与 check 判定规则及脚本边界；不重复技能内的写作规范与模板正文。
 

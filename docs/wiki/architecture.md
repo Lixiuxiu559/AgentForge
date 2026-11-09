@@ -1,6 +1,6 @@
 # 系统架构
 
-> 说明十三个技能如何以一份真源分发到三个宿主、DSH 桥接如何加载技能，以及校验与发布链路的边界；不展开单个技能的方法细节。
+> 说明十四个技能如何以一份真源分发到三个宿主、DSH 桥接如何加载技能，以及校验与发布链路的边界；不展开单个技能的方法细节。
 
 ## 概述
 
@@ -19,7 +19,7 @@ flowchart LR
 
 | 组件 | 职责 | 位置 |
 |---|---|---|
-| 技能真源 | 十三个技能的方法、参考与脚本 | [skills](../../skills) |
+| 技能真源 | 十四个技能的方法、参考与脚本 | [skills](../../skills) |
 | Claude Code 清单 | 插件名、版本与描述；市场文件指向仓库根 | [.claude-plugin/plugin.json](../../.claude-plugin/plugin.json) |
 | Codex 清单 | `skills: "./skills/"` 与展示信息 | [.codex-plugin/plugin.json](../../.codex-plugin/plugin.json) |
 | Codex 市场 | 指向仓库根 `./` 的本地插件条目 | [.agents/plugins/marketplace.json](../../.agents/plugins/marketplace.json) |

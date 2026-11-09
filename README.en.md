@@ -5,7 +5,7 @@
 <p align="center">
   <a href="https://github.com/Lixiuxiu559/AgentForge/actions/workflows/validate.yml"><img src="https://github.com/Lixiuxiu559/AgentForge/actions/workflows/validate.yml/badge.svg" alt="Validate"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-22c55e.svg" alt="MIT License"></a>
-  <img src="https://img.shields.io/badge/Skills-13-8b5cf6.svg" alt="13 skills">
+  <img src="https://img.shields.io/badge/Skills-14-8b5cf6.svg" alt="14 skills">
 </p>
 
 <p align="center"><a href="README.md">简体中文</a> · English</p>
@@ -16,7 +16,7 @@
 
 Install it in **Codex, Claude Code or DeepSeek Harness** and work in your existing repository. You set the goal; the agent uses the skills to organize investigation, implementation and validation, then reports results and unresolved issues.
 
-[Get started](#get-started) · [Project Wiki](#project-knowledge-that-developers-and-agents-can-navigate) · [All skills](#choose-from-thirteen-skills) · [Installation and updates](docs/installation.md)
+[Get started](#get-started) · [Project Wiki](#project-knowledge-that-developers-and-agents-can-navigate) · [All skills](#choose-from-fourteen-skills) · [Installation and updates](docs/installation.md)
 
 ## What you can do
 
@@ -109,11 +109,12 @@ dsh plugin --profile web add github:Lixiuxiu559/AgentForge
 
 Restart the corresponding profile after installation. See [Installation and updates](docs/installation.md) (Chinese) for updates, local installation, pinned versions and troubleshooting.
 
-## Choose from thirteen skills
+## Choose from fourteen skills
 
 | What you want to do | Skill | What you get |
 |---|---|---|
 | Build and maintain project knowledge | [`wiki`](skills/wiki/SKILL.md) | A Project Wiki for developers and agents: navigation, architecture and module guides, source references and updates based on code changes |
+| Pressure-test a plan or decision | [`grilling`](skills/grilling/SKILL.md) | Check facts, ask one question at a time with a recommendation, and let you decide and confirm agreement |
 | Implement a feature | [`implementation-workflow`](skills/implementation-workflow/SKILL.md) | Task breakdown, code changes, integration checks and a delivery report |
 | Diagnose and fix a bug | [`bug-debugging`](skills/bug-debugging/SKILL.md) | Reproduction and root-cause evidence, a proposal for approval, then an approved fix and regression checks |
 | Review changes before committing | [`diff-review`](skills/diff-review/SKILL.md) | Separate findings for correctness, standards and requirements |
@@ -122,6 +123,13 @@ Restart the corresponding profile after installation. See [Installation and upda
 | Assess test protection | [`test-design`](skills/test-design/SKILL.md) · [`mutation-testing`](skills/mutation-testing/SKILL.md) | Gaps in business scenarios and assertions, or an audit using existing mutation-testing tools |
 | Assess change risk and refactoring opportunities | [`complexity-audit`](skills/complexity-audit/SKILL.md) · [`architecture-scout`](skills/architecture-scout/SKILL.md) | Complexity and coverage risks, or evidence-based architecture candidates; architecture investigation requires an explicit user request |
 | Prepare a separate development directory | [`worktree`](skills/worktree/SKILL.md) | Create or safely remove a Git worktree while preserving the branch |
+
+```text
+Use grilling to pressure-test this plan. Ask one question at a time, give a
+recommendation for each, and wait for my answer before continuing.
+```
+
+`grilling` delivers agreed decisions. Use `pm` for a PRD and request execution separately; it does not start another workflow automatically.
 
 ## Work in your existing development environment
 

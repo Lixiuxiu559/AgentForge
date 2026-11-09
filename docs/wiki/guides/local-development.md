@@ -29,7 +29,7 @@ node tools/doctor.mjs     # 结构与清单校验
 
 | 测试文件 | 覆盖 |
 |---|---|
-| `skill-provider.test.mjs` | DSH 桥接发现十三个技能、调用策略、资源路径、迁移后重新扫描 |
+| `skill-provider.test.mjs` | DSH 桥接发现十四个技能、调用策略、资源路径、迁移后重新扫描 |
 | `release.test.mjs` | `--dry-run` 不改动、patch 发版同步三处版本与 CHANGELOG |
 | `complexity-audit.test.mjs` | `crap.cjs` 在 `type: module` 源码树下可运行 |
 | `wiki-*.test.mjs` | wiki 的 scan、catalog 检查、链接与锚点 |
