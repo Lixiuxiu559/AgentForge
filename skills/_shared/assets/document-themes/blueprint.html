@@ -40,7 +40,7 @@
       --radius-lg: 12px;
       --shadow: 0 18px 54px rgb(16 42 67 / 12%);
       --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-      --content-width: 1240px;
+      --content-width: 1600px;
       --sidebar-width: 240px;
       --section-space: 50px;
     }
@@ -64,6 +64,7 @@
 
     .document-page { min-height: 100vh; padding: 32px 24px; }
     .doc-window {
+      width: 94%;
       max-width: var(--content-width);
       margin: 0 auto;
       overflow: hidden;
@@ -240,6 +241,7 @@
     @media (max-width: 760px) {
       html { scroll-padding-top: 12px; }
       .document-page { padding: 12px 10px 24px; }
+      .doc-window { width: 100%; }
       .doc-layout { grid-template-columns: 1fr; min-height: 0; }
       .doc-sidebar { padding: 20px; border-right: 0; border-bottom: 1px solid var(--line); }
       .doc-nav-label { margin: 22px 0 8px; }
