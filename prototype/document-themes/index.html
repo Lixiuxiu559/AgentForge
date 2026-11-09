@@ -367,7 +367,8 @@
       width: 94%;
       max-width: var(--content-width);
       margin: 0 auto;
-      overflow: hidden;
+      /* 保留圆角裁剪，但不创建会拦截侧栏 sticky 的滚动容器。 */
+      overflow: clip;
       border: 1px solid var(--line);
       border-radius: var(--radius-lg);
       color: var(--ink);
@@ -375,8 +376,13 @@
       box-shadow: var(--shadow);
       transition: background .2s ease, border-color .2s ease;
     }
-    .doc-layout { display: grid; grid-template-columns: var(--sidebar-width) minmax(0, 1fr); min-height: 860px; }
+    .doc-layout { display: grid; grid-template-columns: var(--sidebar-width) minmax(0, 1fr); min-height: 860px; background: var(--nav-bg); }
     .doc-sidebar {
+      position: sticky;
+      top: 16px;
+      align-self: start;
+      max-height: calc(100dvh - 32px);
+      overflow-y: auto;
       display: flex;
       flex-direction: column;
       padding: 34px 22px 26px;
@@ -568,7 +574,7 @@
       .preview-caption, .doc-window { width: 100%; }
       .preview-hint { display: none; }
       .doc-layout { grid-template-columns: 1fr; min-height: 0; }
-      .doc-sidebar { padding: 20px; border-right: 0; border-bottom: 1px solid var(--line); }
+      .doc-sidebar { position: static; max-height: none; overflow: visible; padding: 20px; border-right: 0; border-bottom: 1px solid var(--line); }
       .doc-nav-label { margin: 22px 0 8px; }
       .doc-nav { display: flex; flex-wrap: wrap; gap: 5px; }
       .doc-nav a { padding: 7px 9px; }
