@@ -8,7 +8,7 @@
       "id": "architecture",
       "title": "系统架构",
       "path": "architecture.md",
-      "summary": "说明十三个技能如何以一份真源分发到三个宿主、DSH 桥接如何加载技能，以及校验与发布链路的边界；不展开单个技能的方法细节。",
+      "summary": "说明十四个技能如何以一份真源分发到三个宿主、DSH 桥接如何加载技能，以及校验与发布链路的边界；不展开单个技能的方法细节。",
       "sources": [
         "src/index.js",
         "skills/_shared/assets/document-themes/blueprint.html",
@@ -40,8 +40,9 @@
       "id": "skills-overview",
       "title": "技能套件与分工",
       "path": "modules/skills-overview.md",
-      "summary": "列出十三个技能的分组、适用场景与调用策略，说明技能之间不互相调度；不展开单个技能的执行步骤。",
+      "summary": "列出十四个技能的分组、适用场景与调用策略，说明技能之间不互相调度；不展开单个技能的执行步骤。",
       "sources": [
+        "skills/grilling/SKILL.md",
         "skills/pm/SKILL.md",
         "skills/prototype/SKILL.md",
         "skills/architecture-design/SKILL.md",
@@ -61,8 +62,9 @@
       "id": "design-skills",
       "title": "需求与设计技能",
       "path": "modules/design-skills.md",
-      "summary": "说明 pm、prototype、architecture-design、architecture-scout、research、test-design 的交付物、输入与边界；不涉及实施、评审与质量审计。",
+      "summary": "说明 grilling、pm、prototype、architecture-design、architecture-scout、research、test-design 的交付物、输入与边界；不涉及实施、评审与质量审计。",
       "sources": [
+        "skills/grilling/SKILL.md",
         "skills/pm/SKILL.md",
         "skills/prototype/SKILL.md",
         "skills/architecture-design/SKILL.md",

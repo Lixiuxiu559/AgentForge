@@ -1,13 +1,14 @@
 # 需求与设计技能
 
-> 说明 pm、prototype、architecture-design、architecture-scout、research、test-design 的交付物、输入与边界；不涉及实施、评审与质量审计。
+> 说明 grilling、pm、prototype、architecture-design、architecture-scout、research、test-design 的交付物、输入与边界；不涉及实施、评审与质量审计。
 
 ## 概述
 
-这六个技能覆盖“做什么、长什么样、技术上怎么成立、值不值得改、证据是什么、怎么验证”。它们各自独立交付，不指定也不调用下一个技能；用户可以只带其中任意材料进入实施。
+这七个技能覆盖“计划经得起追问吗、做什么、长什么样、技术上怎么成立、值不值得改、证据是什么、怎么验证”。它们各自独立交付，不指定也不调用下一个技能；用户可以只带其中任意材料进入实施。
 
 | 技能 | 输入 | 交付物 | 明确不做 |
 |---|---|---|---|
+| `grilling` | 用户指定的计划、决策、设计或想法 | 对话中的决策摘要、理由与待定项，由用户确认共识 | 共识前实施计划、自动启动其他流程 |
 | `pm` | 想法、需求变更、已有材料 | 默认 `prd.html`，含业务规则、范围、用户故事、验收标准、假设与开放问题 | 技术选型、架构、实施 |
 | `prototype` | PRD、对话需求、截图、现有页面 | 可离线走查的 HTML 原型与页面/字段/交互状态清单 | 生产组件、连接真实服务、实施 |
 | `architecture-design` | 需求、PRD、原型、已有方案或工程事实 | 默认 `spec.html`，含边界、流程、数据归属、契约与风险验证 | 生产代码、数据库变更、发布 |
@@ -18,6 +19,12 @@
 `pm`、`architecture-design`、`architecture-scout` 与 `test-design` 默认沿用 `skills/_shared/assets/document-themes/blueprint.html` 的蓝图内联样式与文档骨架，生成时直接写入实际内容，不各自重新设计主题。`prototype` 不使用这份母版，仍遵循目标项目的样式基线。
 
 ## 核心流程
+
+### grilling：逐题追问，由用户决定
+
+先阅读已有材料、核实可查事实，沿决策依赖优先解决上游选择；一次只问一个问题，每题给出推荐及理由并等待用户回答，不把默认选项或沉默当作决定。相关分支解决后汇总决策、理由和待定项，请用户确认共识；暂停或仍有分歧时保留开放状态（[grilling/SKILL.md](../../../skills/grilling/SKILL.md)）。
+
+追问期间允许只读取证，共识前不修改项目文件、配置或外部状态；确认后只交付决策摘要，不自动进入 PRD、架构或实施。`pm` 仍按需集中澄清并直接交付 PRD，普通任务中的澄清不启动 grilling。
 
 ### pm：按需澄清，直接产出
 
@@ -70,6 +77,7 @@
 
 <details><summary>来源</summary>
 
+- [skills/grilling/SKILL.md](../../../skills/grilling/SKILL.md)
 - [skills/pm/SKILL.md](../../../skills/pm/SKILL.md)
 - [skills/prototype/SKILL.md](../../../skills/prototype/SKILL.md)
 - [skills/architecture-design/SKILL.md](../../../skills/architecture-design/SKILL.md)

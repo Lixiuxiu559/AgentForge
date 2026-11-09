@@ -1,13 +1,14 @@
 # 技能套件与分工
 
-> 列出十三个技能的分组、适用场景与调用策略，说明技能之间不互相调度；不展开单个技能的执行步骤。
+> 列出十四个技能的分组、适用场景与调用策略，说明技能之间不互相调度；不展开单个技能的执行步骤。
 
 ## 概述
 
-十三个技能按开发者会问的问题分三组：需求与设计、实施与质量、协作与知识。技能之间没有固定调用依赖，用户决定是否组合与顺序；每个技能都以“用户当前已有的材料”为输入，不要求先跑上游技能。
+十四个技能按开发者会问的问题分三组：需求与设计、实施与质量、协作与知识。技能之间没有固定调用依赖，用户决定是否组合与顺序；每个技能都以“用户当前已有的材料”为输入，不要求先跑上游技能。
 
 | 分组 | 技能 | 一句话 | 调用策略 |
 |---|---|---|---|
+| 需求与设计 | `grilling` | 逐题压力测试计划与决策，每题给出推荐并由用户确认共识 | 用户可调用 |
 | 需求与设计 | `pm` | 把想法整理成可评审的 PRD（默认 HTML） | 用户可调用 |
 | 需求与设计 | `prototype` | 把 PRD 或页面需求转为可走查的 HTML 原型 | 用户可调用 |
 | 需求与设计 | `architecture-design` | 完成系统设计并交付含图示的 HTML | 用户可调用 |
@@ -64,6 +65,7 @@ flowchart LR
 
 <details><summary>来源</summary>
 
+- [skills/grilling/SKILL.md](../../../skills/grilling/SKILL.md)
 - [skills/pm/SKILL.md](../../../skills/pm/SKILL.md)
 - [skills/prototype/SKILL.md](../../../skills/prototype/SKILL.md)
 - [skills/architecture-design/SKILL.md](../../../skills/architecture-design/SKILL.md)
