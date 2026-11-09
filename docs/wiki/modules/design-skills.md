@@ -16,7 +16,9 @@
 | `research` | 需要多步取证的问题 | 有证据的结论与不确定性说明 | 简单事实查询 |
 | `test-design` | 业务规则、已有材料 | 默认 HTML 测试设计，含用例与断言缺口 | 编写或执行测试、运行覆盖率/突变工具 |
 
-`pm`、`architecture-design`、`architecture-scout` 与 `test-design` 默认沿用 `skills/_shared/assets/document-themes/blueprint.html` 的蓝图内联样式与文档骨架，生成时直接写入实际内容，不各自重新设计主题。`prototype` 不使用这份母版，仍遵循目标项目的样式基线。
+`pm`、`architecture-design`、`architecture-scout` 与 `test-design` 默认沿用 `skills/_shared/assets/document-themes/blueprint.html` 的蓝图内联样式与文档骨架，生成时直接写入实际内容，不各自重新设计主题。`prototype` 直接绘制产品页面，不读取或套用这份文档母版，也不以文档主题预览为前置，仍遵循用户需求与目标项目的样式基线。
+
+文档母版在桌面端将左侧导航吸附在视口内，目录超过可视高度时独立滚动；外层使用裁剪而非滚动容器，避免导航随正文滚出屏幕。小屏仍采用顶部换行导航，打印时隐藏侧栏。
 
 ## 核心流程
 
