@@ -44,9 +44,11 @@
 
 ### architecture-design：用户决定关键取舍
 
-先建立依据与约束，再比较真实可行方案，由用户决定重大取舍后才定稿；单端任务不凭空增加另一端。交付可含契约、Schema、迁移草案与关键伪代码，不写生产实现。数据库设计要比较迁移脚本与实际 Schema，没有连接时标明环境未核实（[architecture-design/SKILL.md](../../../skills/architecture-design/SKILL.md)）。
+先建立依据与约束，再按决策点比较：改起来代价大且有两个以上可行选项的，由用户决定后才定稿，问题集中一次提出；其余由架构师直接选定并记录理由（标为“AI 选定，可推翻”）。不列不满足约束或已被否决的陪衬选项，spec 正文只留结论，完整比较移入附录（[方案比较与决策](../../../skills/architecture-design/references/decisions.md)）。单端任务不凭空增加另一端。交付可含契约、Schema、迁移草案与关键伪代码，不写生产实现。数据库设计要比较迁移脚本与实际 Schema，没有连接时标明环境未核实（[architecture-design/SKILL.md](../../../skills/architecture-design/SKILL.md)）。
 
 表结构变更须在正文解释表用途与字段含义：新表覆盖全部字段，已有表覆盖变更及受影响字段，并与物理定义一致；关键语义未定不能标为可实施（[专项设计要点](../../../skills/architecture-design/references/specialist-design.md#表用途与字段字典)）。
+
+方案读者定为项目开发者：熟悉项目，但不一定熟悉每个技术领域，也没参与生成对话。新概念和跨领域术语在首次出现处定义，关键约束写明原因；文档分为跨端可读的概览、设计主体和默认折叠的附录，决策来源与授权集中记录，正文只保留当前有效设计（[读者与写法](../../../skills/architecture-design/references/readability.md)）。
 
 ### research：证据先于结论
 
@@ -85,6 +87,7 @@
 - [skills/pm/SKILL.md](../../../skills/pm/SKILL.md)
 - [skills/prototype/SKILL.md](../../../skills/prototype/SKILL.md)
 - [skills/architecture-design/SKILL.md](../../../skills/architecture-design/SKILL.md)
+- [skills/architecture-design/references/readability.md](../../../skills/architecture-design/references/readability.md)
 - [skills/architecture-scout/SKILL.md](../../../skills/architecture-scout/SKILL.md)
 - [skills/architecture-scout/references/html-delivery.md](../../../skills/architecture-scout/references/html-delivery.md)
 - [skills/research/SKILL.md](../../../skills/research/SKILL.md)
