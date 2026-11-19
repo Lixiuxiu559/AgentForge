@@ -14,6 +14,14 @@
 
 ## [Unreleased]
 
+### Added
+
+- 
+
+---
+
+## [0.19.1] - 2026-11-19
+
 ### Fixed
 
 - 共用 HTML 蓝图新增共享渲染/检查器，`pm`、`architecture-design`、`architecture-scout` 与 `test-design` 统一使用；交付前扫描残留 `{{...}}` 并核对正文标题，字段名含数字时不再漏替换。
