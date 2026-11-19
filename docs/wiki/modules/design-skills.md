@@ -40,13 +40,17 @@
 
 投入档位与探索方式相互独立：T2 可在局部区域比较方案，布局已明确则直接做单方案；探索阶段只整理共同约束、必要字段／状态与方案差异，选定后才补全细节，避免为未选方案重复维护整套清单。引导场景按需增加可重复的本地交互路径，重置和切换须恢复已知初始状态；方案与场景的演示控件均放在独立区域，离线交付和设计与实施分离的边界不变（[多方案探索](../../../skills/prototype/references/prototype-spec.md#多方案探索按需)、[引导场景](../../../skills/prototype/references/prototype-spec.md#可重置的引导场景按需)）。
 
-已有项目先选取目标模块的同类页面，核实布局、主题、共享组件及项目覆盖样式，在 `prototype.md` 记录带来源的样式基线。绘制时沿用页面骨架和信息密度，局部原型只改变需求涉及的区域；离线替代与新设计建议单独说明。验证除交互走查外，还需在相同视口与主题下对照参照页／截图；只有源码时如实标记视觉对照未完成，不用组件库默认外观代替项目实际风格（[原型清单与走查](../../../skills/prototype/references/prototype-spec.md)）。
+已有项目先查找项目级原型样式基础（kit：带来源注释的 `tokens.css`、应用外壳、常用控件样式和 `kit.md`），有则复制快照使用，没有则选取目标模块的同类页面取证后建立。页面样式只引用 kit 变量，交付前搜索写死的颜色和尺寸；来源冲突时按真实渲染 > 应用源码 > 相邻页面推导 > 用户参考稿取值。绘制时沿用页面骨架和信息密度，局部原型只改变需求涉及的区域；离线替代与新设计建议单独说明（[原型样式基础](../../../skills/prototype/references/style-kit.md)）。
+
+多页或多状态原型按统一结构组织：页面文件共享模拟数据与状态模块；清单先定义状态维度（角色、数据状况、故障注入、页面局部状态），每个状态有编号和直达 URL；入口页提供状态目录和全局重置，跨页流程写成带链接的步骤表（[多页面结构与状态](../../../skills/prototype/references/structure-and-states.md)）。验证除交互走查外，还需在相同视口与主题下对照参照页／截图；只有源码时如实标记视觉对照未完成，不用组件库默认外观代替项目实际风格（[原型清单与走查](../../../skills/prototype/references/prototype-spec.md)）。
 
 ### architecture-design：用户决定关键取舍
 
-先建立依据与约束，再比较真实可行方案，由用户决定重大取舍后才定稿；单端任务不凭空增加另一端。交付可含契约、Schema、迁移草案与关键伪代码，不写生产实现。数据库设计要比较迁移脚本与实际 Schema，没有连接时标明环境未核实（[architecture-design/SKILL.md](../../../skills/architecture-design/SKILL.md)）。
+先建立依据与约束，再按决策点比较：改起来代价大且有两个以上可行选项的，由用户决定后才定稿，问题集中一次提出；其余由架构师直接选定并记录理由（标为“AI 选定，可推翻”）。不列不满足约束或已被否决的陪衬选项，spec 正文只留结论，完整比较移入附录（[方案比较与决策](../../../skills/architecture-design/references/decisions.md)）。单端任务不凭空增加另一端。交付可含契约、Schema、迁移草案与关键伪代码，不写生产实现。数据库设计要比较迁移脚本与实际 Schema，没有连接时标明环境未核实（[architecture-design/SKILL.md](../../../skills/architecture-design/SKILL.md)）。
 
 表结构变更须在正文解释表用途与字段含义：新表覆盖全部字段，已有表覆盖变更及受影响字段，并与物理定义一致；关键语义未定不能标为可实施（[专项设计要点](../../../skills/architecture-design/references/specialist-design.md#表用途与字段字典)）。
+
+方案读者定为项目开发者：熟悉项目，但不一定熟悉每个技术领域，也没参与生成对话。新概念和跨领域术语在首次出现处定义，关键约束写明原因；文档分为跨端可读的概览、设计主体和默认折叠的附录，决策来源与授权集中记录，正文只保留当前有效设计。章节标题统一用名词短语，同类内容固定叫法，不写“数据怎么存”“验收看什么”这类口语化提问（[读者与写法](../../../skills/architecture-design/references/readability.md)）。
 
 ### research：证据先于结论
 
@@ -84,7 +88,10 @@
 - [skills/grilling/SKILL.md](../../../skills/grilling/SKILL.md)
 - [skills/pm/SKILL.md](../../../skills/pm/SKILL.md)
 - [skills/prototype/SKILL.md](../../../skills/prototype/SKILL.md)
+- [skills/prototype/references/style-kit.md](../../../skills/prototype/references/style-kit.md)
+- [skills/prototype/references/structure-and-states.md](../../../skills/prototype/references/structure-and-states.md)
 - [skills/architecture-design/SKILL.md](../../../skills/architecture-design/SKILL.md)
+- [skills/architecture-design/references/readability.md](../../../skills/architecture-design/references/readability.md)
 - [skills/architecture-scout/SKILL.md](../../../skills/architecture-scout/SKILL.md)
 - [skills/architecture-scout/references/html-delivery.md](../../../skills/architecture-scout/references/html-delivery.md)
 - [skills/research/SKILL.md](../../../skills/research/SKILL.md)
