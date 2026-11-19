@@ -61,7 +61,7 @@ description: 独立基于业务规则和可用材料设计测试用例、评估�
 
 按 `references/deliverable-template.md` 核对内容，按 [HTML 测试设计](references/html-delivery.md) 默认生成实际的 `test-design.html`。至少交付范围与依据、测试设施、具体用例、规则对应关系、优先缺口和未确认项；说明关键用例的输入/操作、结果断言与必要数据，技术入口未知时如实标注，不编造。
 
-默认视觉母版为从当前 `SKILL.md` 所在目录解析的 `../_shared/assets/document-themes/blueprint.html`。生成时读取并沿用其中的蓝图内联样式与文档骨架，直接写入本次内容，不每次重新设计主题；用户另有风格要求时优先。
+默认视觉母版为从当前 `SKILL.md` 所在目录解析的 `../_shared/assets/document-themes/blueprint.html`。生成时读取并沿用其中的蓝图内联样式与文档骨架，直接写入本次内容，不每次重新设计主题；用户另有风格要求时优先。生成与校验使用 `../_shared/scripts/render-blueprint.mjs`，交付前运行 `--check`；残留占位符或正文标题不一致视为未通过。
 
 交付状态按第 4 步的证据边界和参考模板区分；不以“100% 完整”或行覆盖率代替场景与缺口说明。
 

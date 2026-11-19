@@ -59,7 +59,7 @@ dsh-model-invocable: false
 
 默认按 [HTML 报告交付](references/html-delivery.md) 生成实际 HTML 文件，不强制另出 Markdown 副本。位置按顺序取第一个命中项：① 用户显式指定的路径；② 仓库明文约定（`AGENTS.md` / `CONTRIBUTING.md` / `README.md`）；③ 仓库已有报告类目录 `docs/research/`、`docs/architecture/`；④ 都没有时新建 `docs/architecture-scout/`（仓库无 `docs/` 则先建）。文件名 `YYYY-MM-DD-主题.html`；落在共享目录（如 `docs/research/`）时写成 `YYYY-MM-DD-architecture-scout-主题.html` 以区分来源。用户明确要求其他格式、已有正本约定或只要即时回答时遵循其要求。
 
-默认视觉母版为从当前 `SKILL.md` 所在目录解析的 `../_shared/assets/document-themes/blueprint.html`。生成时读取并沿用其中的蓝图内联样式与文档骨架，直接写入本次内容；用户另有风格要求时优先。报告自包含、可离线阅读，不依赖网络 CDN。
+默认视觉母版为从当前 `SKILL.md` 所在目录解析的 `../_shared/assets/document-themes/blueprint.html`。生成时读取并沿用其中的蓝图内联样式与文档骨架，直接写入本次内容；用户另有风格要求时优先。报告自包含、可离线阅读，不依赖网络 CDN。生成与校验使用 `../_shared/scripts/render-blueprint.mjs`，交付前运行 `--check`；残留占位符或正文标题不一致视为未通过。
 
 按 `references/candidate-report.md` 保留候选及证据、反证、三方案取舍和迁移风险；证据不足时明确写“未发现值得优先改造的机会”。可选图示不能代替源码证据，不为出报告引入新的强依赖。交付实际文件链接和关键摘要，不在对话中粘贴长篇正文替代文件。
 
